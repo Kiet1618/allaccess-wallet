@@ -1,5 +1,5 @@
 import { createGlobalStyle } from "styled-components"
-import { Theme } from '../types/theme.interface'
+import { Theme } from '@app/types/theme.interface'
 export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
   body {
     background: ${({ theme }) => theme.body};
@@ -15,6 +15,6 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
   }
   code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
+  }
+`
 
-  `
