@@ -1,5 +1,11 @@
 import { createGlobalStyle } from "styled-components"
 import { Theme } from '@app/types/theme.type'
+
+
+declare module "styled-components" {
+  export interface DefaultTheme extends Theme { }
+}
+
 export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
   body {
     background: ${({ theme }) => theme.body};

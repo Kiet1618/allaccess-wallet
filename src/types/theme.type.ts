@@ -3,4 +3,8 @@ export type Theme = {
     text: string;
     toggleBorder: string,
     background: string,
+    color: {
+        primary: string,
+        secondary: string
+    }
 }
