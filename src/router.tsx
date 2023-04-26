@@ -4,7 +4,7 @@ import { ProtectProp } from './types/protectProp.type'
 import { GlobalStyles } from './styles/global.css'
 import { LayoutApp } from './components';
 import { useSelector, useDispatch } from 'react-redux'
-import { login, logout } from './store/features/login/checkLoginReducer'
+import { login, logout } from './store/features/login/reducer'
 import type { RootState } from './store/store'
 
 const RouterApp = () => {

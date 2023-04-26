@@ -1,7 +1,25 @@
-export const route = { home: '/', login: '/login', wallet: '/wallet', profile: '/profile' }
+export const route = { overview: '/overview', login: '/login', transaction: '/transaction' }
 
 export const listMenu = [
-    { name: "Home", route: route.home },
-    { name: "Wallet", route: route.wallet },
-    { name: "Profile", route: route.profile }
+    {
+        name: "My Wallet",
+        subMenu: [
+            { name: "Overview", route: route.overview },
+            { name: "Transaction", route: route.transaction }
+        ]
+    },
+    {
+        name: "History",
+        subMenu: [
+            { name: "Overview", route: route.overview },
+            { name: "Transaction", route: route.transaction }
+        ]
+    },
+    {
+        name: "Setting",
+        subMenu: [
+            { name: "Overview", route: route.overview },
+            { name: "Transaction", route: route.transaction }
+        ]
+    }
 ]

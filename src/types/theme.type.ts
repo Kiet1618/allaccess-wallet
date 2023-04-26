@@ -1,10 +1,10 @@
 export type Theme = {
-    body: string;
+    mode: string;
     text: string;
-    toggleBorder: string,
-    background: string,
     color: {
+        backgroundPrimary: string,
+        backgroundSecondary: string,
         primary: string,
-        secondary: string
+        secondary: string,
     }
 }

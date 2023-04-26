@@ -1,2 +1,4 @@
 import LayoutApp from "./Layout";
-export { LayoutApp }
+import Header from "./Header";
+import Footer from "./Footer";
+export { LayoutApp, Header, Footer }

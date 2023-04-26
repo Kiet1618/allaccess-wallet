@@ -1,8 +1,10 @@
 import React from "react";
+import { Page } from "../../styles/global.css";
+
 const Error = () => {
 
     return (
-        <div>Error</div>
+        <Page>Error</Page>
     );
 }
 

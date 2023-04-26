@@ -1,5 +1,6 @@
 import { createGlobalStyle } from "styled-components"
 import { Theme } from '@app/types/theme.type'
+import styled from "styled-components";
 
 
 declare module "styled-components" {
@@ -8,10 +9,10 @@ declare module "styled-components" {
 
 export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
   body {
-    background: ${({ theme }) => theme.body};
+    background: ${({ theme }) => theme.color.backgroundPrimary};
     color: ${({ theme }) => theme.text};
     font-family: Tahoma, Helvetica, Arial, Roboto, sans-serif;
-    transition: all 0.50s linear;
+    /* transition: all 0.50s linear; */
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -24,3 +25,10 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
   }
 `
 
+
+export const Page = styled.div`
+    /* background: ${(props) => props.theme.color.backgroundPrimary}; */
+    border-bottom:  ${(props) => props.theme.color.backgroundSecondary} solid 0.5vh;
+    border-top: ${(props) => props.theme.color.backgroundSecondary} solid 0.5vh;
+    height: 87.28125vh
+`
