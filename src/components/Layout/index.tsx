@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled, { ThemeProvider, ThemedStyledProps } from "styled-components";
-import { lightTheme, darkTheme } from "../../styles/themes.css"
+import { lightTheme, darkTheme } from "../../styles/theme"
 import { Theme } from "../../types/theme.type";
 import { RoutesProps } from '../../types/route.type'
 import { GlobalStyles } from '../../styles/global.css'

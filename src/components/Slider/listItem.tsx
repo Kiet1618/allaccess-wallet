@@ -32,14 +32,14 @@ const Slider: React.FC<Props> = (props: Props) => {
             component="nav"
         >
             <ListItemButton component="div" onClick={handleClickOpen}>
-                <props.icon></props.icon>
+                <props.icon style={{ marginRight: '10px' }}></props.icon>
                 {props.name}
                 {open ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={open}>
                 <List component="div">
                     {props.subMenu.map(e =>
-                        <ListItemButton sx={{ pl: 4 }}>
+                        <ListItemButton sx={{ pl: 6 }}>
                             <MenuLink to={e.route}>
                                 {e.name}
                             </MenuLink>
