@@ -11,21 +11,20 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import { NavLink } from "react-router-dom";
 import ListItem from "./listItem";
+import { Logo } from "../../assets/img";
 const Slider = () => {
-    const [open, setOpen] = React.useState(true);
 
-    const handleClick = () => {
-        setOpen(!open);
-    };
     return (
         <SliderApp>
             <List>
-                <ListSubheader component="div" id="nested-list-subheader">
-                    ALL Ascce one
-                </ListSubheader>
+                <ListItemButton >
+                    <img src={Logo} />
+                    Allaccess.one
+                </ListItemButton>
                 {listMenu.map(e =>
-                    <ListItem name={e.name} subMenu={e.subMenu} />
+                    <ListItem name={e.name} subMenu={e.subMenu} icon={e.icon} />
                 )}
+
 
             </List>
 

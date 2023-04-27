@@ -12,15 +12,20 @@ export const SliderApp = styled.div`
   height: 100vh;
   background-color: ${(props) => props.theme.color.backgroundSecondary};
 `
-export const Menu = styled(MenuList)`
-  text-align: center;
-`
-export const Item = styled(MenuItem)`
-  text-decoration: none;
-  list-style: none;
-`
+// export const Menu = styled(List)`
+//   text-align: center;
+// `
+// export const Item = styled(ListItemButton)`
+//   text-decoration: none;
+//   list-style: none;
+// `
+// export const MenuLink = styled(NavLink)`
+//   color: ${(props) => props.theme.text};
+//   text-decoration: none;
+//   width: 100%;
+// `
+
 export const MenuLink = styled(NavLink)`
-  color: ${(props) => props.theme.text};
-  text-decoration: none;
-  width: 100%;
+    text-decoration: none;
+    color: ${(props) => props.theme.text};
 `
