@@ -10,7 +10,7 @@ import { subMenuItem } from '../../types/subMenuItem.type'
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { ArrowRight, ArrowDown } from "../../assets/icon";
-import { MenuLink, IconArrowMenu, ListItemDiv } from './slider.css'
+import { MenuLink, IconArrowMenu, ListItemDiv, NavLinkCustom } from './slider.css'
 import { NavLink } from "react-router-dom";
 
 type Props = {
@@ -40,15 +40,15 @@ const Slider: React.FC<Props> = (props: Props) => {
                 </IconArrowMenu>
             </ListItemButton>
             <Collapse in={open}>
-                <List component="div">
+                <NavLinkCustom >
                     {props.subMenu.map(e =>
-                        <ListItemButton component={MenuLink} to={e.route} sx={{ pl: 6.4 }}>
+                        <ListItemButton component={MenuLink} to={e.route}>
                             {e.name}
                         </ListItemButton>
                     )}
 
 
-                </List>
+                </NavLinkCustom>
             </Collapse>
         </List>
 

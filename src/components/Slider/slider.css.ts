@@ -20,7 +20,8 @@ export const MenuLink = styled(NavLink)`
     font-weight:  ${(props) => props.theme.fontWeights.medium};
     color: ${(props) => props.theme.baseColors.neutrals.gray600};
     display: block;
-    width: 100%;
+    width: 80%;
+    height: 40px;
 `
 
 export const ListItemHeader = styled.div`
@@ -29,10 +30,13 @@ export const ListItemHeader = styled.div`
   align-content: center;
   align-items: center;
   font-style: normal;
+  margin-left: 2vw;
+  margin-top: 1vh;
   font-weight:  ${(props) => props.theme.fontWeights.medium};
   font-size: ${(props) => props.theme.fontSizes.lg} +'px';
   color: ${(props) => props.theme.baseColors.neutrals.gray800};
   gap: 8px;
+  margin-bottom: 5vh;
 `
 
 export const IconArrowMenu = styled.div`
@@ -40,5 +44,16 @@ export const IconArrowMenu = styled.div`
 
 `
 export const ListItemDiv = styled.div`
-  width: 70%;
+  width: 80%;
+`
+export const NavLinkCustom = styled(List)`
+  a.active {
+    color: ${(props) => props.theme.baseColors.brands.blue600};
+    background-color: ${(props) => props.theme.baseColors.neutrals.gray300};
+  
+  }
+  a {
+    margin-left: auto;
+    margin-right: auto;
+  }
 `
