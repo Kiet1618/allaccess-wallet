@@ -29,7 +29,7 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
                         <SwapModeButton onClick={themeToggler}>Dark</SwapModeButton>
 
                     </Grid>
-                    <Grid item xs={10}>
+                    <Grid item xs={10} >
                         <Header />
                         {props.children}
                         <Footer />

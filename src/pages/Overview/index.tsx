@@ -1,6 +1,6 @@
 import React from "react";
 import { Page } from "../../styles/global.css";
-const Home = () => {
+const Overview = () => {
     return (
 
         <Page>Home</Page>
@@ -8,4 +8,4 @@ const Home = () => {
     );
 }
 
-export default Home;
+export default Overview;

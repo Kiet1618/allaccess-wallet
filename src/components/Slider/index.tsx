@@ -1,5 +1,5 @@
 import React from "react";
-import { SliderApp, ListItemHeader, ImgLogoIcon } from './slider.css'
+import { SliderApp, ListItemHeader } from './slider.css'
 // import { Menu, Item, MenuLink } from './slider.css'
 import { Grid, Button } from '@mui/material';
 import { listMenu } from "../../configs/data";
@@ -18,7 +18,7 @@ const Slider = () => {
         <SliderApp>
             <List>
                 <ListItemHeader>
-                    <ImgLogoIcon src={LogoIcon} />
+                    <img src={LogoIcon} />
                     Allaccess.one
                 </ListItemHeader>
                 {listMenu.map(e =>
