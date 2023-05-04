@@ -12,6 +12,7 @@ import Collapse from '@mui/material/Collapse';
 import { NavLink } from "react-router-dom";
 import ListItem from "./listItem";
 import { LogoIcon } from "../../assets/img";
+
 const Slider = () => {
 
     return (

@@ -25,14 +25,11 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
 export const Page = styled.div`
     border-bottom:  ${(props) => props.theme.colors.backgroundSecondary} solid 0.5vh;
     border-top: ${(props) => props.theme.colors.backgroundSecondary} solid 0.5vh;
-    height: 87.28125vh;
     
-    ${breakpoint('md')`
-    font-size: 200px;
+    ${breakpoint('xs')`
     `}
- 
-    ${breakpoint('xl')`
-    font-size: 100px;
+    ${breakpoint('sm')`
+        height: 87.28125vh;
     `}
  
 `

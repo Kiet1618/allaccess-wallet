@@ -8,12 +8,24 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
+import { createBreakpoint, createMap } from 'styled-components-breakpoint';
+import base from '../../styles/theme/base';
+import { Grid } from '@mui/material';
+
+const breakpoint = createBreakpoint(base.breakpoints);
+const map = createMap(base.breakpoints);
 
 
 export const SliderApp = styled.div`
   height: 100vh;
   background-color: ${(props) => props.theme.baseColors.neutrals.gray100};
   font-size: ${(props) => props.theme.fontSizes.sm} + 'px';
+  ${breakpoint('xs')`
+    display: none;
+    `}
+    ${breakpoint('sm')`
+    display: block;
+    `}
 
 `
 

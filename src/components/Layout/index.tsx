@@ -9,7 +9,6 @@ import { listMenu } from '../../configs/data';
 import { Grid, Button } from '@mui/material';
 import { Header, Footer } from '../'
 import Slider from '../Slider'
-import { SwapModeButton } from './layout.css'
 
 const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesProps>,) => {
 
@@ -34,7 +33,7 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
                         <Footer />
                     </Grid>
                 </Grid>
-                : <>{props.children}</>}
+                : <div>{props.children}</div>}
 
 
         </ThemeProvider >
