@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { Home, Login, Wallet, Profile, Error } from './pages'
+import { Overview, Login, History, Profile, Error, Transaction } from './pages'
 import { ProtectProp } from './types/protectProp.type'
-import { GlobalStyles } from './styles/global.css'
 import { LayoutApp } from './components';
 import { useSelector, useDispatch } from 'react-redux'
 import { login, logout } from './store/features/login/reducer'
@@ -10,7 +9,13 @@ import type { RootState } from './store/store'
 const RouterApp = () => {
     const ProtectedRoute = ({ user, children }: ProtectProp): JSX.Element => {
         if (!user) {
-            return <Navigate to="/login" replace />;
+            return <Navigate to="/" replace />;
+        }
+        return children;
+    };
+    const RedirectOverview = ({ user, children }: ProtectProp): JSX.Element => {
+        if (user) {
+            return <Navigate to="/overview" replace />;
         }
         return children;
     };
@@ -20,17 +25,24 @@ const RouterApp = () => {
         <Router>
             <LayoutApp >
                 <Routes>
-                    <Route path='/login' element={
-                        <Login />
-                    } />
                     <Route path='/' element={
+                        <RedirectOverview user={user}>
+                            <Login />
+                        </RedirectOverview>
+                    } />
+                    <Route path='/overview' element={
                         <ProtectedRoute user={user}>
-                            <Home />
+                            <Overview />
                         </ProtectedRoute>
                     } />
-                    <Route path='/wallet' element={
+                    <Route path='/transaction' element={
                         <ProtectedRoute user={user}>
-                            <Wallet />
+                            <Transaction />
+                        </ProtectedRoute>
+                    } />
+                    <Route path='/history' element={
+                        <ProtectedRoute user={user}>
+                            <History />
                         </ProtectedRoute>
                     } />
                     <Route path='/profile' element={

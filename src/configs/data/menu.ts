@@ -27,9 +27,9 @@ export const listMenu = [
     {
         name: "Setting",
         icon: Setting,
-
         subMenu: [
-            { name: "Profile", route: route.profile }
+            { name: "User profile", route: route.profile },
+            { name: "Logout", route: "" }
         ]
     }
 ]

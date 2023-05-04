@@ -9,14 +9,13 @@ import { listMenu } from "@app/configs/data";
 import { subMenuItem } from '../../types/subMenuItem.type'
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import { MenuLink } from './slider.css'
-
+import { ArrowRight, ArrowDown } from "../../assets/icon";
+import { MenuLink, IconArrowMenu, ListItemDiv, NavLinkCustom } from './slider.css'
+import { NavLink } from "react-router-dom";
 
 type Props = {
     name: string,
-    icon: React.FunctionComponent<React.SVGProps<
-        SVGSVGElement
-    > & { title?: string }>;
+    icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & { title?: string }>;
     subMenu: Array<subMenuItem>
 }
 
@@ -32,22 +31,24 @@ const Slider: React.FC<Props> = (props: Props) => {
             component="nav"
         >
             <ListItemButton component="div" onClick={handleClickOpen}>
-                <props.icon></props.icon>
-                {props.name}
-                {open ? <ExpandLess /> : <ExpandMore />}
+                <props.icon style={{ marginRight: '10px' }}></props.icon>
+                <ListItemDiv>
+                    {props.name}
+                </ListItemDiv>
+                <IconArrowMenu>
+                    {open ? <ArrowDown /> : <ArrowRight />}
+                </IconArrowMenu>
             </ListItemButton>
             <Collapse in={open}>
-                <List component="div">
+                <NavLinkCustom >
                     {props.subMenu.map(e =>
-                        <ListItemButton sx={{ pl: 4 }}>
-                            <MenuLink to={e.route}>
-                                {e.name}
-                            </MenuLink>
+                        <ListItemButton component={MenuLink} to={e.route}>
+                            {e.name}
                         </ListItemButton>
                     )}
 
 
-                </List>
+                </NavLinkCustom>
             </Collapse>
         </List>
 

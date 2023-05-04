@@ -1,5 +1,5 @@
 import React from "react";
-import { SliderApp } from './slider.css'
+import { SliderApp, ListItemHeader } from './slider.css'
 // import { Menu, Item, MenuLink } from './slider.css'
 import { Grid, Button } from '@mui/material';
 import { listMenu } from "../../configs/data";
@@ -11,16 +11,16 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import { NavLink } from "react-router-dom";
 import ListItem from "./listItem";
-import { Logo } from "../../assets/img";
+import { LogoIcon } from "../../assets/img";
 const Slider = () => {
 
     return (
         <SliderApp>
             <List>
-                <ListItemButton >
-                    <img src={Logo} />
+                <ListItemHeader>
+                    <img src={LogoIcon} />
                     Allaccess.one
-                </ListItemButton>
+                </ListItemHeader>
                 {listMenu.map(e =>
                     <ListItem name={e.name} subMenu={e.subMenu} icon={e.icon} />
                 )}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled, { ThemeProvider, ThemedStyledProps } from "styled-components";
-import { lightTheme, darkTheme } from "../../styles/themes.css"
+import { lightTheme, darkTheme } from "../../styles/theme"
 import { Theme } from "../../types/theme.type";
 import { RoutesProps } from '../../types/route.type'
 import { GlobalStyles } from '../../styles/global.css'
@@ -23,13 +23,12 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
         <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
             <GlobalStyles></GlobalStyles>
             {isLoggedIn ?
-                <Grid container>
-                    <Grid item xs={2}>
-                        <Slider />
-                        <SwapModeButton onClick={themeToggler}>Dark</SwapModeButton>
 
+                <Grid container columns={{ xs: 1, sm: 12, md: 12, lg: 12 }}>
+                    <Grid item xs={1} sm={3} md={2.5} lg={2}>
+                        <Slider />
                     </Grid>
-                    <Grid item xs={10}>
+                    <Grid item xs={1} sm={9} md={9.5} lg={10}>
                         <Header />
                         {props.children}
                         <Footer />
