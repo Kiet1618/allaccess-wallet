@@ -43,7 +43,7 @@ export const TextLogo = styled.div`
   ${breakpoint("xs")`
      display:none;
     `}
-  ${breakpoint("sm")`
+  ${breakpoint("md")`
       display:flex;
       margin-left: 5vw;
     `}
@@ -59,7 +59,7 @@ export const LoginH1 = styled.div`
       margin-right: auto;
       text-align: center;
     `}
-  ${breakpoint("sm")`
+  ${breakpoint("md")`
       margin-left: 5vw;
       text-align: left;
     `}
@@ -74,7 +74,7 @@ export const Subtitle = styled.div`
       margin-right: auto;
       text-align: center;
     `}
-  ${breakpoint("sm")`
+  ${breakpoint("md")`
       margin-left: 5vw;
       text-align: left;
 
@@ -82,7 +82,7 @@ export const Subtitle = styled.div`
 `;
 export const ContainerLoginButton = styled.div`
   margin-top: 10vh;
-  ${breakpoint("sm")`
+  ${breakpoint("md")`
       margin-left: 5vw;
     `}
 `;
@@ -91,7 +91,7 @@ export const CustomGrid = styled(Grid)`
   ${breakpoint("xs")`
     display: none;
     `}
-  ${breakpoint("sm")`
+  ${breakpoint("md")`
       display: block;
     `}
 `;

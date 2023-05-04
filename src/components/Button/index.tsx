@@ -52,7 +52,7 @@ const ButtonComponent = styled.button<Props>`
       margin-right: auto;
       text-align: center;
     `}
-  ${breakpoint("sm")`
+  ${breakpoint("md")`
         text-align: left;
         margin-left: 0;
         margin-right: 0;

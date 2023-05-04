@@ -22,7 +22,7 @@ const Login = () => {
   return (
     <>
       <Grid container direction='row'>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={12} md={6}>
           <TextLogo>
             <img src={LogoIconXL} />
             Allaccess.one
@@ -40,7 +40,7 @@ const Login = () => {
             </Button>
           </ContainerLoginButton>
         </Grid>
-        <CustomGrid item xs={12} sm={6}>
+        <CustomGrid item xs={12} sm={12} md={6}>
           <BackgroundImg>
             <Slider {...settings}>
               <ContainerSlider>
