@@ -1,5 +1,10 @@
 import styled from "styled-components";
 import { Background } from "../../assets/img";
+import Grid from "@mui/material/Grid";
+import base from "../../styles/theme/base";
+import { createBreakpoint } from "styled-components-breakpoint";
+
+const breakpoint = createBreakpoint(base.breakpoints);
 
 export const BackgroundImg = styled.div`
   background-image: url("${Background}");
@@ -12,6 +17,7 @@ export const BackgroundImg = styled.div`
 export const ImgSlider = styled.img`
   margin-left: ${props => props.theme.spacing.auto};
   margin-right: ${props => props.theme.spacing.auto};
+  height: 60vh;
 `;
 
 export const TextSlider = styled.p`
@@ -29,10 +35,63 @@ export const ContainerSlider = styled.div`
 `;
 export const TextLogo = styled.div`
   color: ${props => props.theme.colors.neutrals.gray800};
-  display: flex;
   align-content: center;
   align-items: center;
   font-family: "Roboto";
   font-weight: ${props => props.theme.fontWeights.bold};
   font-size: ${props => props.theme.fontSizes.lg + "px"};
+  ${breakpoint("xs")`
+     display:none;
+    `}
+  ${breakpoint("sm")`
+      display:flex;
+      margin-left: 5vw;
+    `}
+`;
+export const LoginH1 = styled.div`
+  font-family: "Roboto", sans-serif;
+  font-weight: ${props => props.theme.fontWeights.extraBold};
+  font-size: ${props => props.theme.fontSizes.xxxl + "px"};
+  color: ${props => props.theme.colors.neutrals.gray1000};
+  margin-top: 20vh;
+  ${breakpoint("xs")`
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    `}
+  ${breakpoint("sm")`
+      margin-left: 5vw;
+      text-align: left;
+    `}
+`;
+export const Subtitle = styled.div`
+  font-weight: ${props => props.theme.fontWeights.regular};
+  color: ${props => props.theme.colors.neutrals.gray500};
+  font-size: ${props => props.theme.fontSizes.xs + "px"};
+  margin-top: 5px;
+  ${breakpoint("xs")`
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    `}
+  ${breakpoint("sm")`
+      margin-left: 5vw;
+      text-align: left;
+
+    `}
+`;
+export const ContainerLoginButton = styled.div`
+  margin-top: 10vh;
+  ${breakpoint("sm")`
+      margin-left: 5vw;
+    `}
+`;
+
+export const CustomGrid = styled(Grid)`
+  ${breakpoint("xs")`
+    display: none;
+    `}
+  ${breakpoint("sm")`
+      display: block;
+    `}
 `;

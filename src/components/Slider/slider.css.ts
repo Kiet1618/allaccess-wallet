@@ -1,11 +1,10 @@
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import List from "@mui/material/List";
-import { createBreakpoint, createMap } from "styled-components-breakpoint";
+import { createBreakpoint } from "styled-components-breakpoint";
 import base from "../../styles/theme/base";
 
 const breakpoint = createBreakpoint(base.breakpoints);
-const map = createMap(base.breakpoints);
 
 export const SliderApp = styled.div`
   height: 100vh;
@@ -32,7 +31,7 @@ export const MenuLink = styled(NavLink)`
 `;
 
 export const ListItemHeader = styled.div`
-  font-family: "Roboto";
+  font-family: "Roboto", sans-serif;
   display: flex;
   align-content: center;
   align-items: center;

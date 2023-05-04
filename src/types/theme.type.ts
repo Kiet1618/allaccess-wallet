@@ -14,6 +14,7 @@ export type FontSizes = {
   lg: number;
   xl: number;
   xxl: number;
+  xxxl: number;
 };
 export type Spacing = {
   xs: number;

@@ -1,10 +1,12 @@
 import Grid from "@mui/material/Grid";
-import { BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo } from "./login.css";
+import { BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid } from "./login.css";
 import { FristSlider, LogoIconXL } from "../../assets/img";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-
+import React from "react";
+import Button from "../../components/Button";
+import { Google } from "../../assets/icon";
 const Login = () => {
   var settings = {
     dots: true,
@@ -19,14 +21,26 @@ const Login = () => {
 
   return (
     <>
-      <Grid container direction='row' justifyContent='center' textAlign='center'>
-        <Grid item xs={6}>
+      <Grid container direction='row'>
+        <Grid item xs={12} sm={6}>
           <TextLogo>
             <img src={LogoIconXL} />
-            Allaccess . one
+            Allaccess.one
           </TextLogo>
+          <LoginH1>Log in or sign up</LoginH1>
+          <Subtitle>Select how you would like to continue</Subtitle>
+          <ContainerLoginButton>
+            <Button type='button' width='70%' height='48' styleButton='default'>
+              <Google />
+              Continue with Google
+            </Button>
+            <br></br>
+            <Button type='button' width='70%' height='48' styleButton='default'>
+              See other options
+            </Button>
+          </ContainerLoginButton>
         </Grid>
-        <Grid item xs={6}>
+        <CustomGrid item xs={12} sm={6}>
           <BackgroundImg>
             <Slider {...settings}>
               <ContainerSlider>
@@ -43,7 +57,7 @@ const Login = () => {
               </ContainerSlider>
             </Slider>
           </BackgroundImg>
-        </Grid>
+        </CustomGrid>
       </Grid>
     </>
   );

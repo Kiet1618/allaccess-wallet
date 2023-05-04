@@ -31,6 +31,7 @@ const fontSizes: FontSizes = {
   lg: 20,
   xl: 22,
   xxl: 24,
+  xxxl: 42,
 };
 const spacing: Spacing = {
   xs: 10,
