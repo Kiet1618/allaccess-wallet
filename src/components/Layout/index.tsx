@@ -23,13 +23,12 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
         <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
             <GlobalStyles></GlobalStyles>
             {isLoggedIn ?
-                <Grid container>
-                    <Grid item xs={2}>
-                        <Slider />
-                        <SwapModeButton onClick={themeToggler}>Dark</SwapModeButton>
 
+                <Grid container columns={{ xs: 1, sm: 12, md: 12, lg: 12 }}>
+                    <Grid item xs={1} sm={4} md={2.5} lg={2}>
+                        <Slider />
                     </Grid>
-                    <Grid item xs={10} >
+                    <Grid item xs={1} sm={8} md={9.5} lg={10}>
                         <Header />
                         {props.children}
                         <Footer />

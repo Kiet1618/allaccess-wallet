@@ -13,11 +13,14 @@ import Collapse from '@mui/material/Collapse';
 export const SliderApp = styled.div`
   height: 100vh;
   background-color: ${(props) => props.theme.baseColors.neutrals.gray100};
+  font-size: ${(props) => props.theme.fontSizes.sm} + 'px';
+
 `
 
 export const MenuLink = styled(NavLink)`
     text-decoration: none;
     font-weight:  ${(props) => props.theme.fontWeights.medium};
+    font-size: ${(props) => props.theme.fontSizes.sm} + 'px';
     color: ${(props) => props.theme.baseColors.neutrals.gray600};
     display: block;
     width: 80%;
@@ -45,6 +48,8 @@ export const IconArrowMenu = styled.div`
 `
 export const ListItemDiv = styled.div`
   width: 80%;
+  font-size: ${(props) => props.theme.fontSizes.sm} + 'px';
+
 `
 export const NavLinkCustom = styled(List)`
   a.active {
