@@ -1,5 +1,5 @@
 import { red } from "@mui/material/colors"
-import { Radii, FontWeights, LineHeights, FontSizes, Spacing, Position, BaseColors, Breakpoints } from "../../types/theme.type"
+import { Radii, FontWeights, LineHeights, FontSizes, Spacing, Position, Colors, Breakpoints } from "../../types/theme.type"
 import { Breakpoint } from "@mui/material"
 
 const radii: Radii = {
@@ -47,7 +47,25 @@ const position: Position = {
     right: 'right',
     center: 'center',
 }
-const baseColors: BaseColors = {
+
+const breakpoints: Breakpoints = {
+    xs: 0,
+    sm: 600,
+    md: 900,
+    lg: 1200,
+    xl: 1536,
+}
+
+export default {
+    radii,
+    fontSizes,
+    lineHeights,
+    fontWeights,
+    spacing,
+    position,
+    breakpoints
+}
+export const baseColors: Colors = {
     white: '#FFFFFF',
     black: '#000000',
     brands: {
@@ -95,22 +113,4 @@ const baseColors: BaseColors = {
         red900: '#6F2020',
         red1000: '#4A0D0D'
     }
-}
-const breakpoints: Breakpoints = {
-    xs: 0,
-    sm: 600,
-    md: 900,
-    lg: 1200,
-    xl: 1536,
-}
-
-export default {
-    radii,
-    fontSizes,
-    lineHeights,
-    fontWeights,
-    spacing,
-    position,
-    baseColors,
-    breakpoints
 }

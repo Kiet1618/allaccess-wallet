@@ -1,3 +1,5 @@
+import { baseColors } from "@app/styles/theme/base";
+
 export type Theme = {
     radii: Radii;
     fontWeights: FontWeights;
@@ -6,7 +8,6 @@ export type Theme = {
     spacing: Spacing;
     colors: Colors;
     position: Position;
-    baseColors: BaseColors;
 }
 export type FontSizes = {
     xs: number;
@@ -24,14 +25,7 @@ export type Spacing = {
     xl: number;
     auto: string;
 }
-export type Colors = {
-    backgroundPrimary: string,
-    backgroundSecondary: string,
-    textColorPrimary: string,
-    textColorSecondary: string,
-    primary: string,
-    secondary: string,
-}
+
 export type FontWeights = {
     thin: number,
     extraLight: number,
@@ -62,7 +56,7 @@ export type Position = {
     right: string;
     center: string;
 }
-export type BaseColors = {
+export type Colors = {
     white: string,
     black: string,
     brands: {

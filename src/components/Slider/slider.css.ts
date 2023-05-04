@@ -18,13 +18,15 @@ const map = createMap(base.breakpoints);
 
 export const SliderApp = styled.div`
   height: 100vh;
-  background-color: ${(props) => props.theme.baseColors.neutrals.gray100};
+  background-color: ${(props) => props.theme.colors.neutrals.gray100};
   font-size: ${(props) => props.theme.fontSizes.sm} + 'px';
+  
   ${breakpoint('xs')`
     display: none;
     `}
     ${breakpoint('sm')`
-    display: block;
+      display: block;
+      
     `}
 
 `
@@ -33,7 +35,7 @@ export const MenuLink = styled(NavLink)`
     text-decoration: none;
     font-weight:  ${(props) => props.theme.fontWeights.medium};
     font-size: ${(props) => props.theme.fontSizes.sm} + 'px';
-    color: ${(props) => props.theme.baseColors.neutrals.gray600};
+    color: ${(props) => props.theme.colors.neutrals.gray600};
     display: block;
     width: 80%;
     height: 40px;
@@ -49,7 +51,7 @@ export const ListItemHeader = styled.div`
   margin-top: 1vh;
   font-weight:  ${(props) => props.theme.fontWeights.medium};
   font-size: ${(props) => props.theme.fontSizes.lg} +'px';
-  color: ${(props) => props.theme.baseColors.neutrals.gray800};
+  color: ${(props) => props.theme.colors.neutrals.gray800};
   gap: 8px;
   margin-bottom: 5vh;
 `
@@ -66,8 +68,8 @@ export const ListItemDiv = styled.div`
 `
 export const NavLinkCustom = styled(List)`
   a.active {
-    color: ${(props) => props.theme.baseColors.brands.blue600};
-    background-color: ${(props) => props.theme.baseColors.neutrals.gray300};
+    color: ${(props) => props.theme.colors.brands.blue600};
+    background-color: ${(props) => props.theme.colors.neutrals.gray300};
   
   }
   a {

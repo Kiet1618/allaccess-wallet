@@ -18,7 +18,7 @@ export const ImgSlider = styled.img`
 
 
 export const TextSlider = styled.p`
-    color: ${(props) => props.theme.baseColors.white};
+    color: ${(props) => props.theme.colors.white};
     font-weight: ${(props) => props.theme.fontWeights.semiBold};
     font-size: ${(props) => props.theme.fontSizes.xl + 'px'};
     line-height: ${(props) => props.theme.lineHeights.lg + 'px'};
@@ -32,7 +32,7 @@ export const ContainerSlider = styled.div`
 
 `
 export const TextLogo = styled.div`
-    color: ${(props) => props.theme.baseColors.neutrals.gray800};
+    color: ${(props) => props.theme.colors.neutrals.gray800};
     display: flex;
     align-content: center;
     align-items: center;
