@@ -49,7 +49,8 @@ export const IconArrowMenu = styled.div`
 export const ListItemDiv = styled.div`
   width: 80%;
   font-size: ${(props) => props.theme.fontSizes.sm} + 'px';
-
+  color: #42526E;
+  font-weight:  ${(props) => props.theme.fontWeights.medium};
 `
 export const NavLinkCustom = styled(List)`
   a.active {
