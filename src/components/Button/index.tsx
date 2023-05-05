@@ -31,7 +31,7 @@ const ButtonComponent = styled.button<Props>`
   border-radius: ${props => props.theme.radii.sm + "px"};
   background-color: ${props => {
     if (props.styleButton === "primary") {
-      return props.theme.colors.brand.blue500;
+      return props.theme.colors.brands.blue500;
     } else if (props.styleButton === "default") {
       return props.theme.colors.white;
     } else if (props.styleButton === "inactive") {
@@ -41,7 +41,29 @@ const ButtonComponent = styled.button<Props>`
     }
   }};
 
-  margin-bottom: 5vh;
+  border: ${props => {
+    if (props.styleButton === "primary") {
+      return "none";
+    } else if (props.styleButton === "default") {
+      return `solid 1px ${props.theme.colors.neutrals.gray500}`;
+    } else if (props.styleButton === "inactive") {
+      return "none";
+    } else {
+      return "none";
+    }
+  }};
+  color: ${props => {
+    if (props.styleButton === "primary") {
+      return "#FFF";
+    } else if (props.styleButton === "default") {
+      return props.theme.colors.neutrals.gray700;
+    } else if (props.styleButton === "inactive") {
+      return "#000";
+    } else {
+      return "blue";
+    }
+  }};
+
   display: flex;
   justify-content: center;
   align-items: center;

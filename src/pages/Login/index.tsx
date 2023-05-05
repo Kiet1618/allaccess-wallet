@@ -1,5 +1,5 @@
 import Grid from "@mui/material/Grid";
-import { BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid } from "./login.css";
+import { BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
 import { FristSlider, LogoIconXL } from "../../assets/img";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -7,6 +7,7 @@ import Slider from "react-slick";
 import React from "react";
 import Button from "../../components/Button";
 import { Google } from "../../assets/icon";
+
 const Login = () => {
   var settings = {
     dots: true,
@@ -34,7 +35,11 @@ const Login = () => {
               <Google />
               Continue with Google
             </Button>
-            <br></br>
+            <OrLineContainer>
+              <hr></hr>
+              <p>or</p>
+              <hr></hr>
+            </OrLineContainer>
             <Button type='button' width='70%' height='48' styleButton='default'>
               See other options
             </Button>

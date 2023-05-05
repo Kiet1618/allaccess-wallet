@@ -4,9 +4,9 @@ import styled from "styled-components";
 import { createBreakpoint } from "styled-components-breakpoint";
 import base from "../styles/theme/base";
 
-// declare module "styled-components" {
-//   export interface DefaultTheme extends Theme { }
-// }
+declare module "styled-components" {
+  export interface DefaultTheme extends Theme {}
+}
 const breakpoint = createBreakpoint(base.breakpoints);
 
 export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`

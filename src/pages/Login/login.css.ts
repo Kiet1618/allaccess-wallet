@@ -17,7 +17,16 @@ export const BackgroundImg = styled.div`
 export const ImgSlider = styled.img`
   margin-left: ${props => props.theme.spacing.auto};
   margin-right: ${props => props.theme.spacing.auto};
-  height: 60vh;
+
+  ${breakpoint("md")`
+      height: 40vh;
+  `}
+  ${breakpoint("lg")`
+      height: 60vh;
+  `}
+  ${breakpoint("xl")`
+      height: 60vh;
+  `}
 `;
 
 export const TextSlider = styled.p`
@@ -94,4 +103,30 @@ export const CustomGrid = styled(Grid)`
   ${breakpoint("md")`
       display: block;
     `}
+`;
+
+export const OrLineContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  hr {
+    width: 45%;
+    color: ${({ theme }) => theme.colors.neutrals.gray300};
+    background-color: ${({ theme }) => theme.colors.neutrals.gray300};
+    border-width: 0;
+    height: 1px;
+  }
+  ${breakpoint("xs")`
+       margin-left: auto;
+       margin-right: auto;
+       text-align: center;
+    `}
+  ${breakpoint("md")`
+      margin-left:0;
+      margin-right:0;
+      text-align: left;
+  `}
 `;
