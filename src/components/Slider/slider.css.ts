@@ -3,22 +3,7 @@ import { NavLink } from "react-router-dom";
 import List from "@mui/material/List";
 import { createBreakpoint } from "styled-components-breakpoint";
 import base from "../../styles/theme/base";
-
 const breakpoint = createBreakpoint(base.breakpoints);
-
-export const SliderApp = styled.div`
-  height: 100vh;
-  background-color: ${props => props.theme.colors.neutrals.gray100};
-  font-size: ${props => props.theme.fontSizes.sm} + "px";
-
-  ${breakpoint("xs")`
-    display: none;
-    `}
-  ${breakpoint("sm")`
-      display: block;
-      box-shadow: 2px 2px 2px #999999;
-    `}
-`;
 
 export const MenuLink = styled(NavLink)`
   text-decoration: none;

@@ -20,9 +20,5 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
 `;
 
 export const Page = styled.div`
-  ${breakpoint("xs")`
-    `}
-  ${breakpoint("sm")`
-        height: 87.28125vh;
-    `}
+  margin: 5px;
 `;

@@ -3,10 +3,10 @@ import { Overview, Login, History, Profile, Error, Transaction } from "./pages";
 import { ProtectProp } from "./types/protectProp.type";
 import { LayoutApp } from "./components";
 import React from "react";
+
 // import { useSelector, useDispatch } from 'react-redux'
 // import { login, logout } from './store/features/login/reducer'
 // import type { RootState } from './store/store'
-
 const RouterApp = () => {
   const ProtectedRoute = ({ user, children }: ProtectProp): JSX.Element => {
     if (!user) {
@@ -21,7 +21,7 @@ const RouterApp = () => {
     return children;
   };
   // const user = useSelector((state: RootState) => state.login.value)
-  const user = false;
+  const user = true;
   return (
     <Router>
       <LayoutApp>

@@ -60,7 +60,7 @@ export const TextLogo = styled.div`
 export const LoginH1 = styled.div`
   font-family: "Roboto", sans-serif;
   font-weight: ${props => props.theme.fontWeights.extraBold};
-  font-size: ${props => props.theme.fontSizes.xxxl + "px"};
+  font-size: ${props => props.theme.fontSizes.xxxxl + "px"};
   color: ${props => props.theme.colors.neutrals.gray1000};
   margin-top: 20vh;
   ${breakpoint("xs")`

@@ -79,6 +79,7 @@ const ButtonComponent = styled.button<Props>`
         margin-left: 0;
         margin-right: 0;
     `}
+    cursor: pointer;
 `;
 
 const ButtonTemplate: React.FC<Props> = (props: Props) => {
