@@ -25,12 +25,13 @@ const fontWeights: FontWeights = {
   black: 900,
 };
 const fontSizes: FontSizes = {
-  xs: 14,
-  sm: 16,
-  md: 18,
-  lg: 20,
-  xl: 22,
-  xxl: 24,
+  xxs: 14,
+  xs: 16,
+  sm: 18,
+  md: 20,
+  lg: 22,
+  xl: 24,
+  xxl: 28,
   xxxl: 32,
   xxxxl: 42,
 };

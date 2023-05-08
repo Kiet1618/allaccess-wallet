@@ -8,7 +8,7 @@ const breakpoint = createBreakpoint(base.breakpoints);
 export const MenuLink = styled(NavLink)`
   text-decoration: none;
   font-weight: ${props => props.theme.fontWeights.medium};
-  font-size: ${props => props.theme.fontSizes.sm} + "px";
+  font-size: ${props => props.theme.fontSizes.xs} + "px";
   color: ${props => props.theme.colors.neutrals.gray600};
   display: block;
   width: 80%;
@@ -24,7 +24,7 @@ export const ListItemHeader = styled.div`
   margin-left: 2vw;
   margin-top: 1vh;
   font-weight: ${props => props.theme.fontWeights.medium};
-  font-size: ${props => props.theme.fontSizes.lg} + "px";
+  font-size: ${props => props.theme.fontSizes.md} + "px";
   color: ${props => props.theme.colors.neutrals.gray800};
   gap: 8px;
   margin-bottom: 5vh;
@@ -35,7 +35,7 @@ export const IconArrowMenu = styled.div`
 `;
 export const ListItemDiv = styled.div`
   width: 80%;
-  font-size: ${props => props.theme.fontSizes.sm} + "px";
+  font-size: ${props => props.theme.fontSizes.xs} + "px";
   color: #42526e;
   font-weight: ${props => props.theme.fontWeights.medium};
 `;

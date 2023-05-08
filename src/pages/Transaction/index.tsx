@@ -1,4 +1,4 @@
-import { Page } from "../../styles/global.css";
+import { Page } from "../../styles";
 
 const Transaction = () => {
   return <Page>Transaction</Page>;

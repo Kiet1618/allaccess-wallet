@@ -13,9 +13,16 @@ const FooterApp = styled(Grid)`
     `}
   ${breakpoint("sm")`
         display: flex;
+        width: 74vw;
     `}
-    border: solid 1px ${props => props.theme.colors.neutrals.gray200};
-  font-size: ${props => props.theme.fontSizes.xs + "px"};
+   ${breakpoint("md")`
+        width: 80vw;
+    `}
+  ${breakpoint("lg")`
+        width: 84vw;
+    `}
+  border-top: solid 1px ${props => props.theme.colors.neutrals.gray200};
+  font-size: ${props => props.theme.fontSizes.xxs + "px"};
   color: #42526e;
   line-height: 21px;
   justify-content: space-between;
@@ -23,15 +30,18 @@ const FooterApp = styled(Grid)`
   position: fixed;
   bottom: 0;
   right: 0;
-  width: 100%;
+  box-sizing: border-box;
 `;
 const FooterContainer = styled.div`
   display: inline-block;
   margin: 17.5px 44px;
+  a {
+    margin: 0 5px;
+  }
 `;
 const Footer = () => {
   return (
-    <FooterApp item xs={1} sm={9} md={9.5} lg={10}>
+    <FooterApp item xs={100} sm={74} md={80} lg={84}>
       <FooterContainer>© 2023 Allaccess wallet</FooterContainer>
       <FooterContainer>
         <a>About Us</a>

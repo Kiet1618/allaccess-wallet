@@ -2,14 +2,23 @@ import React from "react";
 import styled from "styled-components";
 import base from "../../styles/theme/base";
 import { createBreakpoint } from "styled-components-breakpoint";
+import { Button, ButtonProps } from "@mui/material";
 
 const breakpoint = createBreakpoint(base.breakpoints);
 
 type Props = {
-  children: React.ReactNode;
-  type?: "button" | "submit" | "reset";
+  text?: string;
+  iconLeft?: React.FunctionComponent<
+    React.SVGProps<SVGSVGElement> & {
+      title?: string | undefined;
+    }
+  >;
+  iconRight?: React.FunctionComponent<
+    React.SVGProps<SVGSVGElement> & {
+      title?: string | undefined;
+    }
+  >;
   backgroundColor?: string;
-  color?: string;
   width?: string;
   height?: string;
   borderRadius?: string;
@@ -21,14 +30,16 @@ type Props = {
   pTop?: string;
   pRight?: string;
   pBotton?: string;
+  padding?: string;
+  gap?: string;
+  fontSize?: string;
   styleButton?: "primary" | "default" | "inactive" | "style";
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
 
-const ButtonComponent = styled.button<Props>`
+const ButtonComponent = styled(Button)<ButtonProps & Props>`
   width: ${props => props.width};
-  height: ${props => props.height + "px"};
-  border-radius: ${props => props.theme.radii.sm + "px"};
+  height: ${props => props.height};
+  border-radius: ${props => props.theme.radii.sm + "px"} !important;
   background-color: ${props => {
     if (props.styleButton === "primary") {
       return props.theme.colors.brands.blue500;
@@ -37,10 +48,11 @@ const ButtonComponent = styled.button<Props>`
     } else if (props.styleButton === "inactive") {
       return "rgba(0, 0, 0, 0.1);";
     } else {
-      return "#B9D7FF";
+      return "#EDF4FE";
     }
-  }};
-
+  }} !important;
+  font-family: "Inter", sans-serif !important;
+  font-style: normal !important;
   border: ${props => {
     if (props.styleButton === "primary") {
       return "none";
@@ -49,9 +61,9 @@ const ButtonComponent = styled.button<Props>`
     } else if (props.styleButton === "inactive") {
       return "none";
     } else {
-      return "none";
+      return `solid 1px ${props.theme.colors.brands.blue500}`;
     }
-  }};
+  }} !important;
   color: ${props => {
     if (props.styleButton === "primary") {
       return "#FFF";
@@ -60,15 +72,17 @@ const ButtonComponent = styled.button<Props>`
     } else if (props.styleButton === "inactive") {
       return "#000";
     } else {
-      return "blue";
+      return props.theme.colors.brands.blue500;
     }
-  }};
-
+  }} !important;
+  padding: ${props => props.padding} !important;
+  gap: ${props => props.gap} !important;
   display: flex;
   justify-content: center;
   align-items: center;
-  line-height: 48px;
-  font-size: ${props => props.theme.fontSizes.sm + "px"};
+  text-align: center;
+  line-height: ${props => props.height} !important;
+  font-size: ${props => props.fontSize} !important;
   ${breakpoint("xs")`
       margin-left: auto;
       margin-right: auto;
@@ -82,8 +96,14 @@ const ButtonComponent = styled.button<Props>`
     cursor: pointer;
 `;
 
-const ButtonTemplate: React.FC<Props> = (props: Props) => {
-  return <ButtonComponent {...props}>{props.children}</ButtonComponent>;
+const ButtonTemplate: React.FC<ButtonProps & Props> = (props: ButtonProps & Props) => {
+  return (
+    <ButtonComponent {...props}>
+      {props.iconLeft ? <props.iconLeft></props.iconLeft> : null}
+      <p style={{ margin: "0 10px" }}>{props.text}</p>
+      {props.iconRight ? <props.iconRight></props.iconRight> : null}
+    </ButtonComponent>
+  );
 };
 
 export default ButtonTemplate;

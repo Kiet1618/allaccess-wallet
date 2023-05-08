@@ -5,5 +5,7 @@ import { ReactComponent as ArrowRight } from "./system/Style=Arrow, Icon=right.s
 import { ReactComponent as ArrowDown } from "./system/Style=Arrow, Icon=down.svg";
 import { ReactComponent as Google } from "./social/Type=Social, Icon=google.svg";
 import { ReactComponent as Menu } from "./system/menu.svg";
+import { ReactComponent as ChooseToken } from "./system/Icon.svg";
+import { ReactComponent as SearchIcon } from "./system/md_left_icon.svg";
 
-export { EmptyWallet, ReceiptSearch, Setting, ArrowRight, ArrowDown, Google, Menu };
+export { EmptyWallet, ReceiptSearch, Setting, ArrowRight, ArrowDown, Google, Menu, ChooseToken, SearchIcon };

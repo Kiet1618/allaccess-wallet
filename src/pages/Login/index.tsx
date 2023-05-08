@@ -15,8 +15,8 @@ const Login = () => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    // autoplay: true,
-    // autoplaySpeed: 2000,
+    autoplay: true,
+    autoplaySpeed: 2000,
     arrows: false,
   };
 
@@ -31,18 +31,13 @@ const Login = () => {
           <LoginH1>Log in or sign up</LoginH1>
           <Subtitle>Select how you would like to continue</Subtitle>
           <ContainerLoginButton>
-            <Button type='button' width='70%' height='48' styleButton='default'>
-              <Google />
-              Continue with Google
-            </Button>
+            <Button width='70%' height='48px' styleButton='default' fontSize='18px' iconLeft={Google} text='Continue with Google' />
             <OrLineContainer>
               <hr></hr>
               <p>or</p>
               <hr></hr>
             </OrLineContainer>
-            <Button type='button' width='70%' height='48' styleButton='default'>
-              See other options
-            </Button>
+            <Button width='70%' height='48px' styleButton='default' fontSize='18px' text='See other options' />
           </ContainerLoginButton>
         </Grid>
         <CustomGrid item xs={12} sm={12} md={6}>

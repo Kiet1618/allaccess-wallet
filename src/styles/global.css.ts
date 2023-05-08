@@ -18,7 +18,3 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
     font-style: normal;
   }
 `;
-
-export const Page = styled.div`
-  margin: 5px;
-`;

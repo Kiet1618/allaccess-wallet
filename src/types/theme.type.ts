@@ -8,6 +8,7 @@ export type Theme = {
   position: Position;
 };
 export type FontSizes = {
+  xxs: number;
   xs: number;
   sm: number;
   md: number;
