@@ -18,7 +18,7 @@ type Props = {
       title?: string | undefined;
     }
   >;
-  backgroundColor?: string;
+  boder?: string;
   width?: string;
   height?: string;
   borderRadius?: string;
@@ -37,6 +37,8 @@ type Props = {
 };
 
 const ButtonComponent = styled(Button)<ButtonProps & Props>`
+  margin-left: ${props => props.mLeft} !important;
+  margin-right: ${props => props.mRight} !important;
   width: ${props => props.width} !important;
   height: ${props => props.height} !important;
   border-radius: ${props => props.theme.radii.sm + "px"} !important;
@@ -64,6 +66,8 @@ const ButtonComponent = styled(Button)<ButtonProps & Props>`
       return `solid 1px ${props.theme.colors.brands.blue500}`;
     }
   }} !important;
+  border: ${props => props.boder} !important;
+
   color: ${props => {
     if (props.styleButton === "primary") {
       return "#FFF";

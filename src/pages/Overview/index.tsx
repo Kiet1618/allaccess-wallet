@@ -33,7 +33,7 @@ const Overview = () => {
   return (
     <Page>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100 }}>
-        <Grid item xs={55} sm={55} md={55} lg={55}>
+        <Grid item xs={60} sm={60} md={60} lg={60}>
           <HeaderPageContainer>
             <TitlePage>My wallet overview</TitlePage>
             <SubHeaderPage>Estimated balance</SubHeaderPage>
@@ -44,10 +44,10 @@ const Overview = () => {
             <Divider />
           </HeaderPageContainer>
         </Grid>
-        <Grid item xs={45} sm={45} md={45} lg={45}>
+        <Grid item xs={40} sm={40} md={40} lg={40}>
           <NetworkContainer />
         </Grid>
-        <Grid item xs={55} sm={55} md={55} lg={55}>
+        <Grid item xs={60} sm={60} md={60} lg={60}>
           <OverviewHeaderTopCoin>
             <TextHeaderOverview>My Assets</TextHeaderOverview>
             <SearchContainer>
@@ -82,7 +82,7 @@ const Overview = () => {
             </ListItemMyAssets>
           </ContentPageContainer>
         </Grid>
-        <Grid item xs={45} sm={45} md={45} lg={45}>
+        <Grid item xs={40} sm={40} md={40} lg={40}>
           <OverviewHeaderTopCoin>
             <TextHeaderOverview>Recent transactions</TextHeaderOverview>
           </OverviewHeaderTopCoin>
@@ -108,6 +108,7 @@ const Overview = () => {
               ))}
             </ListItemMyAssets>
           </ContentPageContainer>
+          <CustomButton mLeft='44px' width='88%' boder='none' text='View all transactions'></CustomButton>
         </Grid>
       </Grid>
     </Page>
