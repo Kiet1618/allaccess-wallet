@@ -14,7 +14,7 @@ export const NetworkContainer = () => {
 
   return (
     <Container>
-      <ButtonCustom width='137px' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text='0x15375...b080f' />
+      <ButtonCustom width='200px' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text='0x15375...b080f' />
       <FormControlCustom>
         <SelectCustom labelId='demo-simple-select-label' id='demo-simple-select' value={network} onChange={handleChange}>
           {listNetWorks.map(network => (
@@ -50,6 +50,10 @@ const SelectCustom = styled(Select)`
     border-radius: 8px !important;
   }
   box-sizing: border-box;
+  border-radius: 8px !important;
+  .css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input {
+    border-radius: 8px !important;
+  }
 `;
 const Container = styled.div`
   margin: 44px 35px;

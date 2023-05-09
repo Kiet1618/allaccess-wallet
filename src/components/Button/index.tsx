@@ -37,8 +37,8 @@ type Props = {
 };
 
 const ButtonComponent = styled(Button)<ButtonProps & Props>`
-  width: ${props => props.width};
-  height: ${props => props.height};
+  width: ${props => props.width} !important;
+  height: ${props => props.height} !important;
   border-radius: ${props => props.theme.radii.sm + "px"} !important;
   background-color: ${props => {
     if (props.styleButton === "primary") {

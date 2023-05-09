@@ -46,6 +46,9 @@ const Header = () => {
           size='small'
           hiddenLabel
           fullWidth
+          color='primary'
+          styleTextField='default'
+          width='300px'
         />
       </SearchContainer>
       <Modal open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
@@ -66,18 +69,18 @@ const HeaderApp = styled.div`
         height: 64px;
 
     `}
-    display: flex;
+  display: flex;
   justify-content: space-between;
   text-align: center;
   width: 100%;
   box-sizing: border-box;
+  align-items: center;
 `;
 const TextBreadcumb = styled.div`
   ${breakpoint("xs")`
         color: ${props => props.theme.colors.neutrals.gray900};
         font-weight: ${props => props.theme.fontWeights.semiBold};
         font-size: ${props => props.theme.fontSizes.sm + "px"};
-        margin: 17px 44px;
     `}
   ${breakpoint("sm")`
         color: ${props => props.theme.colors.neutrals.gray600};
@@ -96,10 +99,9 @@ const ButtonCustom = styled.div`
     `}
 `;
 
-const SearchContainer = styled.div`
+export const SearchContainer = styled.div`
   ${breakpoint("xs")`
         display: none;
-       
     `}
   ${breakpoint("sm")`
         display: flex;

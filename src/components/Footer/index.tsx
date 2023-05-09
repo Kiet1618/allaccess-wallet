@@ -31,6 +31,7 @@ const FooterApp = styled(Grid)`
   bottom: 0;
   right: 0;
   box-sizing: border-box;
+  background-color: white;
 `;
 const FooterContainer = styled.div`
   display: inline-block;
