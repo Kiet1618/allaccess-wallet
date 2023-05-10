@@ -43,18 +43,10 @@ const TextFieldComponent = styled(TextField)<TextFieldProps & Props>`
     }
   }} !important;
 
-  ${breakpoint("xs")`
-        display: none ! important;
-    `}
-  ${breakpoint("md")`
-       display: block ! important;
-    `}
-
-  .css-8j6b76-MuiInputBase-root-MuiOutlinedInput-root {
+  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
     border-radius: 8px !important;
     height: ${props => props.height} !important;
     gap: ${props => props.gap} !important;
-
     line-height: ${props => props.height} !important;
 
     font-size: ${props => props.fontSize} !important;
@@ -66,6 +58,10 @@ const TextFieldComponent = styled(TextField)<TextFieldProps & Props>`
       return props.border;
     }} !important;
     width: ${props => props.width} !important;
+  }
+
+  .css-1ua80n0-MuiInputBase-input-MuiOutlinedInput-input {
+    padding-left: 5px !important;
   }
 `;
 

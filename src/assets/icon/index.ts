@@ -10,5 +10,6 @@ import { ReactComponent as SearchIcon } from "./system/md_left_icon.svg";
 import { ReactComponent as SendTransactionHistoty } from "./system/Style=Send or Receive, Icon=Send.svg";
 import { ReactComponent as ReceiveTransactionHistoty } from "./system/Style=Send or Receive, Icon=Receive.svg";
 import { ReactComponent as LinkTransaction } from "./system/LinkTransaction.svg";
+import { ReactComponent as Empty } from "./system/Frame.svg";
 
-export { EmptyWallet, ReceiptSearch, Setting, ArrowRight, ArrowDown, Google, Menu, ChooseToken, SearchIcon, SendTransactionHistoty, ReceiveTransactionHistoty, LinkTransaction };
+export { EmptyWallet, ReceiptSearch, Setting, ArrowRight, ArrowDown, Google, Menu, ChooseToken, SearchIcon, SendTransactionHistoty, ReceiveTransactionHistoty, LinkTransaction, Empty };

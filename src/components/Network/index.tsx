@@ -5,6 +5,9 @@ import ButtonCustom from "../Button";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { listNetWorks } from "../../configs/data/menu";
+import base from "../../styles/theme/base";
+import { createBreakpoint } from "styled-components-breakpoint";
+const breakpoint = createBreakpoint(base.breakpoints);
 export const NetworkContainer = () => {
   const [network, setNetwork] = React.useState("Ethereum Mainnet");
 
@@ -56,9 +59,15 @@ const SelectCustom = styled(Select)`
   }
 `;
 const Container = styled.div`
-  margin: 44px 35px;
+  ${breakpoint("xs")`
+      margin: 10px 10px
+      `}
+  ${breakpoint("sm")`
+       margin: 44px 35px;
+    `}
+
   display: flex;
-  justify-content: right;
+  justify-content: center;
   align-items: center;
 `;
 const MenuItemCustom = styled(MenuItem)`

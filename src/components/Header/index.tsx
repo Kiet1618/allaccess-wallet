@@ -1,7 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { createBreakpoint } from "styled-components-breakpoint";
-import base from "../../styles/theme/base";
 import { useLocation } from "react-router-dom";
 import { routes } from "../../configs/data";
 import Button from "@mui/material/Button";
@@ -11,7 +9,8 @@ import { Menu } from "../../assets/icon";
 import { useState, useEffect } from "react";
 import SearchComponet from "../TextField";
 import { SearchIcon } from "../../assets/icon";
-import { Container } from "@mui/material";
+import base from "../../styles/theme/base";
+import { createBreakpoint } from "styled-components-breakpoint";
 const breakpoint = createBreakpoint(base.breakpoints);
 
 const Header = () => {
@@ -60,39 +59,54 @@ const Header = () => {
 
 export default Header;
 const HeaderApp = styled.div`
-  ${breakpoint("xs")`
-        border: none;
-        height: 80px;
-    `}
-  ${breakpoint("sm")`
-        border-bottom: solid 1px ${props => props.theme.colors.neutrals.gray200};
-        height: 64px;
-
-    `}
   display: flex;
   justify-content: space-between;
   text-align: center;
-  width: 100%;
+  justify-content: space-between;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background-color: ${props => props.theme.colors.white};
   box-sizing: border-box;
   align-items: center;
+  ${breakpoint("xs")`
+        border: none;
+        height: 80px;
+        width: 100%;
+        align-items: left;
+    `}
+  ${breakpoint("sm")`
+        display: flex;
+        max-width: 74%;
+        border-bottom: solid 1px ${props => props.theme.colors.neutrals.gray200};
+        height: 64px;
+    `}
+   ${breakpoint("md")`
+        max-width: 80%;
+    `}
+  ${breakpoint("lg")`
+        max-width: 84%;
+    `}
 `;
+
 const TextBreadcumb = styled.div`
   ${breakpoint("xs")`
         color: ${props => props.theme.colors.neutrals.gray900};
         font-weight: ${props => props.theme.fontWeights.semiBold};
-        font-size: ${props => props.theme.fontSizes.sm + "px"};
+        font-size: ${props => props.theme.fontSizes.xl + "px"};
     `}
   ${breakpoint("sm")`
         color: ${props => props.theme.colors.neutrals.gray600};
         font-weight: ${props => props.theme.fontWeights.semiBold};
         font-size: ${props => props.theme.fontSizes.xs + "px"};
-        margin: 17px 44px;
     `}
+    margin-left: 44px;
 `;
 const ButtonCustom = styled.div`
   ${breakpoint("xs")`
         display: block;
-        margin: 17px 44px;
+
     `}
   ${breakpoint("sm")`
         display: none;

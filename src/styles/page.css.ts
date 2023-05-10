@@ -5,11 +5,12 @@ const breakpoint = createBreakpoint(base.breakpoints);
 
 export const Page = styled.div`
   ${breakpoint("xs")`
+      margin-top: 80px;
+      overflow: auto;
     `}
   ${breakpoint("sm")`
-        height: calc(100vh - 120px)
-        overflow: hidden;
-
+      margin-top: 64px;
+      overflow: auto;
     `}
 `;
 export const TitlePage = styled.div`
@@ -17,4 +18,10 @@ export const TitlePage = styled.div`
   font-weight: ${({ theme }) => theme.fontWeights.semiBold};
   color: ${({ theme }) => theme.colors.brands.blue400};
   line-height: 39px;
+  ${breakpoint("sm")`
+    display: none;
+  `}
+  ${breakpoint("md")`
+    display: block;
+    `}
 `;
