@@ -17,9 +17,9 @@ export const NetworkContainer = () => {
 
   return (
     <Container>
-      <ButtonCustom width='200px' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text='0x15375...b080f' />
+      <ButtonCustom width='40%' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text='0x15375...b080f' />
       <FormControlCustom>
-        <SelectCustom labelId='demo-simple-select-label' id='demo-simple-select' value={network} onChange={handleChange}>
+        <SelectCustom value={network} onChange={handleChange}>
           {listNetWorks.map(network => (
             <MenuItemCustom value={network.description}>
               <p>{network.description}</p>
@@ -33,10 +33,16 @@ export const NetworkContainer = () => {
 
 const FormControlCustom = styled(FormControl)`
   background-color: #4a5568;
-  width: 250px !important;
+  ${breakpoint("xs")`
+       width: 50% !important;
+
+      `}
+  ${breakpoint("sm")`
+       width: 250px !important;
+    `}
   border-radius: 8px !important;
   height: 40px !important;
-  margin-left: 15px !important;
+  margin-left: 10px !important;
   box-sizing: border-box;
 `;
 

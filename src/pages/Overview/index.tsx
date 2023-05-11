@@ -43,7 +43,7 @@ const Overview = () => {
             <TitlePage>My wallet overview</TitlePage>
           </TilePageContainer>
         </Grid>
-        <Grid item xs={100} sm={100} md={100} lg={50} xl={40}>
+        <Grid item xs={100} sm={100} md={50} lg={50} xl={40}>
           <NetworkContainerFixed>
             <NetworkContainer />
           </NetworkContainerFixed>

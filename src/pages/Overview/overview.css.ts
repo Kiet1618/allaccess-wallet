@@ -5,28 +5,28 @@ import { createBreakpoint } from "styled-components-breakpoint";
 const breakpoint = createBreakpoint(base.breakpoints);
 
 export const NetworkContainerFixed = styled.div`
-  /* ${breakpoint("xs")`
-       z-index: 99;
-      left: 50%;
-      transform: translate(-50%, 0);
-      position: fixed;
-      background-color: white;
-      width: calc(100vw - 20px);
-      padding-top: 10px;
-      padding-bottom: 10px;
-    `} */
+  background-color: ${props => props.theme.colors.white};
   ${breakpoint("xs")`
+      padding-bottom: 10px;
+    `}
+  ${breakpoint("sm")`
       position: static;
       width: 100%;
-      justify-content: left;
+      justify-content: center;
       align-items: center;
+      padding: 0;
       transform: none;
       margin: auto
-      padding: 0;
       z-index: 0;
     `}
-
-  ${breakpoint("lg")`
+     ${breakpoint("md")`
+        align-items: center;
+        float: none;
+        margin: auto
+        width: max-content;
+        margin-left: 44px;
+      `}
+       ${breakpoint("lg")`
         justify-content: center;
         align-items: center;
         margin-top: 44px;
@@ -61,12 +61,14 @@ export const HaaderPageBalance = styled.div`
   ${breakpoint("xs")`
     margin: 10px 10px;
     `}
-
   ${breakpoint("sm")`
-    margin: 0 10px;
+    margin: 20px 10px;
     `}
   ${breakpoint("md")`
-    margin: 0 44px;
+    margin: 20px 44px;
+    `}
+  ${breakpoint("lg")`
+    margin: 0px 44px;
     `}
 `;
 export const SubHeaderPage = styled.div`
