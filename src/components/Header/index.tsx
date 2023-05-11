@@ -59,6 +59,7 @@ const Header = () => {
 
 export default Header;
 const HeaderApp = styled.div`
+  z-index: 99;
   display: flex;
   justify-content: space-between;
   text-align: center;
@@ -95,13 +96,19 @@ const TextBreadcumb = styled.div`
         color: ${props => props.theme.colors.neutrals.gray900};
         font-weight: ${props => props.theme.fontWeights.semiBold};
         font-size: ${props => props.theme.fontSizes.xl + "px"};
+        margin-left: 10px;
+
     `}
   ${breakpoint("sm")`
         color: ${props => props.theme.colors.neutrals.gray600};
         font-weight: ${props => props.theme.fontWeights.semiBold};
         font-size: ${props => props.theme.fontSizes.xs + "px"};
+
     `}
-    margin-left: 44px;
+    ${breakpoint("md")`
+      
+      margin-left: 44px;
+    `}
 `;
 const ButtonCustom = styled.div`
   ${breakpoint("xs")`

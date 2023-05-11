@@ -34,11 +34,15 @@ type Props = {
   gap?: string;
   fontSize?: string;
   styleButton?: "primary" | "default" | "inactive" | "style";
+  float?: string;
 };
 
 const ButtonComponent = styled(Button)<ButtonProps & Props>`
   margin-left: ${props => props.mLeft} !important;
   margin-right: ${props => props.mRight} !important;
+  margin-top: ${props => props.mTop} !important;
+  margin-bottom: ${props => props.mBottom} !important;
+  float: ${props => props.float} !important;
   width: ${props => props.width} !important;
   height: ${props => props.height} !important;
   border-radius: ${props => props.theme.radii.sm + "px"} !important;

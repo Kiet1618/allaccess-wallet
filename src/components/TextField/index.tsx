@@ -43,7 +43,7 @@ const TextFieldComponent = styled(TextField)<TextFieldProps & Props>`
     }
   }} !important;
 
-  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+  .css-8j6b76-MuiInputBase-root-MuiOutlinedInput-root {
     border-radius: 8px !important;
     height: ${props => props.height} !important;
     gap: ${props => props.gap} !important;
@@ -59,10 +59,16 @@ const TextFieldComponent = styled(TextField)<TextFieldProps & Props>`
     }} !important;
     width: ${props => props.width} !important;
   }
-
+  .css-md26zr-MuiInputBase-root-MuiOutlinedInput-root {
+    border-radius: 8px !important;
+  }
   .css-1ua80n0-MuiInputBase-input-MuiOutlinedInput-input {
     padding-left: 5px !important;
   }
+  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+    border-radius: 8px !important;
+  }
+  border-radius: 8px !important;
 `;
 
 const TextFieldTemplate: React.FC<TextFieldProps & Props> = (props: TextFieldProps & Props) => {

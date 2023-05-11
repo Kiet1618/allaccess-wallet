@@ -7,7 +7,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { useState, useEffect } from "react";
 
 import {
-  HeaderPageContainer,
+  NetworkContainerFixed,
   SubHeaderPage,
   BalanceContainer,
   TextBlue,
@@ -44,9 +44,9 @@ const Overview = () => {
           </TilePageContainer>
         </Grid>
         <Grid item xs={100} sm={100} md={100} lg={50} xl={40}>
-          <HeaderPageContainer>
+          <NetworkContainerFixed>
             <NetworkContainer />
-          </HeaderPageContainer>
+          </NetworkContainerFixed>
         </Grid>
         <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
           <Grid item xs={100} sm={100} md={100} lg={50} xl={60}>
@@ -144,7 +144,9 @@ const Overview = () => {
               )}
             </ListItemMyAssets>
           </ContentPageContainer>
-          <CustomButton mLeft='44px' width='88%' boder='none' text='View all transactions'></CustomButton>
+          <OverviewHeaderTopCoin>
+            <CustomButton width='100%' boder='none' text='View all transactions'></CustomButton>
+          </OverviewHeaderTopCoin>
         </Grid>
       </Grid>
     </Page>

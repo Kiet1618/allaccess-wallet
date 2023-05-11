@@ -4,6 +4,7 @@ import { createBreakpoint } from "styled-components-breakpoint";
 const breakpoint = createBreakpoint(base.breakpoints);
 
 export const Page = styled.div`
+  max-height: calc(100vh - 120px);
   ${breakpoint("xs")`
       margin-top: 80px;
       overflow: auto;
@@ -12,6 +13,7 @@ export const Page = styled.div`
       margin-top: 64px;
       overflow: auto;
     `}
+    z-index: -99;
 `;
 export const TitlePage = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.xxxl + "px"};

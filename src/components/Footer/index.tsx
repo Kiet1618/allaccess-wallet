@@ -7,7 +7,7 @@ import { Grid } from "@mui/material";
 
 const FooterApp = styled(Grid)`
   height: 56px;
-
+  z-index: 99;
   ${breakpoint("xs")`
         display: none;
     `}

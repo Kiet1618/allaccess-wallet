@@ -11,5 +11,6 @@ import { ReactComponent as SendTransactionHistoty } from "./system/Style=Send or
 import { ReactComponent as ReceiveTransactionHistoty } from "./system/Style=Send or Receive, Icon=Receive.svg";
 import { ReactComponent as LinkTransaction } from "./system/LinkTransaction.svg";
 import { ReactComponent as Empty } from "./system/Frame.svg";
+import { ReactComponent as Copy } from "./system/copy.svg";
 
-export { EmptyWallet, ReceiptSearch, Setting, ArrowRight, ArrowDown, Google, Menu, ChooseToken, SearchIcon, SendTransactionHistoty, ReceiveTransactionHistoty, LinkTransaction, Empty };
+export { EmptyWallet, ReceiptSearch, Setting, ArrowRight, ArrowDown, Google, Menu, ChooseToken, SearchIcon, SendTransactionHistoty, ReceiveTransactionHistoty, LinkTransaction, Empty, Copy };

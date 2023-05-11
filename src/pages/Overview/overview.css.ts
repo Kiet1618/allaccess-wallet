@@ -4,24 +4,29 @@ import base from "../../styles/theme/base";
 import { createBreakpoint } from "styled-components-breakpoint";
 const breakpoint = createBreakpoint(base.breakpoints);
 
-export const HeaderPageContainer = styled.div`
-  ${breakpoint("xs")`
+export const NetworkContainerFixed = styled.div`
+  /* ${breakpoint("xs")`
+       z-index: 99;
       left: 50%;
       transform: translate(-50%, 0);
       position: fixed;
       background-color: white;
       width: calc(100vw - 20px);
-
-    `}
-  ${breakpoint("sm")`
+      padding-top: 10px;
+      padding-bottom: 10px;
+    `} */
+  ${breakpoint("xs")`
       position: static;
       width: 100%;
-      justify-content: center;
+      justify-content: left;
       align-items: center;
       transform: none;
       margin: auto
+      padding: 0;
+      z-index: 0;
     `}
-     ${breakpoint("md")`
+
+  ${breakpoint("lg")`
         justify-content: center;
         align-items: center;
         margin-top: 44px;
@@ -34,11 +39,7 @@ export const TilePageContainer = styled.div`
   ${breakpoint("xs")`
     display: none;
 `}
-  ${breakpoint("sm")`
-    display: block;
-    margin: 0px 10px;
-  `}
-  ${breakpoint("md")`
+  ${breakpoint("lg")`
     display: block;
     margin: 44px 44px;
   `}
@@ -58,7 +59,11 @@ export const ContentPageContainer = styled.div`
 `;
 export const HaaderPageBalance = styled.div`
   ${breakpoint("xs")`
-    margin: 60px 10px;
+    margin: 10px 10px;
+    `}
+
+  ${breakpoint("sm")`
+    margin: 0 10px;
     `}
   ${breakpoint("md")`
     margin: 0 44px;
@@ -68,7 +73,7 @@ export const SubHeaderPage = styled.div`
   font-weight: ${({ theme }) => theme.fontWeights.regular};
   font-size: ${({ theme }) => theme.fontSizes.xs + "px"};
   line-height: 24px;
-  color: ${({ theme }) => theme.colors.neutrals.gray600};
+  color: ${({ theme }) => theme.colors.neutrals.gray600} !;
 `;
 
 export const BalanceContainer = styled.div`

@@ -65,7 +65,7 @@ const Container = styled.div`
   ${breakpoint("sm")`
        margin: 44px 35px;
     `}
-
+  z-index: 2;
   display: flex;
   justify-content: center;
   align-items: center;
