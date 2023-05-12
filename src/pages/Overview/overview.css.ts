@@ -7,21 +7,17 @@ const breakpoint = createBreakpoint(base.breakpoints);
 export const NetworkContainerFixed = styled.div`
   background-color: ${props => props.theme.colors.white};
   ${breakpoint("xs")`
+      width: 100%;
       padding-bottom: 10px;
     `}
   ${breakpoint("sm")`
-      position: static;
-      width: 100%;
-      justify-content: center;
-      align-items: center;
-      padding: 0;
-      transform: none;
-      margin: auto
-      z-index: 0;
+        margin-top: 10px;
+        align-items: center;
+        width: max-content;
+        margin-left: 10px;
     `}
      ${breakpoint("md")`
         align-items: center;
-        float: none;
         margin: auto
         width: max-content;
         margin-left: 44px;
@@ -31,9 +27,9 @@ export const NetworkContainerFixed = styled.div`
         align-items: center;
         margin-top: 44px;
         width: max-content;
-        float: right;
         margin-right: 44px;
-        `}
+        float: right;
+    `}
 `;
 export const TilePageContainer = styled.div`
   ${breakpoint("xs")`

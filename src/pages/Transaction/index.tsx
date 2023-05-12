@@ -330,18 +330,12 @@ export const NetworkContainerFixed = styled.div`
       padding-bottom: 10px;
     `}
   ${breakpoint("sm")`
-      position: static;
-      width: 100%;
-      justify-content: center;
-      align-items: center;
-      padding: 0;
-      transform: none;
-      margin: auto
-      z-index: 0;
+        align-items: center;
+        width: max-content;
+        margin-left: 10px;
     `}
      ${breakpoint("md")`
         align-items: center;
-        float: none;
         margin: auto
         width: max-content;
         margin-left: 44px;
@@ -351,7 +345,7 @@ export const NetworkContainerFixed = styled.div`
         align-items: center;
         margin-top: 44px;
         width: max-content;
-        float: right;
         margin-right: 44px;
+        float: right;
         `}
 `;
