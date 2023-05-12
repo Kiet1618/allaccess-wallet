@@ -6,9 +6,11 @@ import { Computer } from "../../assets/icon";
 import { TextBlue } from "../Overview/overview.css";
 import CustomTextInput from "../../components/TextField";
 import CustomButton from "../../components/Button";
+import { useState } from "react";
 const breakpoint = createBreakpoint(base.breakpoints);
 
 const MultipleFactors = () => {
+  const [typeButton, setTypeButton] = useState(false);
   return (
     <ContainerMultipleFactors>
       <HeaderText>Verify your login</HeaderText>
@@ -35,9 +37,15 @@ const MultipleFactors = () => {
         <TextHeaderCard>Backup Passphrase</TextHeaderCard>
         <SubHeaderText>Make sure you have your 24 words recovery phrase, then click below to begin the recovery process.</SubHeaderText>
         <TextBlue>Passphrase (24 words)</TextBlue>
-        <CustomTextInput fullWidth size='small' styleTextField='default' placeholder='correct horse batterry ...'></CustomTextInput>
+        <CustomTextInput
+          onChange={newValue => setTypeButton(newValue.target.value ? true : false)}
+          fullWidth
+          size='small'
+          styleTextField='default'
+          placeholder='correct horse batterry ...'
+        ></CustomTextInput>
         <ContainerButton>
-          <CustomButton width='30%' padding='10px' text='Confirm' styleButton='inactive'></CustomButton>
+          <CustomButton width='30%' padding='10px' text='Confirm' styleButton={typeButton ? "primary" : "inactive"}></CustomButton>
         </ContainerButton>
       </ContainerBackgroundCard>
     </ContainerMultipleFactors>
