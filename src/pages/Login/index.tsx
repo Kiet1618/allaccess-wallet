@@ -31,13 +31,13 @@ const Login = () => {
           <LoginH1>Log in or sign up</LoginH1>
           <Subtitle>Select how you would like to continue</Subtitle>
           <ContainerLoginButton>
-            <Button width='70%' height='48px' styleButton='default' fontSize='18px' iconLeft={Google} text='Continue with Google' />
+            <Button width='80%' height='48px' styleButton='default' fontSize='18px' iconLeft={Google} text='Continue with Google' />
             <OrLineContainer>
               <hr></hr>
               <p>or</p>
               <hr></hr>
             </OrLineContainer>
-            <Button width='70%' height='48px' styleButton='default' fontSize='18px' text='See other options' />
+            <Button width='80%' height='48px' styleButton='default' fontSize='18px' text='See other options' />
           </ContainerLoginButton>
         </Grid>
         <CustomGrid item xs={12} sm={12} md={6}>
