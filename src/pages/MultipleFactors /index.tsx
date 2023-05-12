@@ -26,7 +26,7 @@ const MultipleFactors = () => {
                 <IpText>IP: {device.ip}</IpText>
               </ContainerText>
             </GroupLeftItemDevice>
-            <NameText>Reference ID: {device.id}</NameText>
+            <IdText>Reference ID: {device.id}</IdText>
           </ConatainerDevice>
         ))}
       </ContainerBackgroundCard>
@@ -62,11 +62,21 @@ export const SubHeaderText = styled.div`
 `;
 export const NameText = styled.div`
   ${breakpoint("xs")`
-        font-weight: 400px;
+        font-weight: 400;
         font-size: 13px;
     `}
   ${breakpoint("sm")`
-        font-weight: 400px;
+        font-weight: 600;
+        font-size: 16px;
+    `}
+`;
+export const IdText = styled.div`
+  ${breakpoint("xs")`
+        font-weight: 400;
+        font-size: 13px;
+    `}
+  ${breakpoint("sm")`
+        font-weight: 400;
         font-size: 16px;
     `}
 `;
