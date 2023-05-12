@@ -5,6 +5,7 @@ import { Devices } from "../../configs/data/test";
 import { Computer } from "../../assets/icon";
 import { TextBlue } from "../Overview/overview.css";
 import CustomTextInput from "../../components/TextField";
+import CustomButton from "../../components/Button";
 const breakpoint = createBreakpoint(base.breakpoints);
 
 const MultipleFactors = () => {
@@ -35,12 +36,21 @@ const MultipleFactors = () => {
         <SubHeaderText>Make sure you have your 24 words recovery phrase, then click below to begin the recovery process.</SubHeaderText>
         <TextBlue>Passphrase (24 words)</TextBlue>
         <CustomTextInput fullWidth size='small' styleTextField='default' placeholder='correct horse batterry ...'></CustomTextInput>
+        <ContainerButton>
+          <CustomButton width='30%' padding='10px' text='Confirm' styleButton='inactive'></CustomButton>
+        </ContainerButton>
       </ContainerBackgroundCard>
     </ContainerMultipleFactors>
   );
 };
 
 export default MultipleFactors;
+export const ContainerButton = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0 10px 0;
+`;
 
 export const ContainerMultipleFactors = styled.div`
   text-align: center;
