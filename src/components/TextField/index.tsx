@@ -1,10 +1,5 @@
 import styled from "styled-components";
-import base from "../../styles/theme/base";
-import { createBreakpoint } from "styled-components-breakpoint";
 import { TextField, TextFieldProps } from "@mui/material";
-import { Input, InputProps } from "@mui/material";
-
-const breakpoint = createBreakpoint(base.breakpoints);
 
 type Props = {
   iconLeft?: React.FunctionComponent<

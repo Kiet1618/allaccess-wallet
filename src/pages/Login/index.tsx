@@ -4,7 +4,6 @@ import { FristSlider, LogoIconXL } from "../../assets/img";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import React from "react";
 import Button from "../../components/Button";
 import { Google } from "../../assets/icon";
 

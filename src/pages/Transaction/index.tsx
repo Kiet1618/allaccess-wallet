@@ -1,5 +1,5 @@
 import { Grid } from "@mui/material";
-import { Page } from "../../styles";
+import { Page, TitlePage } from "../../styles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import base from "../../styles/theme/base";
@@ -11,13 +11,12 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import CustomInput from "../../components/TextField";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
 import { NetworkContainer } from "../../components/Network";
-import { myListCoin, historyData } from "../../configs/data/test";
+import { myListCoin } from "../../configs/data/test";
 import { Copy } from "../../assets/icon";
 import QRCode from "react-qr-code";
-import { OverviewHeaderTopCoin, TextHeaderOverview, SubHeaderPage } from "../Overview/overview.css";
-import { TitlePage } from "../../styles";
+import { OverviewHeaderTopCoin, TextHeaderOverview } from "../Overview/overview.css";
 import styled from "styled-components";
 interface TabPanelProps {
   children?: React.ReactNode;
