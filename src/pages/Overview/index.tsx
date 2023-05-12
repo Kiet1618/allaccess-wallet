@@ -75,7 +75,7 @@ const Overview = () => {
                 hiddenLabel
                 fullWidth
                 color='primary'
-                styleTextField='default'
+                styleTextField='disable'
                 width='100%'
               />
             </SearchContainer>

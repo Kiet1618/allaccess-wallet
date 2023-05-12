@@ -46,7 +46,7 @@ const Header = () => {
           hiddenLabel
           fullWidth
           color='primary'
-          styleTextField='default'
+          styleTextField='disable'
           width='300px'
         />
       </SearchContainer>

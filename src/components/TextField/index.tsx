@@ -7,7 +7,6 @@ import { Input, InputProps } from "@mui/material";
 const breakpoint = createBreakpoint(base.breakpoints);
 
 type Props = {
-  text?: string;
   iconLeft?: React.FunctionComponent<
     React.SVGProps<SVGSVGElement> & {
       title?: string | undefined;
@@ -33,7 +32,7 @@ const TextFieldComponent = styled(TextField)<TextFieldProps & Props>`
     } else if (props.styleTextField === "typing") {
       return props.theme.colors.white;
     } else if (props.styleTextField === "disable") {
-      return "rgba(0, 0, 0, 0.1);";
+      return "#ECECED";
     } else if (props.styleTextField === "successfull") {
       return "rgba(0, 0, 0, 0.1);";
     } else if (props.styleTextField === "error") {

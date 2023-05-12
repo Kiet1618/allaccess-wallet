@@ -287,6 +287,9 @@ export const TabsCustom = styled(Tabs)`
   .css-1aquho2-MuiTabs-indicator {
     background-color: #f6f6f6 !important;
   }
+  .css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected {
+    background-color: ${props => props.theme.colors.white} !important;
+  }
   .css-1h9z7r5-MuiButtonBase-root-MuiTab-root {
     min-height: initial !important;
     height: 40px !important;
@@ -309,7 +312,6 @@ export const TabsCustom = styled(Tabs)`
     `}
 `;
 const TabTransfer = styled(Tab)`
-  background-color: white !important;
   border-radius: 8px !important;
   margin: 5px !important;
 
