@@ -76,3 +76,21 @@ type History = {
   to: string;
   balance: string;
 };
+
+type Device = {
+  name: string;
+  ip: string;
+  id: string;
+};
+export const Devices: Array<Device> = [
+  {
+    name: "Chrome V11.1",
+    ip: "123.456.789.101",
+    id: "2404",
+  },
+  {
+    name: "Chrome V11.1",
+    ip: "123.456.789.101",
+    id: "2404",
+  },
+];

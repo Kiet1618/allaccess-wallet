@@ -16,8 +16,7 @@ import { NetworkContainer } from "../../components/Network";
 import { myListCoin, historyData } from "../../configs/data/test";
 import { Copy } from "../../assets/icon";
 import QRCode from "react-qr-code";
-
-import { HaaderPageBalance, OverviewHeaderTopCoin, TextHeaderOverview, SubHeaderPage } from "../Overview/overview.css";
+import { OverviewHeaderTopCoin, TextHeaderOverview, SubHeaderPage } from "../Overview/overview.css";
 import { TitlePage } from "../../styles";
 import styled from "styled-components";
 interface TabPanelProps {
