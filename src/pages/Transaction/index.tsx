@@ -63,8 +63,8 @@ const Transaction = () => {
         <Grid item xs={100} sm={100} md={100} lg={50} xl={60}>
           <OverviewHeaderTopCoin>
             <TabsCustom value={value} onChange={handleChange} aria-label='basic tabs example'>
-              <Tab label='Transfer' {...a11yProps(0)} />
-              <Tab label='Receive' {...a11yProps(1)} />
+              <TabTransfer label='Transfer' {...a11yProps(0)} />
+              <TabTransfer label='Receive' {...a11yProps(1)} />
             </TabsCustom>
           </OverviewHeaderTopCoin>
         </Grid>
@@ -283,41 +283,48 @@ export const TilePageContainer = styled.div`
   `}
 `;
 export const TabsCustom = styled(Tabs)`
+  background-color: #f6f6f6 !important;
+  border-radius: 8px !important;
+  .css-1aquho2-MuiTabs-indicator {
+    background-color: #f6f6f6 !important;
+  }
+  .css-1h9z7r5-MuiButtonBase-root-MuiTab-root {
+    min-height: initial !important;
+    height: 40px !important;
+  }
   ${breakpoint("xs")`
-       z-index: 99;
-      left: 50%;
-      transform: translate(-50%, 0);
-      position: fixed;
-      background-color: white;
-      width: calc(100vw - 20px);
-
+    
+      width: 100% ! important;
+      display: flex;
+      margin-left: 10px ! important;
+      margin-right: 10px ! important;
     `}
   ${breakpoint("sm")`
       position: static;
-      width: 100%;
+      width: 300px ! important;
       justify-content: center;
       align-items: center;
       transform: none;
-      margin: 0
+      margin: 10px 0;
       z-index: 0;
     `}
-     ${breakpoint("md")`
-        align-items: center;
-        float: none;
-        width: 100%;
-        `}
-       ${breakpoint("lg")`
-        justify-content: center;
-        align-items: center;
-        width: max-content;
-        float: right;
-        margin-right: 44px;
-        `}
 `;
+const TabTransfer = styled(Tab)`
+  background-color: white !important;
+  border-radius: 8px !important;
+  margin: 5px !important;
+
+  ${breakpoint("xs")`
+      width: calc(50% - 10px) !important;
+    `}
+  ${breakpoint("sm")`
+      width: 140px !important;
+    `}
+`;
+
 export const NetworkContainerFixed = styled.div`
   background-color: ${props => props.theme.colors.white};
   ${breakpoint("xs")`
-
       margin-top: 24px;
       padding-top: 10px;
       padding-bottom: 10px;
