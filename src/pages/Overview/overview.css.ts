@@ -33,12 +33,12 @@ export const NetworkContainerFixed = styled.div`
 export const TilePageContainer = styled.div`
   ${breakpoint("xs")`
     display: none;
-`}
+  `}
   ${breakpoint("lg")`
     display: block;
     margin: 44px 44px;
   `}
-    position: static;
+  position: static;
   justify-content: center;
   align-items: center;
 `;

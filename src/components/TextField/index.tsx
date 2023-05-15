@@ -19,6 +19,7 @@ type Props = {
   gap?: string;
   fontSize?: string;
   styleTextField?: "default" | "typing" | "disable" | "successfull" | "error" | "typed";
+  label?: string;
 };
 const TextFieldComponent = styled(TextField)<TextFieldProps & Props>`
   background-color: ${props => {
@@ -64,8 +65,10 @@ const TextFieldComponent = styled(TextField)<TextFieldProps & Props>`
   }
   border-radius: 8px !important;
 `;
-
-const TextFieldTemplate: React.FC<TextFieldProps & Props> = (props: TextFieldProps & Props) => {
+const TextFieldContainer = styled.div<Props>`
+  width: ${props => props.width} !important;
+`;
+const TextFieldTemplate = (props: TextFieldProps & Props) => {
   return <TextFieldComponent {...props}></TextFieldComponent>;
 };
 
