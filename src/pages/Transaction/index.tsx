@@ -16,8 +16,8 @@ import { Copy } from "../../assets/icon";
 import QRCode from "react-qr-code";
 import { OverviewHeaderTopCoin, TextHeaderOverview } from "../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
-import React, { useReducer } from "react";
-
+import React, { useEffect } from "react";
+import web3 from "web3";
 import styled from "styled-components";
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -44,6 +44,7 @@ function a11yProps(index: number) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
+
 const Transaction = () => {
   const myAdress = "0x15375...b080f";
   const myFullAddress = "0xea5a9433df5ea7f57206668e71d8577362dfed02";
@@ -51,18 +52,45 @@ const Transaction = () => {
   const [token, setToken] = React.useState("ETH");
   const [amount, setAmount] = React.useState("0");
   const [addressTo, setAddressTo] = React.useState("");
+  const [checkAddress, setCheckAddress] = React.useState(true);
+  const [checkAmount, setCheckAmount] = React.useState(true);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    let data = {
-      token: token,
-      addressTo: addressTo,
-      amount: amount,
-    };
-    console.log(data);
+    if (!handleValidatorAddress() && !handleValidatorAmount()) {
+      let data = {
+        token: token,
+        addressTo: addressTo,
+        amount: Number(amount),
+      };
+      console.log(data);
+    } else {
+      if (handleValidatorAddress()) {
+        setCheckAddress(false);
+      }
+      if (handleValidatorAmount()) {
+        setCheckAmount(false);
+      }
+    }
+  };
+  const handleValidatorAddress = (value: string = addressTo) => {
+    if (value.slice(0, 2) !== "0x") {
+      return "Address must be start 0x";
+    }
+    if (value.length !== 42) {
+      return "Address length must be 42 characters";
+    }
+    return "";
+  };
+  const handleValidatorAmount = (value: string = amount) => {
+    let valueNumber = Number(value);
+    if (!valueNumber) {
+      return "Amount must be a number";
+    }
+    return "";
   };
 
   return (
@@ -127,14 +155,16 @@ const Transaction = () => {
                         Transfer to <SpanRed>*</SpanRed>
                       </label>
                       <CustomInput
+                        error={!checkAddress}
                         onChange={e => {
                           setAddressTo(e.target.value);
+                          handleValidatorAddress(e.target.value) ? setCheckAddress(false) : setCheckAddress(true);
                         }}
+                        helperText={!checkAddress ? handleValidatorAddress() : ""}
                         placeholder='Enter address'
                         id='addressTo'
                         size='small'
                         styleTextField='default'
-                        required
                       ></CustomInput>
                     </ContainerTextField>
                     <ContainerTextField>
@@ -142,14 +172,16 @@ const Transaction = () => {
                         Amount <SpanRed>*</SpanRed>
                       </label>
                       <CustomInput
+                        error={!checkAmount}
                         onChange={e => {
                           setAmount(e.target.value);
+                          handleValidatorAmount(e.target.value) ? setCheckAmount(false) : setCheckAmount(true);
                         }}
                         placeholder='Enter amount'
                         id='value'
                         size='small'
                         styleTextField='default'
-                        required
+                        helperText={!checkAmount ? handleValidatorAmount() : ""}
                       ></CustomInput>
                     </ContainerTextField>
                     <ContainerFlexSpace>
@@ -360,7 +392,7 @@ export const TabsCustom = styled(Tabs)`
       z-index: 0;
     `}
 `;
-const TabTransfer = styled(Tab)`
+export const TabTransfer = styled(Tab)`
   border-radius: 8px !important;
   margin: 5px !important;
 
