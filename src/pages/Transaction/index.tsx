@@ -327,7 +327,7 @@ const ContainerFlexSpace = styled.div`
   align-items: center;
   margin-top: 10px;
 `;
-const ContainerTabs = styled(TabPanel)`
+export const ContainerTabs = styled(TabPanel)`
   .css-ahj2mt-MuiTypography-root {
     width: 100%;
   }
