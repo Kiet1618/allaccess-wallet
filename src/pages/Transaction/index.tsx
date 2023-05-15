@@ -86,11 +86,12 @@ const Transaction = () => {
     return "";
   };
   const handleValidatorAmount = (value: string = amount) => {
-    if (value === "0") return "Amount must be diffent 0";
     let valueNumber = Number(value);
     if (!valueNumber) {
-      return "Amount must be a number";
+      return "Amount must be a number and different 0";
     }
+    if (valueNumber <= 0) return "Amount must be more than 0";
+
     return "";
   };
 
@@ -114,9 +115,9 @@ const Transaction = () => {
         <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
           <Grid>
             <ContainerTabs value={value} index={0}>
-              <TilePageContainer>
+              <TitlePageContainer>
                 <TitlePage>Transfer your Ethereum</TitlePage>
-              </TilePageContainer>
+              </TitlePageContainer>
               <SubTitlePage>You need to choose the correct network, address and coin to transfer to another wallet address.</SubTitlePage>
             </ContainerTabs>
           </Grid>
@@ -210,7 +211,7 @@ const Transaction = () => {
               <BackgroundPage>
                 <ReceiveTagHeader>Account balance</ReceiveTagHeader>
                 <CopyAddressContainer>
-                  {myAdress} <Copy />{" "}
+                  {myAdress} <Copy />
                 </CopyAddressContainer>
                 <BalanceNumberCard>
                   {myListCoin.find(coin => coin.symbol === token)?.balance} {token}
@@ -222,9 +223,9 @@ const Transaction = () => {
         <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
           <Grid item xs={100}>
             <TabPanel value={value} index={1}>
-              <TilePageContainer>
+              <TitlePageContainer>
                 <TitlePage>Scan QR code</TitlePage>
-              </TilePageContainer>
+              </TitlePageContainer>
             </TabPanel>
           </Grid>
           <Grid item xs={100} sm={100} md={100} lg={50} xl={55}>
@@ -280,7 +281,7 @@ const ReceiveTagHeader = styled.div`
   line-height: 24px;
   color: ${({ theme }) => theme.colors.neutrals.gray600};
 `;
-const SubTitlePage = styled.div`
+export const SubTitlePage = styled.div`
   font-weight: ${({ theme }) => theme.fontWeights.regular};
   font-size: ${({ theme }) => theme.fontSizes.xs + "px"};
   line-height: 24px;
@@ -303,7 +304,7 @@ const SubTitlePage = styled.div`
   `}
 `;
 
-const BackgroundPage = styled.div`
+export const BackgroundPage = styled.div`
   background-color: #fafafa;
   padding: 40px;
   border-radius: 8px;
@@ -355,7 +356,7 @@ const BalanceNumberCard = styled.div`
   line-height: 48px;
   margin: 20px 0;
 `;
-export const TilePageContainer = styled.div`
+export const TitlePageContainer = styled.div`
   ${breakpoint("xs")`
     display: none;
 `}
@@ -433,10 +434,10 @@ export const NetworkContainerFixed = styled.div`
         `}
 `;
 
-const SpanRed = styled.span`
+export const SpanRed = styled.span`
   color: #cf2d2d;
 `;
-const ContainerTextField = styled.div`
+export const ContainerTextField = styled.div`
   margin: 10px 0;
   display: flex;
   flex-direction: column;
