@@ -50,7 +50,7 @@ const Transaction = () => {
   const myFullAddress = "0xea5a9433df5ea7f57206668e71d8577362dfed02";
   const [value, setValue] = React.useState(0);
   const [token, setToken] = React.useState("ETH");
-  const [amount, setAmount] = React.useState("0");
+  const [amount, setAmount] = React.useState("");
   const [addressTo, setAddressTo] = React.useState("");
   const [checkAddress, setCheckAddress] = React.useState(true);
   const [checkAmount, setCheckAmount] = React.useState(true);
@@ -86,6 +86,7 @@ const Transaction = () => {
     return "";
   };
   const handleValidatorAmount = (value: string = amount) => {
+    if (value === "0") return "Amount must be diffent 0";
     let valueNumber = Number(value);
     if (!valueNumber) {
       return "Amount must be a number";

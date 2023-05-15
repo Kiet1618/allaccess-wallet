@@ -11,8 +11,9 @@ const breakpoint = createBreakpoint(base.breakpoints);
 
 const MultipleFactors = () => {
   const [typeButton, setTypeButton] = useState(false);
-  const [seed, setSeed] = useState("a a a a a a a a a a a a a a a a a a a a a a a a");
-  const handleValidatorAmount = (value: string) => {
+  const [seed, setSeed] = useState("");
+  const [checkSeed, setCheckSeed] = useState(true);
+  const handleValidatorAmount = (value: string = seed) => {
     const words = value.split(" ");
     if (words.length !== 24) {
       return "Must be 24 characters long";
@@ -46,16 +47,17 @@ const MultipleFactors = () => {
         <SubHeaderText>Make sure you have your 24 words recovery phrase, then click below to begin the recovery process.</SubHeaderText>
         <TextBlue>Passphrase (24 words)</TextBlue>
         <CustomTextInput
-          error={handleValidatorAmount(seed) ? true : false}
+          error={!checkSeed}
           onChange={newValue => {
-            setTypeButton(newValue.target.value ? false : true);
             setSeed(newValue.target.value);
+            handleValidatorAmount(newValue.target.value) ? setCheckSeed(false) : setCheckSeed(true);
+            setTypeButton(handleValidatorAmount(newValue.target.value) ? false : true);
           }}
           fullWidth
           size='small'
           styleTextField='default'
           placeholder='correct horse batterry ...'
-          helperText={handleValidatorAmount(seed) ? handleValidatorAmount(seed) : ""}
+          helperText={!checkSeed ? handleValidatorAmount() : ""}
         ></CustomTextInput>
         <ContainerButton>
           <CustomButton width='30%' padding='10px' text='Confirm' styleButton={typeButton ? "primary" : "inactive"}></CustomButton>
