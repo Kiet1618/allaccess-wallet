@@ -12,7 +12,7 @@ import CustomInput from "../../components/TextField";
 import Select from "@mui/material/Select";
 import { NetworkContainer } from "../../components/Network";
 import { myListCoin } from "../../configs/data/test";
-import { Copy } from "../../assets/icon";
+import { Copy, DropdownBlack } from "../../assets/icon";
 import QRCode from "react-qr-code";
 import { OverviewHeaderTopCoin, TextHeaderOverview } from "../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
@@ -135,6 +135,9 @@ const Transaction = () => {
                           {...register("token", {
                             onChange: e => setToken(e.target.value),
                           })}
+                          SelectProps={{
+                            IconComponent: () => <DropdownBlack style={{ marginRight: "10px" }} />,
+                          }}
                         >
                           {myListCoin.map(coin => (
                             <MenuItem value={coin.symbol}>
@@ -257,7 +260,7 @@ const Transaction = () => {
                   </CopyAddressContainer>
                 </ContainerFlexSpace>
                 <AddressContainer>
-                  <CustomInput disabled defaultValue={myFullAddress} variant='outlined' fullWidth size='medium' margin='normal' styleTextField='disable' />
+                  <CustomInput size='small' disabled defaultValue={myFullAddress} variant='outlined' fullWidth margin='normal' styleTextField='disable' />
                 </AddressContainer>
               </BackgroundPage>
             </TabPanel>
