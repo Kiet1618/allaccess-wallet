@@ -18,8 +18,10 @@ import { ReactComponent as Dropdown } from "./system/Turn Down.svg";
 import { ReactComponent as DropRight } from "./system/Style=Turn, Icon=turn right.svg";
 import { ReactComponent as DropdownBlack } from "./system/Style=Turn, Icon=turn down.svg";
 import { ReactComponent as TimeDropdown } from "./system/time.svg";
+import { ReactComponent as Eyes } from "./system/Eyes.svg";
 
 export {
+  Eyes,
   DropRight,
   TimeDropdown,
   Trash,

@@ -31,5 +31,18 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
       margin: 0;
       padding-left: 10px;
     }
+    .css-wjh20t-MuiPagination-ul{
+      margin: 20px 0px;
+      display: flex;
+      justify-content: center;
+    }
+    .css-10w330c-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected{
+      background: #E9F2FF;
+      border-radius: 3px;
+      color:#0C66E4;
+    }
+    .css-1ps6pg7-MuiPaper-root{
+      box-shadow: none !important;
+    }
   }
 `;
