@@ -8,17 +8,13 @@ import MenuItem from "@mui/material/MenuItem";
 import CustomInput from "../../components/TextField";
 import { listNetWorks } from "../../configs/data/menu";
 import { TimeDropdown } from "../../assets/icon";
-import { GridColDef, DataGrid, GridCellParams } from "@mui/x-data-grid";
-import clsx from "clsx";
-
-import Box from "@mui/material/Box";
-
+import { GridColDef, DataGrid } from "@mui/x-data-grid";
 const columns: GridColDef[] = [
   { field: "time", headerName: "Time", width: 150 },
   {
     field: "method",
     headerName: "Method",
-    width: 150,
+    width: 140,
     renderCell: cellValues => {
       return (
         <div
@@ -42,6 +38,7 @@ const columns: GridColDef[] = [
   {
     field: "inOut",
     headerName: "",
+    width: 80,
     renderCell: cellValues => {
       let cellColor = "";
       let cellBackground = "";
