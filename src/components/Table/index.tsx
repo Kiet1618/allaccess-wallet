@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TitlePage } from "../../styles";
+import { TitlePageBlack } from "../../styles";
 
 import { Table, TableContainer, TableBody, TableCell, TableCellProps, TableHead, TableRow, Paper, TablePagination, Pagination } from "@mui/material";
 import styled from "styled-components";
@@ -8,8 +8,9 @@ import { createBreakpoint } from "styled-components-breakpoint";
 import { Copy, Eyes } from "../../assets/icon";
 import { CopyAddressContainer, SubTitlePage } from "../../pages/Transaction";
 import IconButton from "@mui/material/IconButton";
-import Modal from "@mui/material";
+import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
+import CloseIcon from "@mui/icons-material/Close";
 
 const breakpoint = createBreakpoint(base.breakpoints);
 interface Row {
@@ -191,7 +192,6 @@ const TableWithPagination: React.FC = () => {
                 </TableCell>
 
                 <TableCell>
-                  {" "}
                   <TableCellCustomInOut text={row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}>
                     {row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}
                   </TableCellCustomInOut>
@@ -208,7 +208,7 @@ const TableWithPagination: React.FC = () => {
                   </CopyAddressContainer>
                 </TableCell>
                 <TableCell>
-                  <IconButton>
+                  <IconButton onClick={() => handleInfo(row.time, row.method, row.amount, row.from, row.to, row.network, row.id, row.token)}>
                     <Eyes />
                   </IconButton>
                 </TableCell>
@@ -219,6 +219,32 @@ const TableWithPagination: React.FC = () => {
       </TableContainer>
 
       <Pagination count={Math.ceil(rows.length / rowsPerPage)} page={page} onChange={handleChangePage} shape='rounded' />
+      <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
+        <Box sx={style}>
+          <HeaderModalInforTransaction>
+            <HeaderModalGroupLeft>
+              <TitleModal>Transfer details</TitleModal>
+              <CustomMethod>{row.method}</CustomMethod>
+              <TableCellCustomInOut text={row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}>
+                {row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}
+              </TableCellCustomInOut>
+            </HeaderModalGroupLeft>
+            <div>
+              <IconButton>
+                <CloseIcon />
+              </IconButton>
+            </div>
+          </HeaderModalInforTransaction>
+          <HeaderModalInforTransaction>
+            <div>Status</div>
+            <div>Completed</div>
+          </HeaderModalInforTransaction>
+          <HeaderModalInforTransaction>
+            <div>Status</div>
+            <div>Completed</div>
+          </HeaderModalInforTransaction>
+        </Box>
+      </ModalCustom>
     </>
   );
 };
@@ -227,11 +253,38 @@ const App: React.FC = () => {
   return <TableWithPagination />;
 };
 
+const TitleModal = styled.div`
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 30px;
+  color: black;
+  margin-right: 10px;
+`;
+
+const HeaderModalInforTransaction = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+const HeaderModalGroupLeft = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+`;
 export default App;
 type PropsInOut = {
   text: string;
 };
-
+const ModalCustom = styled(Modal)`
+  .igUPum {
+    display: flex;
+    -webkit-box-pack: justify !important;
+    justify-content: space-between;
+    width: 100% !important;
+  }
+`;
 const CustomMethod = styled.div`
   text-align: center;
   padding: 5px 5px;
@@ -268,3 +321,20 @@ const TableCellCustomInOut = styled.div<PropsInOut>`
   }};
   text-align: center;
 `;
+
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 4,
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
+  textAlign: "center",
+  alignItems: "center",
+  width: 600,
+};

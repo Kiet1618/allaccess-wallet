@@ -19,11 +19,6 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { TabsCustom, TabTransfer, ContainerTabs, SubTitlePage, CopyAddressContainer, ContainerTextField, SpanRed } from "../Transaction";
 import React from "react";
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
 const breakpoint = createBreakpoint(base.breakpoints);
 
 function a11yProps(index: number) {
