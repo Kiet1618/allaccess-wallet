@@ -1,4 +1,4 @@
-import { ListItemHeader, ListCustom } from "./slider.css";
+import { ListItemHeader, ListCustom } from "./sidebar.css";
 // import { Menu, Item, MenuLink } from './slider.css'
 import { listMenu } from "../../configs/data";
 import List from "@mui/material/List";

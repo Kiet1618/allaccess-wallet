@@ -8,15 +8,71 @@ import MenuItem from "@mui/material/MenuItem";
 import CustomInput from "../../components/TextField";
 import { listNetWorks } from "../../configs/data/menu";
 import { TimeDropdown } from "../../assets/icon";
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import { GridColDef, DataGrid, GridCellParams } from "@mui/x-data-grid";
+import clsx from "clsx";
+
 import Box from "@mui/material/Box";
 
 const columns: GridColDef[] = [
   { field: "time", headerName: "Time", width: 150 },
-  { field: "method", headerName: "Method", width: 150 },
+  {
+    field: "method",
+    headerName: "Method",
+    width: 150,
+    renderCell: cellValues => {
+      return (
+        <div
+          style={{
+            textAlign: "center",
+            alignItems: "center",
+            padding: "5px 5px",
+            border: "solid 1px #CFD6DD",
+            color: "#272E35",
+            width: "100px",
+            borderRadius: "8px",
+          }}
+        >
+          {cellValues.value}
+        </div>
+      );
+    },
+  },
   { field: "amount", headerName: "Amount", width: 150 },
   { field: "from", headerName: "From", width: 250 },
-  { field: "inOut", headerName: "", width: 100 },
+  {
+    field: "inOut",
+    headerName: "",
+    renderCell: cellValues => {
+      let cellColor = "";
+      let cellBackground = "";
+      let cellBorderColor = "";
+      if (cellValues.value === "In") {
+        cellColor = "#1DE9B6";
+        cellBackground = "rgb(29, 233, 182, 0.25)";
+        cellBorderColor = "solid 1px #1DE9B6";
+      } else if (cellValues.value === "Out") {
+        cellColor = "#F7CE39";
+        cellBackground = "rgb(247, 206, 57, 0.25)";
+        cellBorderColor = "solid 1px #F7CE39";
+      }
+      return (
+        <div
+          style={{
+            textAlign: "center",
+            alignItems: "center",
+            padding: "5px 5px",
+            backgroundColor: cellBackground,
+            border: cellBorderColor,
+            color: cellColor,
+            borderRadius: "8px",
+            width: "50px",
+          }}
+        >
+          {cellValues.value}
+        </div>
+      );
+    },
+  },
   { field: "to", headerName: "To", width: 250 },
   { field: "network", headerName: "Network", width: 200 },
   { field: "id", headerName: "TxID", width: 250 },
@@ -186,6 +242,14 @@ const History = () => {
         <DataGrid
           rows={rows}
           columns={columns}
+          sx={{
+            ".MuiDataGrid-columnSeparator": {
+              display: "none",
+            },
+            "&.MuiDataGrid-root": {
+              border: "none",
+            },
+          }}
           initialState={{
             pagination: {
               paginationModel: {
