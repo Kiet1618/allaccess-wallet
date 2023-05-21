@@ -13,9 +13,9 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
   body {
     background: ${({ theme }) => theme.colors.white};
     color: ${({ theme }) => theme.colors.neutrals.gray600};
-    margin: 0;
     font-family:  'Inter', sans-serif;
     font-style: normal;
+    margin: 0;
     .css-1e6y48t-MuiButtonBase-root-MuiButton-root{
       text-transform: none !important;
     }

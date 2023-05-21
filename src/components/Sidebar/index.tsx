@@ -22,7 +22,7 @@ const Sidebar: React.FC<Props> = (props: Props) => {
         </ListItemHeader>
         <ListCustom>
           {listMenu.map(e => (
-            <ListItem name={e.name} subMenu={e.subMenu} icon={e.icon} />
+            <ListItem key={e.name} name={e.name} subMenu={e.subMenu} icon={e.icon} />
           ))}
         </ListCustom>
       </List>

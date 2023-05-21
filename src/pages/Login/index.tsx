@@ -3,12 +3,11 @@ import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, Te
 import { FristSlider, LogoIconXL } from "../../assets/img";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
 import Button from "../../components/Button";
 import { Google } from "../../assets/icon";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import React from "react";
 const Login = () => {
   const navigate = useNavigate();
 

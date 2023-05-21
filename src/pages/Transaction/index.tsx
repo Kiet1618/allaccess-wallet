@@ -9,15 +9,13 @@ import CustomButton from "../../components/Button";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import CustomInput from "../../components/TextField";
-import Select from "@mui/material/Select";
 import { NetworkContainer } from "../../components/Network";
 import { myListCoin } from "../../configs/data/test";
 import { Copy, DropdownBlack } from "../../assets/icon";
 import QRCode from "react-qr-code";
 import { OverviewHeaderTopCoin, TextHeaderOverview } from "../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
-import React, { useEffect } from "react";
-import web3 from "web3";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import styled from "styled-components";
@@ -62,7 +60,6 @@ const Transaction = () => {
     register,
     handleSubmit,
     reset,
-    getValues,
     control,
     formState: { errors },
   } = useForm<FormData>({
@@ -82,7 +79,7 @@ const Transaction = () => {
   };
   const onSubmit = React.useCallback((values: FormData) => {
     console.log(values);
-    // reset();
+    reset();
   }, []);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -140,7 +137,7 @@ const Transaction = () => {
                           }}
                         >
                           {myListCoin.map(coin => (
-                            <MenuItem value={coin.symbol}>
+                            <MenuItem key={coin.symbol} value={coin.symbol}>
                               <SelectCoin>
                                 <img width={"20px"} src={coin.img}></img>
                                 {coin.name}
@@ -338,10 +335,6 @@ export const SelectCoin = styled.div`
   img {
     margin-right: 10px;
   }
-`;
-const SelectCustom = styled(Select)`
-  border-radius: 8px !important;
-  margin: 0;
 `;
 const ContainerFlexSpace = styled.div`
   display: flex;

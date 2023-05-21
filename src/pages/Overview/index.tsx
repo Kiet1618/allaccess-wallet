@@ -4,7 +4,8 @@ import { NetworkContainer } from "../../components/Network";
 import { myListCoin, historyData } from "../../configs/data/test";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-
+import { sliceAddress } from "../../utils";
+import React from "react";
 import {
   NetworkContainerFixed,
   SubHeaderPage,
@@ -33,7 +34,7 @@ import { SearchIcon, ReceiveTransactionHistoty, SendTransactionHistoty, LinkTran
 
 import CustomButton from "../../components/Button";
 const Overview = () => {
-  const myAdress = "0x15375...b080f";
+  const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   return (
     <Page>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -84,7 +85,7 @@ const Overview = () => {
             <ListItemMyAssets>
               {myListCoin ? (
                 myListCoin.map(item => (
-                  <ItemMyAssets>
+                  <ItemMyAssets key={item.symbol}>
                     <ItemMyAssetsLeft>
                       <img style={{ marginRight: "10px" }} width={"30px"} src={item.img}></img>
                       <TextCoin>{item.name}</TextCoin>
@@ -114,7 +115,7 @@ const Overview = () => {
             <ListItemMyAssets>
               {historyData ? (
                 historyData.map(item => (
-                  <ItemMyAssets>
+                  <ItemMyAssets key={item.balance}>
                     <TransactionLinkContainer>
                       <Tooltip title='Link to view full about this transaction' placement='top-start'>
                         <IconButton>
@@ -123,10 +124,10 @@ const Overview = () => {
                       </Tooltip>
                       <div>
                         <FromToAddressContainer>
-                          <span style={{ color: "#42526E" }}> From: </span> <span style={{ color: "#346FBE" }}>{item.from}</span>
+                          <span style={{ color: "#42526E" }}> From: </span> <span style={{ color: "#346FBE" }}>{sliceAddress(item.from)}</span>
                         </FromToAddressContainer>
                         <FromToAddressContainer>
-                          <span style={{ color: "#42526E" }}> To: </span> <span style={{ color: "#346FBE" }}>{item.to}</span>
+                          <span style={{ color: "#42526E" }}> To: </span> <span style={{ color: "#346FBE" }}>{sliceAddress(item.to)}</span>
                         </FromToAddressContainer>
                       </div>
                     </TransactionLinkContainer>

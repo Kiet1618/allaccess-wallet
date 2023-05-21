@@ -6,30 +6,39 @@ import styled from "styled-components";
 const breakpoint = createBreakpoint(base.breakpoints);
 import MenuItem from "@mui/material/MenuItem";
 import CustomInput from "../../components/TextField";
+import CustomButton from "../../components/Button";
 import { listNetWorks } from "../../configs/data/menu";
 import { TimeDropdown } from "../../assets/icon";
-import TableCustom from "../../components/Table";
+import TableCustom, { ModalCustom, HeaderModalInforTransaction, TitleModal } from "../../components/Table";
+import dayjs, { Dayjs } from "dayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 const History = () => {
-  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  // const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   const [time, setTime] = useState("30");
   const [method, setMethod] = useState("All");
   const [network, setNetwork] = useState("0");
   const [status, setStatus] = useState("All");
   const [searchId, setSearchId] = useState("");
-  const [page, setPage] = useState(1);
-  const rowsPerPage = 5;
-
+  const [customTimeFrom, setCustomTimeFrom] = useState<Dayjs | null>(dayjs("2022-04-17"));
+  const [customTimeTo, setCustomTimeTo] = useState<Dayjs | null>(dayjs("2022-04-17"));
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   return (
     <Page>
       <TilePageContainer>
         <TitlePage>Transactions history</TitlePage>
         <SubTitlePage>View all your transfers and receive transaction in your wallet.</SubTitlePage>
         <ContainerFilter>
-          <ContainerTextField>
-            <label>Time</label>
+          <ContainerTextFieldTime>
+            <label style={{ marginBottom: "5px" }}>Time</label>
             <CustomInput
-              width='260px'
               value={time}
               styleTextField='default'
               select
@@ -43,53 +52,124 @@ const History = () => {
               <MenuItem value={7}>Past 7 days</MenuItem>
               <MenuItem value={30}>Past 30 days</MenuItem>
               <MenuItem value={90}>Past 90 days</MenuItem>
-              <MenuItem value={0}>Custimized</MenuItem>
+              <MenuItem onClick={handleOpen} value={0}>
+                Custimized
+              </MenuItem>
             </CustomInput>
-          </ContainerTextField>
-          <ContainerTextField>
-            <label>Method</label>
-            <CustomInput width='200px' value={method} styleTextField='default' select id='method' size='small' onChange={e => setMethod(e.target.value)}>
+          </ContainerTextFieldTime>
+          <ContainerTextFieldMethod>
+            <label style={{ marginBottom: "5px" }}>Method</label>
+            <CustomInput value={method} styleTextField='default' select id='method' size='small' onChange={e => setMethod(e.target.value)}>
               <MenuItem value={"All"}>All</MenuItem>
               <MenuItem value={"Receive"}>Receive</MenuItem>
               <MenuItem value={"Execute"}>Execute</MenuItem>
               <MenuItem value={"LinearDeposit"}>Linear Deposit</MenuItem>
               <MenuItem value={"Approve"}>Approve</MenuItem>
             </CustomInput>
-          </ContainerTextField>
-          <ContainerTextField>
-            <label>Network</label>
-            <CustomInput width='300px' value={network} styleTextField='default' select id='network' size='small' onChange={e => setNetwork(e.target.value)}>
+          </ContainerTextFieldMethod>
+          <ContainerTextFieldNetwork>
+            <label style={{ marginBottom: "5px" }}>Network</label>
+            <CustomInput value={network} styleTextField='default' select id='network' size='small' onChange={e => setNetwork(e.target.value)}>
               <MenuItem value={"0"}>All mainnet</MenuItem>
               {listNetWorks.map(network => (
-                <MenuItem value={network.chainID}>{network.description}</MenuItem>
+                <MenuItem key={network.chainID} value={network.chainID}>
+                  {network.description}
+                </MenuItem>
               ))}
             </CustomInput>
-          </ContainerTextField>
-          <ContainerTextField>
-            <label>Status</label>
-            <CustomInput width='200px' value={status} styleTextField='default' select id='status' size='small' onChange={e => setStatus(e.target.value)}>
+          </ContainerTextFieldNetwork>
+          <ContainerTextFieldStatus>
+            <label style={{ marginBottom: "5px" }}>Status</label>
+            <CustomInput value={status} styleTextField='default' select id='status' size='small' onChange={e => setStatus(e.target.value)}>
               <MenuItem value={"All"}>All</MenuItem>
               <MenuItem value={"Completed"}>Completed</MenuItem>
               <MenuItem value={"Incomplete"}>Incomplete</MenuItem>
               <MenuItem value={"Pending"}>Pending</MenuItem>
             </CustomInput>
-          </ContainerTextField>
-          <ContainerTextField>
-            <label>Search ID</label>
-            <CustomInput width='300px' onChange={e => setSearchId(e.target.value)} placeholder='Enter ID' id='search-id' size='small' value={searchId} styleTextField='default' />
-          </ContainerTextField>
+          </ContainerTextFieldStatus>
+          <ContainerTextFieldId>
+            <label style={{ marginBottom: "5px" }}>Search ID</label>
+            <CustomInput onChange={e => setSearchId(e.target.value)} placeholder='Enter ID' id='search-id' size='small' value={searchId} styleTextField='default' />
+          </ContainerTextFieldId>
         </ContainerFilter>
       </TilePageContainer>
       <ContainerDataTable>
         <TableCustom />
       </ContainerDataTable>
+      <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
+        <Box sx={style}>
+          <HeaderModalInforTransaction>
+            <TitleModal>Customize time range</TitleModal>
+            <div>
+              <IconButton onClick={handleClose}>
+                <CloseIcon />
+              </IconButton>
+            </div>
+          </HeaderModalInforTransaction>
+          <HeaderModalInforTransaction>
+            <ModalSubtitle>Select your time range with in 12 months</ModalSubtitle>
+          </HeaderModalInforTransaction>
+          <HeaderModalInforTransaction>
+            <ContainerTextFieldTimeCustom>
+              <label style={{ marginBottom: "5px" }}>Start time</label>
+              <CustomInput
+                value={1}
+                styleTextField='default'
+                select
+                size='small'
+                SelectProps={{
+                  IconComponent: () => <TimeDropdown style={{ marginRight: "10px" }} />,
+                }}
+              >
+                <MenuItem value={1}>{customTimeFrom?.format("DD/MM/YYYY")}</MenuItem>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateCalendar value={customTimeFrom} onChange={newValue => setCustomTimeFrom(newValue)} />
+                </LocalizationProvider>
+              </CustomInput>
+            </ContainerTextFieldTimeCustom>
+            <ModalTo>To</ModalTo>
+            <ContainerTextFieldTimeCustom>
+              <label style={{ marginBottom: "5px" }}>End time</label>
+              <CustomInput
+                value={1}
+                styleTextField='default'
+                select
+                id='time'
+                size='small'
+                SelectProps={{
+                  IconComponent: () => <TimeDropdown style={{ marginRight: "10px" }} />,
+                }}
+              >
+                <MenuItem value={1}>{customTimeTo?.format("DD/MM/YYYY")}</MenuItem>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateCalendar value={customTimeTo} onChange={newValue => setCustomTimeTo(newValue)} />
+                </LocalizationProvider>
+              </CustomInput>
+            </ContainerTextFieldTimeCustom>
+          </HeaderModalInforTransaction>
+          <CustomButton onClick={handleClose} mTop='30px' size='large' styleButton='primary' width='100%' text='Continue' />
+        </Box>
+      </ModalCustom>
     </Page>
   );
 };
 export default History;
+const ModalSubtitle = styled.div`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+`;
+const ModalTo = styled.div`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
+`;
 const ContainerFilter = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
 `;
 const ContainerDataTable = styled.div`
   ${breakpoint("xs")`
@@ -134,12 +214,84 @@ const SubTitlePage = styled.div`
      width: 60%;
   `}
 `;
-export const ContainerTextField = styled.div`
+export const ContainerTextFieldTime = styled.div`
   margin: 10px 10px;
   display: flex;
   flex-direction: column;
-  justify-content: left;
+  justify-content: left !important;
+  align-items: left !important;
+  text-align: left !important;
+  width: 30%;
   .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
     color: rgb(113, 128, 150) !important;
   }
 `;
+
+export const ContainerTextFieldTimeCustom = styled.div`
+  margin: 10px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: left !important;
+  align-items: left !important;
+  text-align: left !important;
+  width: 40%;
+  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+    color: rgb(113, 128, 150) !important;
+  }
+`;
+export const ContainerTextFieldMethod = styled.div`
+  margin: 10px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  width: 20%;
+  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+    color: rgb(113, 128, 150) !important;
+  }
+`;
+export const ContainerTextFieldNetwork = styled.div`
+  margin: 10px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  width: 30%;
+  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+    color: rgb(113, 128, 150) !important;
+  }
+`;
+export const ContainerTextFieldStatus = styled.div`
+  margin: 10px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  width: 20%;
+  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+    color: rgb(113, 128, 150) !important;
+  }
+`;
+export const ContainerTextFieldId = styled.div`
+  margin: 10px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  width: 35%;
+  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
+    color: rgb(113, 128, 150) !important;
+  }
+`;
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 4,
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
+  textAlign: "center",
+  alignItems: "center",
+  width: 600,
+};

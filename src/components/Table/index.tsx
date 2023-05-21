@@ -1,121 +1,18 @@
 import React, { useState } from "react";
-import { TitlePageBlack } from "../../styles";
 
-import { Table, TableContainer, TableBody, TableCell, TableCellProps, TableHead, TableRow, Paper, TablePagination, Pagination } from "@mui/material";
+import { Table, TableContainer, TableBody, TableCell, TableHead, TableRow, Pagination } from "@mui/material";
 import styled from "styled-components";
-import base from "../../styles/theme/base";
-import { createBreakpoint } from "styled-components-breakpoint";
+// import base from "../../styles/theme/base";
+// import { createBreakpoint } from "styled-components-breakpoint";
 import { Copy, Eyes } from "../../assets/icon";
-import { CopyAddressContainer, SubTitlePage } from "../../pages/Transaction";
+import { CopyAddressContainer } from "../../pages/Transaction";
 import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
-
-const breakpoint = createBreakpoint(base.breakpoints);
-interface Row {
-  time: string;
-  method: string;
-  amount: number;
-  from: string;
-  to: string;
-  network: string;
-  id: string;
-  token: string;
-}
-
-const rows: Row[] = [
-  {
-    time: "2022-08-14 02:34",
-    method: "Approve",
-    amount: 244.68,
-    token: "USDT",
-    from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
-    to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    network: "Erthereum network",
-    id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e4c7a0be751111111111111111",
-  },
-  {
-    time: "2022-08-14 02:34",
-    method: "Execute",
-    amount: 244.68,
-    token: "USDT",
-    from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
-    network: "Erthereum network",
-    id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e4c7a0be222222222222222222222",
-  },
-  {
-    time: "2022-08-14 02:34",
-    method: "Transfer",
-    amount: 244.68,
-    token: "USDT",
-    from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
-    network: "Erthereum network",
-    id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e4433333333333333333333333333333",
-  },
-  {
-    time: "2022-08-14 02:34",
-    method: "Linear Deposit",
-    amount: 244.68,
-    token: "USDT",
-    from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
-    network: "Erthereum network",
-    id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e4c4444444444444444444444444444",
-  },
-  {
-    time: "2022-08-14 02:34",
-    method: "Approve",
-    amount: 244.68,
-    token: "USDT",
-    from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
-    to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    network: "Erthereum network",
-    id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e4c7a555555555555555555555555555",
-  },
-  {
-    time: "2022-08-14 02:34",
-    method: "Approve",
-    amount: 244.68,
-    token: "USDT",
-    from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
-    to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    network: "Erthereum network",
-    id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e4c6666666666666666666666666666",
-  },
-  {
-    time: "2022-08-14 02:34",
-    method: "Approve",
-    amount: 244.68,
-    token: "USDT",
-    from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
-    to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    network: "Erthereum network",
-    id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e4c777777777777777777777777777",
-  },
-  {
-    time: "2022-08-14 02:34",
-    method: "Approve",
-    amount: 244.68,
-    token: "USDT",
-    from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
-    to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    network: "Erthereum network",
-    id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e888888888888888888888888888888",
-  },
-  {
-    time: "2022-08-14 02:34",
-    method: "Approve",
-    amount: 244.68,
-    token: "USDT",
-    from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
-    to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    network: "Erthereum network",
-    id: "0xed3a265cebd603aa2cb9771be5c6ce10f9999999999999999999999999999999999",
-  },
-];
+import { sliceAddress, copyAddress } from "../../utils";
+import { rows, Row } from "../../configs/data/test";
+// const breakpoint = createBreakpoint(base.breakpoints);
 
 const TableWithPagination: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -152,12 +49,6 @@ const TableWithPagination: React.FC = () => {
     handleOpen();
   };
 
-  const sliceAddress = (str: string) => {
-    if (str.length > 35) {
-      return str.substr(0, 8) + "..." + str.substr(str.length - 5, str.length);
-    }
-    return str;
-  };
   return (
     <>
       <TableContainer>
@@ -186,7 +77,7 @@ const TableWithPagination: React.FC = () => {
                   {row.amount} {row.token}
                 </TableCell>
                 <TableCell>
-                  <CopyAddressContainer>
+                  <CopyAddressContainer onClick={() => copyAddress(row.from)}>
                     {sliceAddress(row.from)} <Copy />
                   </CopyAddressContainer>
                 </TableCell>
@@ -197,13 +88,13 @@ const TableWithPagination: React.FC = () => {
                   </TableCellCustomInOut>
                 </TableCell>
                 <TableCell>
-                  <CopyAddressContainer>
+                  <CopyAddressContainer onClick={() => copyAddress(row.to)}>
                     {sliceAddress(row.to)} <Copy />
                   </CopyAddressContainer>
                 </TableCell>
                 <TableCell>{row.network}</TableCell>
                 <TableCell>
-                  <CopyAddressContainer>
+                  <CopyAddressContainer onClick={() => copyAddress(row.id)}>
                     {sliceAddress(row.id)} <Copy />
                   </CopyAddressContainer>
                 </TableCell>
@@ -230,19 +121,58 @@ const TableWithPagination: React.FC = () => {
               </TableCellCustomInOut>
             </HeaderModalGroupLeft>
             <div>
-              <IconButton>
+              <IconButton onClick={handleClose}>
                 <CloseIcon />
               </IconButton>
             </div>
           </HeaderModalInforTransaction>
-          <HeaderModalInforTransaction>
-            <div>Status</div>
-            <div>Completed</div>
-          </HeaderModalInforTransaction>
-          <HeaderModalInforTransaction>
-            <div>Status</div>
-            <div>Completed</div>
-          </HeaderModalInforTransaction>
+          <ContainerInfoTransactions>
+            <HeaderModalInforTransaction>
+              <div>Status</div>
+              <div>Completed</div>
+            </HeaderModalInforTransaction>
+            <HeaderModalInforTransaction>
+              <div>Date</div>
+              <div>{row.time}</div>
+            </HeaderModalInforTransaction>
+            <HeaderModalInforTransaction>
+              <div>Method</div>
+              <div>Approve</div>
+            </HeaderModalInforTransaction>
+            <HeaderModalInforTransaction>
+              <div>TxID</div>
+              <CopyAddressContainer onClick={() => copyAddress(row.id)}>
+                {row.id} <Copy />
+              </CopyAddressContainer>
+            </HeaderModalInforTransaction>
+            <HeaderModalInforTransaction>
+              <div>Coin</div>
+              <div>{row.token}</div>
+            </HeaderModalInforTransaction>
+            <HeaderModalInforTransaction>
+              <div>Network</div>
+              <div>{row.network}</div>
+            </HeaderModalInforTransaction>
+            <HeaderModalInforTransaction>
+              <div>From</div>
+              <CopyAddressContainer onClick={() => copyAddress(row.from)}>
+                {row.from} <Copy />
+              </CopyAddressContainer>
+            </HeaderModalInforTransaction>
+            <HeaderModalInforTransaction>
+              <div>To</div>
+              <CopyAddressContainer onClick={() => copyAddress(row.to)}>
+                {row.to} <Copy />
+              </CopyAddressContainer>
+            </HeaderModalInforTransaction>
+            <HeaderModalInforTransaction>
+              <div>Fee</div>
+              <div>
+                0.12
+                <span>{row.token}</span>
+              </div>
+            </HeaderModalInforTransaction>
+          </ContainerInfoTransactions>
         </Box>
       </ModalCustom>
     </>
@@ -253,7 +183,7 @@ const App: React.FC = () => {
   return <TableWithPagination />;
 };
 
-const TitleModal = styled.div`
+export const TitleModal = styled.div`
   font-style: normal;
   font-weight: 600;
   font-size: 20px;
@@ -261,23 +191,28 @@ const TitleModal = styled.div`
   color: black;
   margin-right: 10px;
 `;
+const ContainerInfoTransactions = styled.div`
+  width: 100%;
+  margin-top: 40px;
+  color: ${props => props.theme.colors.black};
+`;
 
-const HeaderModalInforTransaction = styled.div`
+export const HeaderModalInforTransaction = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-between !important;
+  width: 100%;
+  margin-bottom: 20px;
 `;
 const HeaderModalGroupLeft = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  text-align: center;
 `;
 export default App;
 type PropsInOut = {
   text: string;
 };
-const ModalCustom = styled(Modal)`
+export const ModalCustom = styled(Modal)`
   .igUPum {
     display: flex;
     -webkit-box-pack: justify !important;
@@ -336,5 +271,5 @@ const style = {
   flexDirection: "column",
   textAlign: "center",
   alignItems: "center",
-  width: 600,
+  width: 750,
 };
