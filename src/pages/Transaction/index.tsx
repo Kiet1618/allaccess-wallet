@@ -18,9 +18,12 @@ import FormGroup from "@mui/material/FormGroup";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress } from "../../utils";
-
 import styled from "styled-components";
-
+// import Box from "@mui/material/Box";
+// import IconButton from "@mui/material/IconButton";
+// import CloseIcon from "@mui/icons-material/Close";
+// import { ModalCustom, HeaderModalInforTransaction, TitleModal } from "../../components/Table";
+// import { ModalSubtitle, ContainerTextFieldTimeCustom } from "../History"
 interface FormData {
   token: string;
   addressTo: string;
@@ -55,7 +58,9 @@ function a11yProps(index: number) {
 const Transaction = () => {
   const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   const [value, setValue] = React.useState(0);
-
+  // const [open, setOpen] = React.useState(false);
+  // const handleOpen = () => setOpen(true);
+  // const handleClose = () => setOpen(false);
   const {
     register,
     handleSubmit,
@@ -456,3 +461,20 @@ export const ContainerTextField = styled.div`
   flex-direction: column;
   justify-content: left;
 `;
+
+// const style = {
+//   position: "absolute" as "absolute",
+//   top: "50%",
+//   left: "50%",
+//   transform: "translate(-50%, -50%)",
+//   bgcolor: "background.paper",
+//   boxShadow: 24,
+//   p: 4,
+//   borderRadius: 4,
+//   display: "flex",
+//   justifyContent: "center",
+//   flexDirection: "column",
+//   textAlign: "center",
+//   alignItems: "center",
+//   width: 600,
+// };

@@ -43,7 +43,7 @@ export const TilePageContainer = styled.div`
   align-items: center;
 `;
 export const ContentPageContainer = styled.div`
-  min-height: 40vh;
+  height: 40vh;
   overflow: auto;
   ${breakpoint("xs")`
     margin: 44px 10px;

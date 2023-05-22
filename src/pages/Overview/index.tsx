@@ -5,7 +5,7 @@ import { myListCoin, rows } from "../../configs/data/test";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { sliceAddress } from "../../utils";
-import React from "react";
+import React, { useState } from "react";
 import {
   NetworkContainerFixed,
   SubHeaderPage,
@@ -34,6 +34,7 @@ import { SearchIcon, ReceiveTransactionHistoty, SendTransactionHistoty, LinkTran
 import CustomButton from "../../components/Button";
 const Overview = () => {
   const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const [number, setNumber] = useState(6);
   return (
     <Page>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -113,7 +114,7 @@ const Overview = () => {
           <ContentPageContainer>
             <ListItemMyAssets>
               {rows ? (
-                rows.map(item => (
+                rows.slice(0, number).map(item => (
                   <ItemMyAssets key={item.amount}>
                     <TransactionLinkContainer>
                       <Tooltip title='Link to view full about this transaction' placement='top-start'>
@@ -144,7 +145,7 @@ const Overview = () => {
             </ListItemMyAssets>
           </ContentPageContainer>
           <OverviewHeaderTopCoin>
-            <CustomButton width='100%' boder='none' text='View all transactions'></CustomButton>
+            <CustomButton onClick={() => setNumber(rows.length)} width='100%' boder='none' text='View all transactions'></CustomButton>
           </OverviewHeaderTopCoin>
         </Grid>
       </Grid>

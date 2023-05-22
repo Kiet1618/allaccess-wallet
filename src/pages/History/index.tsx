@@ -167,7 +167,7 @@ const History = () => {
 };
 export default History;
 
-const ModalSubtitle = styled.div`
+export const ModalSubtitle = styled.div`
   font-weight: 400;
   font-size: 14px;
   line-height: 24px;
@@ -297,6 +297,7 @@ export const ContainerTextFieldId = styled.div`
     color: rgb(113, 128, 150) !important;
   }
 `;
+
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
