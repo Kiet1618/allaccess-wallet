@@ -1,7 +1,7 @@
 import { Page } from "../../styles";
 import { Grid } from "@mui/material";
 import { NetworkContainer } from "../../components/Network";
-import { myListCoin, historyData } from "../../configs/data/test";
+import { myListCoin, rows } from "../../configs/data/test";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { sliceAddress } from "../../utils";
@@ -31,7 +31,6 @@ import { TitlePage } from "../../styles";
 import { ChooseToken } from "../../assets/icon";
 import SearchComponet from "../../components/TextField";
 import { SearchIcon, ReceiveTransactionHistoty, SendTransactionHistoty, LinkTransaction, Empty } from "../../assets/icon";
-
 import CustomButton from "../../components/Button";
 const Overview = () => {
   const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
@@ -113,9 +112,9 @@ const Overview = () => {
           </OverviewHeaderTopCoin>
           <ContentPageContainer>
             <ListItemMyAssets>
-              {historyData ? (
-                historyData.map(item => (
-                  <ItemMyAssets key={item.balance}>
+              {rows ? (
+                rows.map(item => (
+                  <ItemMyAssets key={item.amount}>
                     <TransactionLinkContainer>
                       <Tooltip title='Link to view full about this transaction' placement='top-start'>
                         <IconButton>
@@ -131,7 +130,7 @@ const Overview = () => {
                         </FromToAddressContainer>
                       </div>
                     </TransactionLinkContainer>
-                    <CustomButton text={item.balance + " ETH"} styleButton='default' iconRight={item.from === myAdress ? SendTransactionHistoty : ReceiveTransactionHistoty}></CustomButton>
+                    <CustomButton text={item.amount + item.token} styleButton='default' iconRight={item.from === myAdress ? SendTransactionHistoty : ReceiveTransactionHistoty}></CustomButton>
                   </ItemMyAssets>
                 ))
               ) : (

@@ -17,6 +17,9 @@ import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { EmptyContainer } from "../Overview/overview.css";
+import { rows } from "../../configs/data/test";
+import { Empty } from "../../assets/icon";
 
 const History = () => {
   // const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
@@ -94,7 +97,16 @@ const History = () => {
         </ContainerFilter>
       </TilePageContainer>
       <ContainerDataTable>
-        <TableCustom />
+        {rows ? (
+          <TableCustom />
+        ) : (
+          <EmptyContainer>
+            <ContainerItemEmpty>
+              <Empty></Empty>
+              <p>No records found.</p>
+            </ContainerItemEmpty>
+          </EmptyContainer>
+        )}
       </ContainerDataTable>
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style}>
@@ -154,6 +166,7 @@ const History = () => {
   );
 };
 export default History;
+
 const ModalSubtitle = styled.div`
   font-weight: 400;
   font-size: 14px;
@@ -191,7 +204,12 @@ export const TilePageContainer = styled.div`
   justify-content: center;
   align-items: center;
 `;
-
+const ContainerItemEmpty = styled.div`
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
 const SubTitlePage = styled.div`
   font-weight: ${({ theme }) => theme.fontWeights.regular};
   font-size: ${({ theme }) => theme.fontSizes.xs + "px"};

@@ -17,6 +17,7 @@ import { OverviewHeaderTopCoin, TextHeaderOverview } from "../Overview/overview.
 import FormGroup from "@mui/material/FormGroup";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
+import { sliceAddress, copyAddress } from "../../utils";
 
 import styled from "styled-components";
 
@@ -52,8 +53,7 @@ function a11yProps(index: number) {
 }
 
 const Transaction = () => {
-  const myAdress = "0x15375...b080f";
-  const myFullAddress = "0xea5a9433df5ea7f57206668e71d8577362dfed02";
+  const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   const [value, setValue] = React.useState(0);
 
   const {
@@ -122,7 +122,6 @@ const Transaction = () => {
                         <label>
                           Select coin <SpanRed>*</SpanRed>
                         </label>
-
                         <CustomInput
                           value={token}
                           styleTextField='default'
@@ -228,8 +227,8 @@ const Transaction = () => {
             <ContainerTabs value={value} index={0}>
               <BackgroundPage>
                 <ReceiveTagHeader>Account balance</ReceiveTagHeader>
-                <CopyAddressContainer>
-                  {myAdress} <Copy />
+                <CopyAddressContainer onClick={() => copyAddress(myAdress)}>
+                  {sliceAddress(myAdress)} <Copy />
                 </CopyAddressContainer>
                 <BalanceNumberCard>
                   {myListCoin.find(coin => coin.symbol === token)?.balance} {token}
@@ -257,7 +256,7 @@ const Transaction = () => {
                   </CopyAddressContainer>
                 </ContainerFlexSpace>
                 <AddressContainer>
-                  <CustomInput size='small' disabled defaultValue={myFullAddress} variant='outlined' fullWidth margin='normal' styleTextField='disable' />
+                  <CustomInput size='small' disabled defaultValue={myAdress} variant='outlined' fullWidth margin='normal' styleTextField='disable' />
                 </AddressContainer>
               </BackgroundPage>
             </TabPanel>
@@ -266,7 +265,7 @@ const Transaction = () => {
             <TabPanel value={value} index={1}>
               <ContainerQRCode>
                 <BackgroundPageQR>
-                  <QRCode value={myFullAddress}></QRCode>
+                  <QRCode value={myAdress}></QRCode>
                 </BackgroundPageQR>
               </ContainerQRCode>
             </TabPanel>
