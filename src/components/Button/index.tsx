@@ -35,6 +35,7 @@ type Props = {
   fontSize?: string;
   styleButton?: "primary" | "default" | "inactive" | "style";
   float?: string;
+  spaceBetween?: boolean;
 };
 
 const ButtonComponent = styled(Button)<ButtonProps & Props>`
@@ -86,7 +87,6 @@ const ButtonComponent = styled(Button)<ButtonProps & Props>`
   padding: ${props => props.padding} !important;
   gap: ${props => props.gap} !important;
   display: flex;
-  justify-content: center;
   align-items: center;
   text-align: center;
   line-height: ${props => props.height} !important;
@@ -102,6 +102,7 @@ const ButtonComponent = styled(Button)<ButtonProps & Props>`
         margin-right: 0;
     `}
     cursor: pointer;
+  justify-content: ${props => (props.spaceBetween ? "space-between" : "center")} !important;
 `;
 
 const ButtonTemplate: React.FC<ButtonProps & Props> = (props: ButtonProps & Props) => {
