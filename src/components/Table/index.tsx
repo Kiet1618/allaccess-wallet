@@ -200,14 +200,7 @@ const App: React.FC = () => {
 };
 
 export default App;
-// const CustomBox = styled(Box)`
-//   ${breakpoint("xs")`
-//        font-size: 10px !important;
-//     `}
-//   ${breakpoint("md")`
-//       font-size: 16px !important;
-//   `}
-// `;
+
 export const TitleModal = styled.div`
   font-style: normal;
   font-weight: 600;

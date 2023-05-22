@@ -1,7 +1,7 @@
 import { Page, TitlePage } from "../../styles";
 import base from "../../styles/theme/base";
 import { createBreakpoint } from "styled-components-breakpoint";
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import styled from "styled-components";
 const breakpoint = createBreakpoint(base.breakpoints);
 import MenuItem from "@mui/material/MenuItem";
@@ -19,7 +19,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { EmptyContainer } from "../Overview/overview.css";
 import { rows } from "../../configs/data/test";
-import { Empty, Filter } from "../../assets/icon";
+import { Empty, Filter, SearchIcon } from "../../assets/icon";
 
 const History = () => {
   // const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
@@ -36,6 +36,21 @@ const History = () => {
   const [openFilter, setOpenFilter] = React.useState(false);
   const handleOpenFilter = () => setOpenFilter(true);
   const handleCloseFilter = () => setOpenFilter(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+  const handleResize = () => {
+    if (window.innerWidth < 600) {
+      setIsDesktop(false);
+    } else {
+      setIsDesktop(true);
+    }
+  };
+  useLayoutEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   return (
     <Page>
       <TilePageContainer>
@@ -99,7 +114,7 @@ const History = () => {
           </ContainerTextFieldId>
         </ContainerFilter>
         <ContainerFilterButton>
-          <CustomButton text='Filter' styleButton='style' iconRight={Filter} />
+          <CustomButton onClick={handleOpenFilter} text='Filter' styleButton='style' iconRight={Filter} />
         </ContainerFilterButton>
       </TilePageContainer>
       <ContainerDataTable>
@@ -115,7 +130,7 @@ const History = () => {
         )}
       </ContainerDataTable>
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
-        <Box sx={style}>
+        <Box sx={style} width={isDesktop ? 500 : 320}>
           <HeaderModalInforTransaction>
             <TitleModal>Customize time range</TitleModal>
             <div>
@@ -166,6 +181,67 @@ const History = () => {
             </ContainerTextFieldTimeCustom>
           </HeaderModalInforTransaction>
           <CustomButton onClick={handleClose} mTop='30px' size='large' styleButton='primary' width='100%' text='Continue' />
+        </Box>
+      </ModalCustom>
+      <ModalCustom open={openFilter} onClose={handleCloseFilter} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
+        <Box sx={styleMobile} width={300}>
+          <TitleModal>Filter</TitleModal>
+          <CustomInput
+            InputProps={{
+              startAdornment: <SearchIcon />,
+            }}
+            placeholder={"Search TxID"}
+            size='small'
+            hiddenLabel
+            fullWidth
+            color='primary'
+            styleTextField='disable'
+            width='100%'
+            margin='normal'
+          />
+          <label style={{ marginBottom: "5px", marginTop: "5px" }}>Time</label>
+          <CustomInput
+            value={time}
+            styleTextField='default'
+            select
+            id='time'
+            size='small'
+            onChange={e => setTime(e.target.value)}
+            SelectProps={{
+              IconComponent: () => <TimeDropdown style={{ marginRight: "10px" }} />,
+            }}
+          >
+            <MenuItem value={7}>Past 7 days</MenuItem>
+            <MenuItem value={30}>Past 30 days</MenuItem>
+            <MenuItem value={90}>Past 90 days</MenuItem>
+            <MenuItem onClick={handleOpen} value={0}>
+              Custimized
+            </MenuItem>
+          </CustomInput>
+          <label style={{ marginBottom: "5px", marginTop: "5px" }}>Method</label>
+          <CustomInput value={method} styleTextField='default' select id='method' size='small' onChange={e => setMethod(e.target.value)}>
+            <MenuItem value={"All"}>All</MenuItem>
+            <MenuItem value={"Receive"}>Receive</MenuItem>
+            <MenuItem value={"Execute"}>Execute</MenuItem>
+            <MenuItem value={"LinearDeposit"}>Linear Deposit</MenuItem>
+            <MenuItem value={"Approve"}>Approve</MenuItem>
+          </CustomInput>
+          <label style={{ marginBottom: "5px", marginTop: "5px" }}>Network</label>
+          <CustomInput value={network} styleTextField='default' select id='network' size='small' onChange={e => setNetwork(e.target.value)}>
+            <MenuItem value={"0"}>All mainnet</MenuItem>
+            {listNetWorks.map(network => (
+              <MenuItem key={network.chainID} value={network.chainID}>
+                {network.description}
+              </MenuItem>
+            ))}
+          </CustomInput>
+          <label style={{ marginBottom: "5px", marginTop: "5px" }}>Status</label>
+          <CustomInput value={status} styleTextField='default' select id='status' size='small' onChange={e => setStatus(e.target.value)}>
+            <MenuItem value={"All"}>All</MenuItem>
+            <MenuItem value={"Completed"}>Completed</MenuItem>
+            <MenuItem value={"Incomplete"}>Incomplete</MenuItem>
+            <MenuItem value={"Pending"}>Pending</MenuItem>
+          </CustomInput>
         </Box>
       </ModalCustom>
     </Page>
@@ -333,5 +409,20 @@ const style = {
   flexDirection: "column",
   textAlign: "center",
   alignItems: "center",
-  width: 600,
+};
+
+const styleMobile = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 4,
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
+  textAlign: "left",
+  alignItems: "left",
 };
