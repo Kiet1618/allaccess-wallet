@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-
+import React, { useState, useLayoutEffect } from "react";
 import { Table, TableContainer, TableBody, TableCell, TableHead, TableRow, Pagination } from "@mui/material";
 import styled from "styled-components";
 import base from "../../styles/theme/base";
@@ -13,7 +12,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import { sliceAddress, copyAddress } from "../../utils";
 import { rows, Row } from "../../configs/data/test";
 const breakpoint = createBreakpoint(base.breakpoints);
-
+const sliceAddressIdTableCell = (str: string) => {
+  if (str.length > 35) {
+    return str.substr(0, 5) + "..." + str.substr(str.length - 3, str.length);
+  }
+  return str;
+};
 const TableWithPagination: React.FC = () => {
   const [page, setPage] = useState(1);
   const rowsPerPage = 5;
@@ -21,7 +25,21 @@ const TableWithPagination: React.FC = () => {
   const handleChangePage = (event: React.ChangeEvent<unknown>, newPage: number) => {
     setPage(newPage);
   };
-
+  const [isDesktop, setIsDesktop] = useState(true);
+  const handleResize = () => {
+    if (window.innerWidth < 600) {
+      setIsDesktop(false);
+    } else {
+      setIsDesktop(true);
+    }
+  };
+  useLayoutEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -55,7 +73,7 @@ const TableWithPagination: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCellCustom>Time</TableCellCustom>
+              <TableCell>Time</TableCell>
               <TableCell>Method</TableCell>
               <TableCellCustom>Amount</TableCellCustom>
               <TableCellCustom>From</TableCellCustom>
@@ -69,7 +87,7 @@ const TableWithPagination: React.FC = () => {
           <TableBody>
             {rows.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage).map(row => (
               <TableRow key={row.id}>
-                <TableCellCustom>{row.time}</TableCellCustom>
+                <TableCell>{row.time}</TableCell>
                 <TableCell>
                   <CustomMethod>{row.method}</CustomMethod>
                 </TableCell>
@@ -94,7 +112,7 @@ const TableWithPagination: React.FC = () => {
                 <TableCellCustom>{row.network}</TableCellCustom>
                 <TableCell>
                   <CopyAddressContainer onClick={() => copyAddress(row.id)}>
-                    {sliceAddress(row.id)} <Copy />
+                    {isDesktop ? sliceAddress(row.id) : sliceAddressIdTableCell(row.id)} <Copy />
                   </CopyAddressContainer>
                 </TableCell>
                 <TableCell>
@@ -109,7 +127,7 @@ const TableWithPagination: React.FC = () => {
       </TableContainer>
       <Pagination count={Math.ceil(rows.length / rowsPerPage)} page={page} onChange={handleChangePage} shape='rounded' />
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
-        <Box sx={style}>
+        <Box sx={style} width={isDesktop ? 700 : 300}>
           <HeaderModalInforTransaction>
             <HeaderModalGroupLeft>
               <TitleModal>Transfer details</TitleModal>
@@ -140,7 +158,7 @@ const TableWithPagination: React.FC = () => {
             <HeaderModalInforTransaction>
               <div>TxID</div>
               <CopyAddressContainer onClick={() => copyAddress(row.id)}>
-                {sliceAddress(row.id)} <Copy />
+                {isDesktop ? row.id : sliceAddress(row.id)} <Copy />
               </CopyAddressContainer>
             </HeaderModalInforTransaction>
             <HeaderModalInforTransaction>
@@ -154,13 +172,13 @@ const TableWithPagination: React.FC = () => {
             <HeaderModalInforTransaction>
               <div>From</div>
               <CopyAddressContainer onClick={() => copyAddress(row.from)}>
-                {sliceAddress(row.from)} <Copy />
+                {isDesktop ? row.from : sliceAddress(row.from)} <Copy />
               </CopyAddressContainer>
             </HeaderModalInforTransaction>
             <HeaderModalInforTransaction>
               <div>To</div>
               <CopyAddressContainer onClick={() => copyAddress(row.to)}>
-                {sliceAddress(row.to)} <Copy />
+                {isDesktop ? row.to : sliceAddress(row.to)} <Copy />
               </CopyAddressContainer>
             </HeaderModalInforTransaction>
             <HeaderModalInforTransaction>
@@ -182,14 +200,14 @@ const App: React.FC = () => {
 };
 
 export default App;
-const CustomBox = styled(Box)`
-  ${breakpoint("xs")`
-       font-size: 10px !important;
-    `}
-  ${breakpoint("md")`
-      font-size: 16px !important;
-  `}
-`;
+// const CustomBox = styled(Box)`
+//   ${breakpoint("xs")`
+//        font-size: 10px !important;
+//     `}
+//   ${breakpoint("md")`
+//       font-size: 16px !important;
+//   `}
+// `;
 export const TitleModal = styled.div`
   font-style: normal;
   font-weight: 600;
