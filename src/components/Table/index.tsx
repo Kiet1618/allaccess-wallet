@@ -2,8 +2,8 @@ import React, { useState } from "react";
 
 import { Table, TableContainer, TableBody, TableCell, TableHead, TableRow, Pagination } from "@mui/material";
 import styled from "styled-components";
-// import base from "../../styles/theme/base";
-// import { createBreakpoint } from "styled-components-breakpoint";
+import base from "../../styles/theme/base";
+import { createBreakpoint } from "styled-components-breakpoint";
 import { Copy, Eyes } from "../../assets/icon";
 import { CopyAddressContainer } from "../../pages/Transaction";
 import IconButton from "@mui/material/IconButton";
@@ -12,7 +12,7 @@ import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import { sliceAddress, copyAddress } from "../../utils";
 import { rows, Row } from "../../configs/data/test";
-// const breakpoint = createBreakpoint(base.breakpoints);
+const breakpoint = createBreakpoint(base.breakpoints);
 
 const TableWithPagination: React.FC = () => {
   const [page, setPage] = useState(1);
@@ -55,13 +55,13 @@ const TableWithPagination: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Time</TableCell>
+              <TableCellCustom>Time</TableCellCustom>
               <TableCell>Method</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>From</TableCell>
-              <TableCell></TableCell>
-              <TableCell>To</TableCell>
-              <TableCell>Network</TableCell>
+              <TableCellCustom>Amount</TableCellCustom>
+              <TableCellCustom>From</TableCellCustom>
+              <TableCellCustom></TableCellCustom>
+              <TableCellCustom>To</TableCellCustom>
+              <TableCellCustom>Network</TableCellCustom>
               <TableCell>TxID</TableCell>
               <TableCell></TableCell>
             </TableRow>
@@ -69,30 +69,29 @@ const TableWithPagination: React.FC = () => {
           <TableBody>
             {rows.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage).map(row => (
               <TableRow key={row.id}>
-                <TableCell>{row.time}</TableCell>
+                <TableCellCustom>{row.time}</TableCellCustom>
                 <TableCell>
                   <CustomMethod>{row.method}</CustomMethod>
                 </TableCell>
-                <TableCell>
+                <TableCellCustom>
                   {row.amount} {row.token}
-                </TableCell>
-                <TableCell>
+                </TableCellCustom>
+                <TableCellCustom>
                   <CopyAddressContainer onClick={() => copyAddress(row.from)}>
                     {sliceAddress(row.from)} <Copy />
                   </CopyAddressContainer>
-                </TableCell>
-
-                <TableCell>
+                </TableCellCustom>
+                <TableCellCustom>
                   <TableCellCustomInOut text={row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}>
                     {row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}
                   </TableCellCustomInOut>
-                </TableCell>
-                <TableCell>
+                </TableCellCustom>
+                <TableCellCustom>
                   <CopyAddressContainer onClick={() => copyAddress(row.to)}>
                     {sliceAddress(row.to)} <Copy />
                   </CopyAddressContainer>
-                </TableCell>
-                <TableCell>{row.network}</TableCell>
+                </TableCellCustom>
+                <TableCellCustom>{row.network}</TableCellCustom>
                 <TableCell>
                   <CopyAddressContainer onClick={() => copyAddress(row.id)}>
                     {sliceAddress(row.id)} <Copy />
@@ -108,7 +107,6 @@ const TableWithPagination: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
-
       <Pagination count={Math.ceil(rows.length / rowsPerPage)} page={page} onChange={handleChangePage} shape='rounded' />
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style}>
@@ -142,7 +140,7 @@ const TableWithPagination: React.FC = () => {
             <HeaderModalInforTransaction>
               <div>TxID</div>
               <CopyAddressContainer onClick={() => copyAddress(row.id)}>
-                {row.id} <Copy />
+                {sliceAddress(row.id)} <Copy />
               </CopyAddressContainer>
             </HeaderModalInforTransaction>
             <HeaderModalInforTransaction>
@@ -156,13 +154,13 @@ const TableWithPagination: React.FC = () => {
             <HeaderModalInforTransaction>
               <div>From</div>
               <CopyAddressContainer onClick={() => copyAddress(row.from)}>
-                {row.from} <Copy />
+                {sliceAddress(row.from)} <Copy />
               </CopyAddressContainer>
             </HeaderModalInforTransaction>
             <HeaderModalInforTransaction>
               <div>To</div>
               <CopyAddressContainer onClick={() => copyAddress(row.to)}>
-                {row.to} <Copy />
+                {sliceAddress(row.to)} <Copy />
               </CopyAddressContainer>
             </HeaderModalInforTransaction>
             <HeaderModalInforTransaction>
@@ -183,6 +181,15 @@ const App: React.FC = () => {
   return <TableWithPagination />;
 };
 
+export default App;
+const CustomBox = styled(Box)`
+  ${breakpoint("xs")`
+       font-size: 10px !important;
+    `}
+  ${breakpoint("md")`
+      font-size: 16px !important;
+  `}
+`;
 export const TitleModal = styled.div`
   font-style: normal;
   font-weight: 600;
@@ -208,7 +215,6 @@ const HeaderModalGroupLeft = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
-export default App;
 type PropsInOut = {
   text: string;
 };
@@ -225,8 +231,13 @@ const CustomMethod = styled.div`
   padding: 5px 5px;
   border: solid 1px #cfd6dd;
   color: #272e35;
-  width: 100px;
   border-radius: 8px;
+  ${breakpoint("xs")`
+       width: auto !important;
+    `}
+  ${breakpoint("md")`
+        width: 100px !important;
+  `}
 `;
 const TableCellCustomInOut = styled.div<PropsInOut>`
   background-color: ${props => {
@@ -257,6 +268,15 @@ const TableCellCustomInOut = styled.div<PropsInOut>`
   text-align: center;
 `;
 
+const TableCellCustom = styled(TableCell)`
+  ${breakpoint("xs")`
+      display: none !important;
+    `}
+  ${breakpoint("md")`
+      display: table-cell !important;
+  `}
+`;
+
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -271,5 +291,4 @@ const style = {
   flexDirection: "column",
   textAlign: "center",
   alignItems: "center",
-  width: 750,
 };

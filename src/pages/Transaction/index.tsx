@@ -348,7 +348,8 @@ const ContainerFlexSpace = styled.div`
 `;
 export const ContainerTabs = styled(TabPanel)`
   .css-ahj2mt-MuiTypography-root {
-    width: 100%;
+    width: 100% !important;
+    padding: 0 !important;
   }
 `;
 const ContainerRight = styled.div`

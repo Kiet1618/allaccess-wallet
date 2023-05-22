@@ -73,11 +73,12 @@ const Profile = () => {
                 <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
                   <Grid item xs={100} md={30}>
                     <ContainerAvatar>
-                      <Avatar alt='Remy Sharp' src='https://haycafe.vn/wp-content/uploads/2021/11/Anh-avatar-dep-chat-lam-hinh-dai-dien.jpg' sx={{ width: 200, height: 200 }} />
+                      <Avatar alt='Remy Sharp' src='https://images.ctfassets.net/fu9did2d8yaw/2rUzSj8VDtr9YBmrU61c2G/a84a48f14f027886374cc618df4ae176/BAYC.png' sx={{ width: 200, height: 200 }} />
                       <CustomButton mTop='20px' mBottom='20px' text='Change avatar' styleButton='primary'></CustomButton>
                       <CopyAddressContainer onClick={() => copyAddress(myAdress)}>
                         {sliceAddress(myAdress)} <Copy />
                       </CopyAddressContainer>
+                      CustomBox' is assigned a value but never used
                     </ContainerAvatar>
                   </Grid>
                   <Grid item xs={100} md={70}>

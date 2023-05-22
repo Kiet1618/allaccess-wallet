@@ -19,7 +19,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { EmptyContainer } from "../Overview/overview.css";
 import { rows } from "../../configs/data/test";
-import { Empty } from "../../assets/icon";
+import { Empty, Filter } from "../../assets/icon";
 
 const History = () => {
   // const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
@@ -33,6 +33,9 @@ const History = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [openFilter, setOpenFilter] = React.useState(false);
+  const handleOpenFilter = () => setOpenFilter(true);
+  const handleCloseFilter = () => setOpenFilter(false);
   return (
     <Page>
       <TilePageContainer>
@@ -95,6 +98,9 @@ const History = () => {
             <CustomInput onChange={e => setSearchId(e.target.value)} placeholder='Enter ID' id='search-id' size='small' value={searchId} styleTextField='default' />
           </ContainerTextFieldId>
         </ContainerFilter>
+        <ContainerFilterButton>
+          <CustomButton text='Filter' styleButton='style' iconRight={Filter} />
+        </ContainerFilterButton>
       </TilePageContainer>
       <ContainerDataTable>
         {rows ? (
@@ -183,11 +189,17 @@ const ContainerFilter = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  ${breakpoint("xs")`
+    display: none;
+`}
+  ${breakpoint("md")`
+     display: flex;
+  `}
 `;
 const ContainerDataTable = styled.div`
   ${breakpoint("xs")`
     margin: 10px 10px;
-`}
+  `}
   ${breakpoint("lg")`
     margin: 10px 44px;
   `}
@@ -230,6 +242,15 @@ const SubTitlePage = styled.div`
   ${breakpoint("lg")`
      margin: 20px 0;
      width: 60%;
+  `}
+`;
+const ContainerFilterButton = styled.div`
+  margin: 20px 10px;
+  ${breakpoint("xs")`
+    display: block;
+  `}
+  ${breakpoint("md")`
+     display: none;
   `}
 `;
 export const ContainerTextFieldTime = styled.div`
