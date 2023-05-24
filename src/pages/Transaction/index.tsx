@@ -9,7 +9,6 @@ import CustomButton from "../../components/Button";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import CustomInput from "../../components/TextField";
-import LoadingButton from "../../components/LoadingButton";
 import { NetworkContainer } from "../../components/Network";
 import { myListCoin, privateKey } from "../../configs/data/test";
 import { Copy, DropdownBlack } from "../../assets/icon";
@@ -58,7 +57,7 @@ function a11yProps(index: number) {
 
 const Transaction = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { web3, getBalance } = useBlockchain("5");
+  const { web3, getBalance } = useBlockchain();
 
   const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   const [value, setValue] = useState(0);
@@ -89,6 +88,7 @@ const Transaction = () => {
   };
   const onSubmit = React.useCallback(async (values: FormData) => {
     setIsSubmitting(true);
+    console.log(values.addressTo);
     await sendTransaction(web3 as Web3, values, privateKey);
     setIsSubmitting(false);
     reset();
@@ -228,7 +228,7 @@ const Transaction = () => {
                       <TextHeaderOverview>$12.34</TextHeaderOverview>
                     </ContainerFlexSpace>
                     <ContainerRight>
-                      <LoadingButton variant='contained' loadingPosition='end' loading={isSubmitting} type='submit' text='Transfer' styleButton='primary' width='150px' height='50px'></LoadingButton>
+                      <CustomButton variant='contained' loadingPosition='end' loading={isSubmitting} type='submit' text='Transfer' styleButton='primary' width='150px' height='50px'></CustomButton>
                     </ContainerRight>
                   </FormGroup>
                 </form>

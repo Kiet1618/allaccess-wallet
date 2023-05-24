@@ -4,7 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import ButtonCustom from "../Button";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { listNetWorks } from "../../configs/data/menu";
+import { listNetWorks } from "../../configs/data";
 import base from "../../styles/theme/base";
 import { createBreakpoint } from "styled-components-breakpoint";
 const breakpoint = createBreakpoint(base.breakpoints);
