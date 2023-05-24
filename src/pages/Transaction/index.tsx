@@ -232,7 +232,6 @@ const Transaction = () => {
                     </ContainerRight>
                   </FormGroup>
                 </form>
-                Compiled
               </BackgroundPage>
             </ContainerTabs>
           </Grid>
