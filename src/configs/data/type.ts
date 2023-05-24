@@ -10,3 +10,11 @@ export type Route = {
   breadcrumbName: string;
   layout: boolean;
 };
+
+export type Token = {
+  rpcUrls: string;
+  chainId: string;
+  symbol: string;
+  name: string;
+  tokenContract?: string;
+};

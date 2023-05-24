@@ -15,13 +15,13 @@ import { Copy, DropdownBlack } from "../../assets/icon";
 import QRCode from "react-qr-code";
 import { OverviewHeaderTopCoin, TextHeaderOverview } from "../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress } from "../../utils";
 import styled from "styled-components";
 import Web3 from "web3";
 import { sendTransaction, useBlockchain } from "../../blockchain";
-// import { TransferNative } from "../../blockchain"
+import { useAppDispatch, useAppSelector } from "../../store";
 
 export type FormData = {
   token: string;
@@ -57,13 +57,12 @@ function a11yProps(index: number) {
 
 const Transaction = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { web3, getBalance } = useBlockchain();
-
+  const networkState = useAppSelector(state => state.network);
+  const [provider, setProvider] = useState(networkState.currentListTokens.data);
+  const { web3, getBalance } = useBlockchain(provider);
   const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   const [value, setValue] = useState(0);
-  // const [open, setOpen] = React.useState(false);
-  // const handleOpen = () => setOpen(true);
-  // const handleClose = () => setOpen(false);
+
   const {
     register,
     handleSubmit,
@@ -88,7 +87,8 @@ const Transaction = () => {
   };
   const onSubmit = React.useCallback(async (values: FormData) => {
     setIsSubmitting(true);
-    console.log(values.addressTo);
+    console.log(networkState.currentListTokens.data);
+    console.log(web3?.currentProvider);
     await sendTransaction(web3 as Web3, values, privateKey);
     setIsSubmitting(false);
     reset();

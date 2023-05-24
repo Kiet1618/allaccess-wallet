@@ -6,18 +6,18 @@ import { TransferNative } from "./type";
 export const useBlockchain = (rpcUrl: string = "https://goerli.blockpi.network/v1/rpc/public") => {
   try {
     const web3 = new Web3(rpcUrl);
-    return { web3, getBalance, sendTransaction, sendTransactionToken, formatValue };
+    return { web3, getGasPrice, getBalance, sendTransaction, sendTransactionToken, formatValue };
   } catch (error) {
     console.log(error);
     return { error };
   }
 };
 
-// export const getGasPrice = async (web3: Web3) => {
-//   const price = await web3.eth.getGasPrice();
-//   const ethValue = Math.round((parseInt(price, 16) / 10 ** 18) * 1000000) / 1000000;
-//   return ethValue;
-// };
+export const getGasPrice = async (web3: Web3) => {
+  const price = await web3.eth.getGasPrice();
+  const ethValue = Math.round((parseInt(price, 16) / 10 ** 18) * 1000000) / 1000000;
+  return ethValue;
+};
 
 export const formatValue = (web3: Web3, value: string) => {
   try {

@@ -221,7 +221,7 @@ export const HeaderModalInforTransaction = styled.div`
   width: 100%;
   margin-bottom: 20px;
 `;
-const HeaderModalGroupLeft = styled.div`
+export const HeaderModalGroupLeft = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;

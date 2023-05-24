@@ -7,7 +7,7 @@ const breakpoint = createBreakpoint(base.breakpoints);
 import MenuItem from "@mui/material/MenuItem";
 import CustomInput from "../../components/TextField";
 import CustomButton from "../../components/Button";
-import { listNetWorks } from "../../configs/data/menu";
+import { listNetWorks } from "../../configs/data";
 import { TimeDropdown } from "../../assets/icon";
 import TableCustom, { ModalCustom, HeaderModalInforTransaction, TitleModal } from "../../components/Table";
 import dayjs, { Dayjs } from "dayjs";

@@ -21,8 +21,10 @@ import { ReactComponent as TimeDropdown } from "./system/time.svg";
 import { ReactComponent as Eyes } from "./system/Eyes.svg";
 import { ReactComponent as Filter } from "./system/filter-square.svg";
 import { ReactComponent as LogoText } from "./system/logo-no-background.svg";
+import { ReactComponent as Move } from "./system/move.svg";
 
 export {
+  Move,
   LogoText,
   Filter,
   Eyes,
