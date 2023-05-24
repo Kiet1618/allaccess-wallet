@@ -203,3 +203,4 @@ export const rows: Row[] = [
     id: "0xed3a265cebd603aa2cb9771be5c6ce109999999999999999999999999999999",
   },
 ];
+export const privateKey = "e19d5570950218a0f385f098b9b6c050a63aca31a286da271075a33a8ae7b3da";
