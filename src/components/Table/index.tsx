@@ -1,5 +1,6 @@
 import React, { useState, useLayoutEffect } from "react";
 import { Table, TableContainer, TableBody, TableCell, TableHead, TableRow, Pagination } from "@mui/material";
+import Box from "@mui/material/Box";
 import styled from "styled-components";
 import base from "../../styles/theme/base";
 import { createBreakpoint } from "styled-components-breakpoint";
@@ -7,7 +8,6 @@ import { Copy, Eyes } from "../../assets/icon";
 import { CopyAddressContainer } from "../../pages/Transaction";
 import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import { sliceAddress, copyAddress } from "../../utils";
 import { rows, Row } from "../../configs/data/test";

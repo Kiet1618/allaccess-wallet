@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import styled from "styled-components";
 import MenuItem from "@mui/material/MenuItem";
 import ButtonCustom from "../Button";
@@ -38,6 +38,13 @@ export const NetworkContainer = () => {
       setIsDesktop(true);
     }
   };
+  useLayoutEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   return (
     <Container>
@@ -82,7 +89,7 @@ const ChangeNetworkTag = styled.div`
   color: #42526e;
   margin-bottom: 20px;
 `;
-const ChangeNetworkTagSub = styled.div`
+export const ChangeNetworkTagSub = styled.div`
   font-family: "Inter";
   font-style: normal;
   font-weight: 400;

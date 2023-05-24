@@ -11,17 +11,19 @@ import FormControl from "@mui/material/FormControl";
 import CustomInput from "../../components/TextField";
 import { NetworkContainer } from "../../components/Network";
 import { myListCoin, privateKey } from "../../configs/data/test";
-import { Copy, DropdownBlack } from "../../assets/icon";
+import { Copy, DropdownBlack, Success } from "../../assets/icon";
 import QRCode from "react-qr-code";
 import { OverviewHeaderTopCoin, TextHeaderOverview } from "../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
-import React, { useEffect, useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress } from "../../utils";
 import styled from "styled-components";
 import Web3 from "web3";
 import { sendTransaction, useBlockchain } from "../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../store";
+import { ModalCustom, HeaderModalInforTransaction } from "../../components/Table";
+import Box from "@mui/material/Box";
 
 export type FormData = {
   token: string;
@@ -62,7 +64,9 @@ const Transaction = () => {
   const { web3, getBalance } = useBlockchain(provider);
   const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   const [value, setValue] = useState(0);
-
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const {
     register,
     handleSubmit,
@@ -90,6 +94,7 @@ const Transaction = () => {
     console.log(networkState.currentListTokens.data);
     console.log(web3?.currentProvider);
     await sendTransaction(web3 as Web3, values, privateKey);
+    setOpen(true);
     setIsSubmitting(false);
     reset();
   }, []);
@@ -97,6 +102,21 @@ const Transaction = () => {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+  const [isDesktop, setIsDesktop] = useState(true);
+  const handleResize = () => {
+    if (window.innerWidth < 600) {
+      setIsDesktop(false);
+    } else {
+      setIsDesktop(true);
+    }
+  };
+  useLayoutEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
   const [token, setToken] = React.useState("ETH");
   return (
     <Page>
@@ -284,6 +304,22 @@ const Transaction = () => {
           </Grid>
         </Grid>
       </Grid>
+      <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
+        <Box sx={style} width={isDesktop ? 700 : 300}>
+          <HeaderModalInforTransaction>
+            <ContainerIconSuccess>
+              <Success />
+            </ContainerIconSuccess>
+          </HeaderModalInforTransaction>
+          <TransferSuccessTitle>Transfer successfully</TransferSuccessTitle>
+          <TransferSuccessSub>You are done the transaction successfully. You can now review your transaction in your history</TransferSuccessSub>
+
+          <ContainerTwoButtonModal>
+            <CustomButton onClick={() => handleClose()} width='230px' height='44px' styleButton='inactive' text='View transfer history'></CustomButton>
+            <CustomButton onClick={() => handleClose()} width='135px' height='44px' styleButton='primary' text='Ok, I got it'></CustomButton>
+          </ContainerTwoButtonModal>
+        </Box>
+      </ModalCustom>
     </Page>
   );
 };
@@ -295,7 +331,20 @@ const BackgroundPageQR = styled.div`
   border-radius: 8px;
   box-shadow: 5px 5px 5px 5px rgba(88, 88, 88, 0.2);
 `;
-
+const TransferSuccessTitle = styled.div`
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 40px;
+  color: rgba(0, 0, 0, 0.85);
+`;
+const TransferSuccessSub = styled.div`
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #42526e;
+  width: 418px;
+  margin-top: 20px;
+`;
 const AddressContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -470,19 +519,32 @@ export const ContainerTextField = styled.div`
   justify-content: left;
 `;
 
-// const style = {
-//   position: "absolute" as "absolute",
-//   top: "50%",
-//   left: "50%",
-//   transform: "translate(-50%, -50%)",
-//   bgcolor: "background.paper",
-//   boxShadow: 24,
-//   p: 4,
-//   borderRadius: 4,
-//   display: "flex",
-//   justifyContent: "center",
-//   flexDirection: "column",
-//   textAlign: "center",
-//   alignItems: "center",
-//   width: 600,
-// };
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 4,
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
+  textAlign: "center",
+  alignItems: "center",
+};
+
+const ContainerIconSuccess = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
+`;
+const ContainerTwoButtonModal = styled.div`
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  align-items: center;
+`;

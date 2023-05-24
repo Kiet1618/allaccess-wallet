@@ -22,8 +22,10 @@ import { ReactComponent as Eyes } from "./system/Eyes.svg";
 import { ReactComponent as Filter } from "./system/filter-square.svg";
 import { ReactComponent as LogoText } from "./system/logo-no-background.svg";
 import { ReactComponent as Move } from "./system/move.svg";
+import { ReactComponent as Success } from "./system/modal_image.svg";
 
 export {
+  Success,
   Move,
   LogoText,
   Filter,
