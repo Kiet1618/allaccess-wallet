@@ -18,7 +18,7 @@ type Props = {
       title?: string | undefined;
     }
   >;
-  boder?: string;
+  border?: string;
   width?: string;
   height?: string;
   borderRadius?: string;
@@ -29,7 +29,7 @@ type Props = {
   pLeft?: string;
   pTop?: string;
   pRight?: string;
-  pBotton?: string;
+  pBottom?: string;
   padding?: string;
   gap?: string;
   fontSize?: string;
@@ -71,7 +71,7 @@ const ButtonComponent = styled(LoadingButton)<LoadingButtonProps & Props>`
       return `solid 1px ${props.theme.colors.brands.blue500}`;
     }
   }} !important;
-  border: ${props => props.boder} !important;
+  border: ${props => props.border} !important;
 
   color: ${props => {
     if (props.styleButton === "primary") {

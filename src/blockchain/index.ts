@@ -1,9 +1,8 @@
 import Web3 from "web3";
 import abi from "../common/ERC20_ABI.json";
 import { FormData } from "../pages/Transaction";
-import { TransferNative } from "./type";
 
-export const useBlockchain = (rpcUrl: string = "https://goerli.blockpi.network/v1/rpc/public") => {
+export const useBlockchain = (rpcUrl: string) => {
   try {
     const web3 = new Web3(rpcUrl);
     return { web3, getGasPrice, getBalance, sendTransaction, sendTransactionToken, formatValue };
@@ -50,7 +49,7 @@ export const getBalance = async (web3: Web3, address: string, symbol: string = "
 };
 
 export const sendTransaction = async (web3: Web3, data: FormData, privateKey: string) => {
-  const { addressTo, amount, token, tokenContract } = data;
+  const { addressTo, amount } = data;
   try {
     const weiValue = Math.round(parseFloat(amount) * 10 ** 18);
     const hexValue = web3.utils.toHex(weiValue ? weiValue : 0);

@@ -9,7 +9,7 @@ import CustomInput from "../../components/TextField";
 import CustomButton from "../../components/Button";
 import { listNetWorks } from "../../configs/data";
 import { TimeDropdown } from "../../assets/icon";
-import TableCustom, { ModalCustom, HeaderModalInforTransaction, TitleModal } from "../../components/Table";
+import TableCustom, { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../components/Table";
 import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -131,18 +131,18 @@ const History = () => {
       </ContainerDataTable>
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style} width={isDesktop ? 500 : 320}>
-          <HeaderModalInforTransaction>
+          <HeaderModalInfoTransaction>
             <TitleModal>Customize time range</TitleModal>
             <div>
               <IconButton onClick={handleClose}>
                 <CloseIcon />
               </IconButton>
             </div>
-          </HeaderModalInforTransaction>
-          <HeaderModalInforTransaction>
+          </HeaderModalInfoTransaction>
+          <HeaderModalInfoTransaction>
             <ModalSubtitle>Select your time range with in 12 months</ModalSubtitle>
-          </HeaderModalInforTransaction>
-          <HeaderModalInforTransaction>
+          </HeaderModalInfoTransaction>
+          <HeaderModalInfoTransaction>
             <ContainerTextFieldTimeCustom>
               <label style={{ marginBottom: "5px" }}>Start time</label>
               <CustomInput
@@ -179,7 +179,7 @@ const History = () => {
                 </LocalizationProvider>
               </CustomInput>
             </ContainerTextFieldTimeCustom>
-          </HeaderModalInforTransaction>
+          </HeaderModalInfoTransaction>
           <CustomButton onClick={handleClose} mTop='30px' size='large' styleButton='primary' width='100%' text='Continue' />
         </Box>
       </ModalCustom>

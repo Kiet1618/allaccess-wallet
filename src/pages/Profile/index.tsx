@@ -11,7 +11,7 @@ import base from "../../styles/theme/base";
 import { createBreakpoint } from "styled-components-breakpoint";
 import { Devices } from "../../configs/data/test";
 import { Computer, Trash } from "../../assets/icon";
-import { ConatainerDevice, GroupLeftItemDevice, ContainerText, NameText, IpText } from "../MultipleFactors";
+import { ContainerDevice, GroupLeftItemDevice, ContainerText, NameText, IpText } from "../MultipleFactors";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
@@ -131,7 +131,7 @@ const Profile = () => {
               <BackgroundPage>
                 <TextHeaderCard>List devices</TextHeaderCard>
                 {Devices.map(device => (
-                  <ConatainerDevice key={device.id}>
+                  <ContainerDevice key={device.id}>
                     <GroupLeftItemDevice>
                       <Computer />
                       <ContainerText>
@@ -148,7 +148,7 @@ const Profile = () => {
                         <Trash />
                       </IconButton>
                     </Tooltip>
-                  </ConatainerDevice>
+                  </ContainerDevice>
                 ))}
               </BackgroundPage>
             </ListDeviecsContainer>
@@ -159,7 +159,7 @@ const Profile = () => {
             <TitlePage>Delete devices</TitlePage>
             <SubTitlePage>This device will be erased and automatically logged out, are you sure?</SubTitlePage>
             <ContainerDeviceModal>
-              <ConatainerDevice>
+              <ContainerDevice>
                 <GroupLeftItemDevice>
                   <Computer />
                   <ContainerText>
@@ -167,7 +167,7 @@ const Profile = () => {
                     <IpText>IP: {device.ip}</IpText>
                   </ContainerText>
                 </GroupLeftItemDevice>
-              </ConatainerDevice>
+              </ContainerDevice>
             </ContainerDeviceModal>
             <ContainerButtonFactors>
               <CustomButton onClick={handleClose} height='48px' width='150px' mTop='50px' mBottom='20px' mRight='20px' text='Back' styleButton='inactive'></CustomButton>

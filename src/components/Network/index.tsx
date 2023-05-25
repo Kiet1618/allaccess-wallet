@@ -12,7 +12,7 @@ import { Dropdown } from "../../assets/icon";
 import { sliceAddress, copyAddress } from "../../utils";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { setCurrentListTokens } from "../../store/redux/transfer/actions";
-import { ModalCustom, HeaderModalInforTransaction, HeaderModalGroupLeft, TitleModal } from "../Table";
+import { ModalCustom, HeaderModalInfoTransaction, HeaderModalGroupLeft, TitleModal } from "../Table";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
@@ -45,10 +45,10 @@ export const NetworkContainer = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   return (
     <Container>
-      <ButtonCustom onClick={() => copyAddress(myAdress)} width='40%' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text={sliceAddress(myAdress)} />
+      <ButtonCustom onClick={() => copyAddress(myAddress)} width='40%' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text={sliceAddress(myAddress)} />
       <FormControlCustom>
         <SelectCustom IconComponent={() => <Dropdown style={{ marginRight: "10px" }} />} value={network} onChange={handleChange}>
           {listNetWorks.map(network => (
@@ -60,7 +60,7 @@ export const NetworkContainer = () => {
       </FormControlCustom>
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style} width={isDesktop ? 700 : 300}>
-          <HeaderModalInforTransaction>
+          <HeaderModalInfoTransaction>
             <HeaderModalGroupLeft>
               <TitleModal>You have switched to</TitleModal>
               <TagNetwork>{listNetWorks.find(e => e.rpcUrls === network)?.description}</TagNetwork>
@@ -70,8 +70,8 @@ export const NetworkContainer = () => {
                 <CloseIcon />
               </IconButton>
             </div>
-          </HeaderModalInforTransaction>
-          <TagChangeNetwork text1={myAdress} text2={myAdress} />
+          </HeaderModalInfoTransaction>
+          <TagChangeNetwork text1={myAddress} text2={myAddress} />
           <ChangeNetworkTag>Change network</ChangeNetworkTag>
           <ChangeNetworkTagSub>The system will automatically create a new account for you on this network</ChangeNetworkTagSub>
           <ButtonCustom onClick={() => handleClose()} width='146px' height='44px' styleButton='primary' text='Got it'></ButtonCustom>

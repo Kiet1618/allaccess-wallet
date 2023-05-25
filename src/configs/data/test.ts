@@ -119,7 +119,7 @@ export const rows: Row[] = [
     token: "ETH",
     from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
     to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    network: "Erthereum network",
+    network: "Ethereum network",
     id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e4c7a0be75111111111111111111",
   },
   {
@@ -129,7 +129,7 @@ export const rows: Row[] = [
     token: "BTC",
     from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
     to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
-    network: "Erthereum network",
+    network: "Ethereum network",
     id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e4c7a0be222222222222222222222",
   },
   {
@@ -139,7 +139,7 @@ export const rows: Row[] = [
     token: "BNB",
     from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
     to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
-    network: "Erthereum network",
+    network: "Ethereum network",
     id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e4433333333333333333333333333",
   },
   {
@@ -149,7 +149,7 @@ export const rows: Row[] = [
     token: "USDT",
     from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
     to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
-    network: "Erthereum network",
+    network: "Ethereum network",
     id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e4c44444444444444444444444444",
   },
   {
@@ -159,7 +159,7 @@ export const rows: Row[] = [
     token: "USDC",
     from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
     to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    network: "Erthereum network",
+    network: "Ethereum network",
     id: "0xed3a265cebd603aa2cb9be5c6ce10ff1e4c7a555555555555555555555555555",
   },
   {
@@ -169,7 +169,7 @@ export const rows: Row[] = [
     token: "FIL",
     from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
     to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    network: "Erthereum network",
+    network: "Ethereum network",
     id: "0xed3a265cebd603aa2cb9771be5c6ce10f4c6666666666666666666666666666",
   },
   {
@@ -179,7 +179,7 @@ export const rows: Row[] = [
     token: "DOGE",
     from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
     to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    network: "Erthereum network",
+    network: "Ethereum network",
     id: "0xed3a265cebd603aa2cb9771be5c6ce10ff1e4c7777777777777777777777777",
   },
   {
@@ -189,7 +189,7 @@ export const rows: Row[] = [
     token: "ETH",
     from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
     to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    network: "Erthereum network",
+    network: "Ethereum network",
     id: "0xed3a265cebd603aa2cb9771be5c6cef1e888888888888888888888888888888",
   },
   {
@@ -199,7 +199,7 @@ export const rows: Row[] = [
     token: "BTC",
     from: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe",
     to: "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Af1",
-    network: "Erthereum network",
+    network: "Ethereum network",
     id: "0xed3a265cebd603aa2cb9771be5c6ce109999999999999999999999999999999",
   },
 ];

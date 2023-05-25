@@ -22,7 +22,7 @@ import styled from "styled-components";
 import Web3 from "web3";
 import { sendTransaction, useBlockchain } from "../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { ModalCustom, HeaderModalInforTransaction } from "../../components/Table";
+import { ModalCustom, HeaderModalInfoTransaction } from "../../components/Table";
 import Box from "@mui/material/Box";
 
 export type FormData = {
@@ -306,11 +306,11 @@ const Transaction = () => {
       </Grid>
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style} width={isDesktop ? 700 : 300}>
-          <HeaderModalInforTransaction>
+          <HeaderModalInfoTransaction>
             <ContainerIconSuccess>
               <Success />
             </ContainerIconSuccess>
-          </HeaderModalInforTransaction>
+          </HeaderModalInfoTransaction>
           <TransferSuccessTitle>Transfer successfully</TransferSuccessTitle>
           <TransferSuccessSub>You are done the transaction successfully. You can now review your transaction in your history</TransferSuccessSub>
 

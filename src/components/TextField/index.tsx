@@ -18,7 +18,7 @@ type Props = {
   border?: string;
   gap?: string;
   fontSize?: string;
-  styleTextField?: "default" | "typing" | "disable" | "successfull" | "error" | "typed";
+  styleTextField?: "default" | "typing" | "disable" | "successful" | "error" | "typed";
   label?: string;
 };
 const TextFieldComponent = styled(TextField)<TextFieldProps & Props>`
@@ -29,7 +29,7 @@ const TextFieldComponent = styled(TextField)<TextFieldProps & Props>`
       return props.theme.colors.white;
     } else if (props.styleTextField === "disable") {
       return "#ECECED";
-    } else if (props.styleTextField === "successfull") {
+    } else if (props.styleTextField === "successful") {
       return "rgba(0, 0, 0, 0.1);";
     } else if (props.styleTextField === "error") {
       return "rgba(0, 0, 0, 0.1);";

@@ -128,7 +128,7 @@ const TableWithPagination: React.FC = () => {
       <Pagination count={Math.ceil(rows.length / rowsPerPage)} page={page} onChange={handleChangePage} shape='rounded' />
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style} width={isDesktop ? 700 : 300}>
-          <HeaderModalInforTransaction>
+          <HeaderModalInfoTransaction>
             <HeaderModalGroupLeft>
               <TitleModal>Transfer details</TitleModal>
               <CustomMethod>{row.method}</CustomMethod>
@@ -141,53 +141,53 @@ const TableWithPagination: React.FC = () => {
                 <CloseIcon />
               </IconButton>
             </div>
-          </HeaderModalInforTransaction>
+          </HeaderModalInfoTransaction>
           <ContainerInfoTransactions>
-            <HeaderModalInforTransaction>
+            <HeaderModalInfoTransaction>
               <div>Status</div>
               <div>Completed</div>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>Date</div>
               <div>{row.time}</div>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>Method</div>
               <div>Approve</div>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>TxID</div>
               <CopyAddressContainer onClick={() => copyAddress(row.id)}>
                 {isDesktop ? row.id : sliceAddress(row.id)} <Copy />
               </CopyAddressContainer>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>Coin</div>
               <div>{row.token}</div>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>Network</div>
               <div>{row.network}</div>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>From</div>
               <CopyAddressContainer onClick={() => copyAddress(row.from)}>
                 {isDesktop ? row.from : sliceAddress(row.from)} <Copy />
               </CopyAddressContainer>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>To</div>
               <CopyAddressContainer onClick={() => copyAddress(row.to)}>
                 {isDesktop ? row.to : sliceAddress(row.to)} <Copy />
               </CopyAddressContainer>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>Fee</div>
               <div>
                 0.12
                 <span>{row.token}</span>
               </div>
-            </HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
           </ContainerInfoTransactions>
         </Box>
       </ModalCustom>
@@ -215,7 +215,7 @@ const ContainerInfoTransactions = styled.div`
   color: ${props => props.theme.colors.black};
 `;
 
-export const HeaderModalInforTransaction = styled.div`
+export const HeaderModalInfoTransaction = styled.div`
   display: flex;
   justify-content: space-between !important;
   width: 100%;

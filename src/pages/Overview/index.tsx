@@ -22,18 +22,18 @@ import {
   TextCoin,
   FromToAddressContainer,
   TransactionLinkContainer,
-  HaaderPageBalance,
+  HeaderPageBalance,
   ContentPageContainer,
   TilePageContainer,
   EmptyContainer,
 } from "./overview.css";
 import { TitlePage } from "../../styles";
 import { ChooseToken } from "../../assets/icon";
-import SearchComponet from "../../components/TextField";
-import { SearchIcon, ReceiveTransactionHistoty, SendTransactionHistoty, LinkTransaction, Empty } from "../../assets/icon";
+import SearchComponent from "../../components/TextField";
+import { SearchIcon, ReceiveTransactionHistory, SendTransactionHistory, LinkTransaction, Empty } from "../../assets/icon";
 import CustomButton from "../../components/Button";
 const Overview = () => {
-  const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   const [number, setNumber] = useState(6);
   return (
     <Page>
@@ -50,14 +50,14 @@ const Overview = () => {
         </Grid>
         <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
           <Grid item xs={100} sm={100} md={100} lg={50} xl={60}>
-            <HaaderPageBalance>
+            <HeaderPageBalance>
               <SubHeaderPage>Estimated balance</SubHeaderPage>
               <BalanceContainer>
                 <TextBlue>1.868 BTC </TextBlue>
                 <ChooseToken /> ~ $56,040
               </BalanceContainer>
               <Divider />
-            </HaaderPageBalance>
+            </HeaderPageBalance>
           </Grid>
         </Grid>
       </Grid>
@@ -66,7 +66,7 @@ const Overview = () => {
           <OverviewHeaderTopCoin>
             <TextHeaderOverview>My Assets</TextHeaderOverview>
             <SearchContainer>
-              <SearchComponet
+              <SearchComponent
                 InputProps={{
                   startAdornment: <SearchIcon />,
                 }}
@@ -136,7 +136,7 @@ const Overview = () => {
                       width='150px'
                       text={item.amount + " " + item.token}
                       styleButton='default'
-                      iconRight={item.from === myAdress ? SendTransactionHistoty : ReceiveTransactionHistoty}
+                      iconRight={item.from === myAddress ? SendTransactionHistory : ReceiveTransactionHistory}
                     ></CustomButton>
                   </ItemMyAssets>
                 ))
@@ -151,7 +151,7 @@ const Overview = () => {
             </ListItemMyAssets>
           </ContentPageContainer>
           <OverviewHeaderTopCoin>
-            <CustomButton onClick={() => setNumber(rows.length)} width='100%' boder='none' text='View all transactions'></CustomButton>
+            <CustomButton onClick={() => setNumber(rows.length)} width='100%' border='none' text='View all transactions'></CustomButton>
           </OverviewHeaderTopCoin>
         </Grid>
       </Grid>

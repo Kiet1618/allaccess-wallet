@@ -7,8 +7,8 @@ import { ReactComponent as Google } from "./social/Type=Social, Icon=google.svg"
 import { ReactComponent as Menu } from "./system/menu.svg";
 import { ReactComponent as ChooseToken } from "./system/Icon.svg";
 import { ReactComponent as SearchIcon } from "./system/md_left_icon.svg";
-import { ReactComponent as SendTransactionHistoty } from "./system/Style=Send or Receive, Icon=Send.svg";
-import { ReactComponent as ReceiveTransactionHistoty } from "./system/Style=Send or Receive, Icon=Receive.svg";
+import { ReactComponent as SendTransactionHistory } from "./system/Style=Send or Receive, Icon=Send.svg";
+import { ReactComponent as ReceiveTransactionHistory } from "./system/Style=Send or Receive, Icon=Receive.svg";
 import { ReactComponent as LinkTransaction } from "./system/LinkTransaction.svg";
 import { ReactComponent as Empty } from "./system/Frame.svg";
 import { ReactComponent as Copy } from "./system/copy.svg";
@@ -42,8 +42,8 @@ export {
   Menu,
   ChooseToken,
   SearchIcon,
-  SendTransactionHistoty,
-  ReceiveTransactionHistoty,
+  SendTransactionHistory,
+  ReceiveTransactionHistory,
   LinkTransaction,
   Empty,
   Copy,
