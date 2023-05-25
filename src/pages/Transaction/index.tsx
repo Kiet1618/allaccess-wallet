@@ -27,6 +27,7 @@ import { ModalCustom, HeaderModalInfoTransaction } from "../../components/Table"
 import Snackbar, { SnackbarOrigin } from "@mui/material/Snackbar";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Box from "@mui/material/Box";
+import { sendTransactionToken } from "../../blockchain";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
@@ -35,7 +36,6 @@ export type FormData = {
   token: string;
   addressTo: string;
   amount: string;
-  tokenContract?: string;
 };
 type TabPanelProps = {
   children?: React.ReactNode;
@@ -76,8 +76,7 @@ const Transaction = () => {
   const handleClose = () => setOpen(false);
   const handleCloseAlert = () => setOpenAlert(false);
   const [balance, setBalance] = useState("");
-  const [token, setToken] = React.useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
-
+  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
   const {
     register,
     handleSubmit,
@@ -89,7 +88,6 @@ const Transaction = () => {
       token: token,
       addressTo: "",
       amount: "",
-      tokenContract: "",
     },
   });
 
@@ -102,13 +100,22 @@ const Transaction = () => {
   };
   const onSubmit = React.useCallback(async (values: FormData) => {
     setIsSubmitting(true);
-    await sendTransaction(web3 as Web3, values).then(res => {
-      if (res === "Error") {
-        setOpenAlert(true);
-      } else {
-        setOpen(true);
-      }
-    });
+    const currentToken = await listTokenState.currentListTokens.data.filter(e => e.rpcUrls === networkState.currentListTokens.data).find(e => e.symbol === values.token);
+    currentToken?.tokenContract
+      ? await sendTransactionToken(web3 as Web3, values, currentToken.tokenContract).then(res => {
+          if (res === "Error") {
+            setOpenAlert(true);
+          } else {
+            setOpen(true);
+          }
+        })
+      : await sendTransaction(web3 as Web3, values).then(res => {
+          if (res === "Error") {
+            setOpenAlert(true);
+          } else {
+            setOpen(true);
+          }
+        });
     setIsSubmitting(false);
     reset();
   }, []);
@@ -133,15 +140,17 @@ const Transaction = () => {
   }, []);
   useEffect(() => {
     try {
-      getBalance(web3 as Web3).then(res => setBalance(res));
+      setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
+    } catch {}
+  }, [networkState.currentListTokens.data]);
+  useEffect(() => {
+    try {
+      const currentToken = listTokenState.currentListTokens.data.filter(e => e.rpcUrls === networkState.currentListTokens.data).find(e => e.symbol === token);
+      currentToken?.tokenContract ? getBalanceToken(web3 as Web3, currentToken.tokenContract).then(res => setBalance(res)) : getBalance(web3 as Web3).then(res => setBalance(res));
     } catch {
       setBalance("Error");
     }
-    try {
-      setToken(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
-    } catch {}
-  }, [networkState.currentListTokens.data]);
-
+  }, [networkState.currentListTokens.data, token]);
   return (
     <Page>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>

@@ -76,8 +76,8 @@ export const sendTransaction = async (web3: Web3, data: FormData) => {
   }
 };
 
-export const sendTransactionToken = async (web3: Web3, data: FormData) => {
-  const { addressTo, amount, tokenContract } = data;
+export const sendTransactionToken = async (web3: Web3, data: FormData, tokenContract: string) => {
+  const { addressTo, amount } = data;
   try {
     const tokenAddress = new web3.eth.Contract(abi as any, tokenContract);
     const price = await web3.eth.getGasPrice();
@@ -95,6 +95,7 @@ export const sendTransactionToken = async (web3: Web3, data: FormData) => {
     const transactionReceipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
     return transactionReceipt.transactionHash;
   } catch (error) {
-    return error;
+    console.log(error);
+    return "Error";
   }
 };
