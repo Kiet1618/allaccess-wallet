@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import styled from "styled-components";
 import MenuItem from "@mui/material/MenuItem";
 import ButtonCustom from "../Button";
@@ -11,7 +11,7 @@ const breakpoint = createBreakpoint(base.breakpoints);
 import { Dropdown } from "../../assets/icon";
 import { sliceAddress, copyAddress } from "../../utils";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { setCurrentListTokens } from "../../store/redux/transfer/actions";
+import { setNetworkState } from "../../store/redux/network/actions";
 import { ModalCustom, HeaderModalInfoTransaction, HeaderModalGroupLeft, TitleModal } from "../Table";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -24,11 +24,9 @@ export const NetworkContainer = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const handleChange = (event: any) => {
-    setNetwork(event.target.value);
-    dispatch(setCurrentListTokens(network));
+  const handleChange = async (event: any) => {
+    await setNetwork(event.target.value);
     handleOpen();
-    console.log(networkState.currentListTokens.data);
   };
   const [isDesktop, setIsDesktop] = useState(true);
   const handleResize = () => {
@@ -41,10 +39,14 @@ export const NetworkContainer = () => {
   useLayoutEffect(() => {
     handleResize();
     window.addEventListener("resize", handleResize);
+    dispatch(setNetworkState(network));
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  useEffect(() => {
+    dispatch(setNetworkState(network));
+  }, [network]);
   const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   return (
     <Container>

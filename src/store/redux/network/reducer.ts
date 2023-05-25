@@ -15,14 +15,14 @@ export const listNetwork = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(actions.setCurrentListTokens.pending, state => {
+    builder.addCase(actions.setNetworkState.pending, state => {
       state.currentListTokens.loading = true;
     });
-    builder.addCase(actions.setCurrentListTokens.fulfilled, (state, action) => {
+    builder.addCase(actions.setNetworkState.fulfilled, (state, action) => {
       state.currentListTokens.data = action.payload;
       state.currentListTokens.loading = false;
     });
-    builder.addCase(actions.setCurrentListTokens.rejected, (state, action) => {
+    builder.addCase(actions.setNetworkState.rejected, (state, action) => {
       // state.currentListTokens.error = action.payload;
       state.currentListTokens.loading = false;
     });

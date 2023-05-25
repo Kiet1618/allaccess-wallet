@@ -14,6 +14,7 @@ export type Route = {
 export type Token = {
   rpcUrls: string;
   chainId: string;
+  img: string;
   symbol: string;
   name: string;
   tokenContract?: string;

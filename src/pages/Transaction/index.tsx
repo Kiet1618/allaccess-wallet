@@ -15,27 +15,33 @@ import { Copy, DropdownBlack, Success } from "../../assets/icon";
 import QRCode from "react-qr-code";
 import { OverviewHeaderTopCoin, TextHeaderOverview } from "../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress } from "../../utils";
 import styled from "styled-components";
+import { setCurrentListTokens } from "../../store/redux/token/actions";
 import Web3 from "web3";
-import { sendTransaction, useBlockchain } from "../../blockchain";
+import { sendTransaction, getBalanceToken, useBlockchain, getBalance } from "../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { ModalCustom, HeaderModalInfoTransaction } from "../../components/Table";
+import Snackbar, { SnackbarOrigin } from "@mui/material/Snackbar";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
+});
 export type FormData = {
   token: string;
   addressTo: string;
   amount: string;
   tokenContract?: string;
 };
-interface TabPanelProps {
+type TabPanelProps = {
   children?: React.ReactNode;
   index: number;
   value: number;
-}
+};
 const breakpoint = createBreakpoint(base.breakpoints);
 
 function TabPanel(props: TabPanelProps) {
@@ -60,13 +66,18 @@ function a11yProps(index: number) {
 const Transaction = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const networkState = useAppSelector(state => state.network);
-  const [provider, setProvider] = useState(networkState.currentListTokens.data);
-  const { web3, getBalance } = useBlockchain(provider);
-  const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const listTokenState = useAppSelector(state => state.token);
+  // const [provider, setProvider] = useState(networkState.currentListTokens.data);
+  const { web3 } = useBlockchain(networkState.currentListTokens.data);
+  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const [openAlert, setOpenAlert] = useState(false);
   const [value, setValue] = useState(0);
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
+  const handleCloseAlert = () => setOpenAlert(false);
+  const [balance, setBalance] = useState("");
+  const [token, setToken] = React.useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
+
   const {
     register,
     handleSubmit,
@@ -75,7 +86,7 @@ const Transaction = () => {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      token: "ETH",
+      token: token,
       addressTo: "",
       amount: "",
       tokenContract: "",
@@ -91,10 +102,13 @@ const Transaction = () => {
   };
   const onSubmit = React.useCallback(async (values: FormData) => {
     setIsSubmitting(true);
-    console.log(networkState.currentListTokens.data);
-    console.log(web3?.currentProvider);
-    await sendTransaction(web3 as Web3, values, privateKey);
-    setOpen(true);
+    await sendTransaction(web3 as Web3, values).then(res => {
+      if (res === "Error") {
+        setOpenAlert(true);
+      } else {
+        setOpen(true);
+      }
+    });
     setIsSubmitting(false);
     reset();
   }, []);
@@ -117,7 +131,17 @@ const Transaction = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  const [token, setToken] = React.useState("ETH");
+  useEffect(() => {
+    try {
+      getBalance(web3 as Web3).then(res => setBalance(res));
+    } catch {
+      setBalance("Error");
+    }
+    try {
+      setToken(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
+    } catch {}
+  }, [networkState.currentListTokens.data]);
+
   return (
     <Page>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -134,7 +158,6 @@ const Transaction = () => {
             <NetworkContainer />
           </NetworkContainerFixed>
         </Grid>
-
         <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
           <Grid>
             <ContainerTabs value={value} index={0}>
@@ -167,14 +190,16 @@ const Transaction = () => {
                             IconComponent: () => <DropdownBlack style={{ marginRight: "10px" }} />,
                           }}
                         >
-                          {myListCoin.map(coin => (
-                            <MenuItem key={coin.symbol} value={coin.symbol}>
-                              <SelectCoin>
-                                <img width={"20px"} src={coin.img}></img>
-                                {coin.name}
-                              </SelectCoin>
-                            </MenuItem>
-                          ))}
+                          {listTokenState.currentListTokens.data
+                            .filter(token => token.rpcUrls === networkState.currentListTokens.data)
+                            .map(coin => (
+                              <MenuItem key={coin.symbol} value={coin.symbol}>
+                                <SelectCoin>
+                                  <img width={"20px"} src={coin.img}></img>
+                                  {coin.name}
+                                </SelectCoin>
+                              </MenuItem>
+                            ))}
                         </CustomInput>
                       </ContainerTextField>
                     </FormControl>
@@ -259,11 +284,11 @@ const Transaction = () => {
             <ContainerTabs value={value} index={0}>
               <BackgroundPage>
                 <ReceiveTagHeader>Account balance</ReceiveTagHeader>
-                <CopyAddressContainer onClick={() => copyAddress(myAdress)}>
-                  {sliceAddress(myAdress)} <Copy />
+                <CopyAddressContainer onClick={() => copyAddress(myAddress)}>
+                  {sliceAddress(myAddress)} <Copy />
                 </CopyAddressContainer>
                 <BalanceNumberCard>
-                  {myListCoin.find(coin => coin.symbol === token)?.balance} {token}
+                  {balance} {token}
                 </BalanceNumberCard>
               </BackgroundPage>
             </ContainerTabs>
@@ -288,7 +313,7 @@ const Transaction = () => {
                   </CopyAddressContainer>
                 </ContainerFlexSpace>
                 <AddressContainer>
-                  <CustomInput size='small' disabled defaultValue={myAdress} variant='outlined' fullWidth margin='normal' styleTextField='disable' />
+                  <CustomInput size='small' disabled defaultValue={myAddress} variant='outlined' fullWidth margin='normal' styleTextField='disable' />
                 </AddressContainer>
               </BackgroundPage>
             </TabPanel>
@@ -297,7 +322,7 @@ const Transaction = () => {
             <TabPanel value={value} index={1}>
               <ContainerQRCode>
                 <BackgroundPageQR>
-                  <QRCode value={myAdress}></QRCode>
+                  <QRCode value={myAddress}></QRCode>
                 </BackgroundPageQR>
               </ContainerQRCode>
             </TabPanel>
@@ -320,6 +345,11 @@ const Transaction = () => {
           </ContainerTwoButtonModal>
         </Box>
       </ModalCustom>
+      <Snackbar anchorOrigin={{ vertical: "top", horizontal: "right" }} open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+        <Alert onClose={handleCloseAlert} severity='error' sx={{ width: "100%", borderRadius: "8px" }}>
+          Transaction failure!
+        </Alert>
+      </Snackbar>
     </Page>
   );
 };

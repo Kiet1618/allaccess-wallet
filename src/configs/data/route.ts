@@ -1,4 +1,4 @@
-import { Route } from "./type";
+import { Route } from "../../types/blockchain.type";
 export const routes: Array<Route> = [
   {
     path: "/overview",

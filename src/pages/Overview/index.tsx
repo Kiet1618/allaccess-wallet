@@ -6,6 +6,9 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { sliceAddress } from "../../utils";
 import React, { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { sendTransaction, getBalanceToken, useBlockchain, getBalance } from "../../blockchain";
+
 import {
   NetworkContainerFixed,
   SubHeaderPage,
@@ -35,6 +38,9 @@ import CustomButton from "../../components/Button";
 const Overview = () => {
   const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   const [number, setNumber] = useState(6);
+  const listTokenState = useAppSelector(state => state.token);
+  const networkState = useAppSelector(state => state.network);
+
   return (
     <Page>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -83,19 +89,21 @@ const Overview = () => {
 
           <ContentPageContainer>
             <ListItemMyAssets>
-              {myListCoin ? (
-                myListCoin.map(item => (
-                  <ItemMyAssets key={item.symbol}>
-                    <ItemMyAssetsLeft>
-                      <img style={{ marginRight: "10px" }} width={"30px"} src={item.img}></img>
-                      <TextCoin>{item.name}</TextCoin>
-                      {item.symbol}
-                    </ItemMyAssetsLeft>
-                    <ItemMyAssetsRight>
-                      <TextCoin> {item.balance} </TextCoin>~ $0.6868
-                    </ItemMyAssetsRight>
-                  </ItemMyAssets>
-                ))
+              {listTokenState.currentListTokens.data ? (
+                listTokenState.currentListTokens.data
+                  .filter(token => token.rpcUrls === networkState.currentListTokens.data)
+                  .map(item => (
+                    <ItemMyAssets key={item.symbol}>
+                      <ItemMyAssetsLeft>
+                        <img style={{ marginRight: "10px" }} width={"30px"} src={item.img}></img>
+                        <TextCoin>{item.name}</TextCoin>
+                        {item.symbol}
+                      </ItemMyAssetsLeft>
+                      <ItemMyAssetsRight>
+                        <TextCoin> 0.12 </TextCoin>~ $0.6868
+                      </ItemMyAssetsRight>
+                    </ItemMyAssets>
+                  ))
               ) : (
                 <EmptyContainer>
                   <div>
