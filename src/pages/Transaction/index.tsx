@@ -67,7 +67,6 @@ const Transaction = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const networkState = useAppSelector(state => state.network);
   const listTokenState = useAppSelector(state => state.token);
-  // const [provider, setProvider] = useState(networkState.currentListTokens.data);
   const { web3 } = useBlockchain(networkState.currentListTokens.data);
   const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   const [openAlert, setOpenAlert] = useState(false);
@@ -76,9 +75,6 @@ const Transaction = () => {
   const handleClose = () => setOpen(false);
   const handleCloseAlert = () => setOpenAlert(false);
 
-  const [openSelectToken, setOpenSelectToken] = useState(false);
-  const handleOpenSelectToken = () => setOpenSelectToken(true);
-  const handleCloseSelectToken = () => setOpenSelectToken(false);
   const [balance, setBalance] = useState("");
   const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
   const {
@@ -212,7 +208,6 @@ const Transaction = () => {
                               size='small'
                               hiddenLabel
                               fullWidth
-                              height='35px'
                               color='primary'
                               styleTextField='disable'
                               width='100%'
@@ -404,7 +399,7 @@ const TransferSuccessSub = styled.div`
   margin-top: 20px;
 `;
 const SearchContainer = styled.div`
-  margin: 10px 10px;
+  margin: 20px 10px;
 `;
 const AddressContainer = styled.div`
   display: flex;

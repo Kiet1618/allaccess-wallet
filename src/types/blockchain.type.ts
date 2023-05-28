@@ -1,6 +1,7 @@
 export type ChainNetwork = {
   chainID: string;
-  apiScan: string;
+  apiScanNormalTransactionsByAddress: string;
+  apiScanTokenTransactionsByAddress: string;
   rpcUrls: string;
   title: string;
   description: string;
