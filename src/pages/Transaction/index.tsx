@@ -11,7 +11,7 @@ import FormControl from "@mui/material/FormControl";
 import CustomInput from "../../components/TextField";
 import { NetworkContainer } from "../../components/Network";
 import { myListCoin, privateKey } from "../../configs/data/test";
-import { Copy, DropdownBlack, Success } from "../../assets/icon";
+import { Copy, DropdownBlack, Success, SearchIcon } from "../../assets/icon";
 import QRCode from "react-qr-code";
 import { OverviewHeaderTopCoin, TextHeaderOverview } from "../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
@@ -75,6 +75,10 @@ const Transaction = () => {
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const handleCloseAlert = () => setOpenAlert(false);
+
+  const [openSelectToken, setOpenSelectToken] = useState(false);
+  const handleOpenSelectToken = () => setOpenSelectToken(true);
+  const handleCloseSelectToken = () => setOpenSelectToken(false);
   const [balance, setBalance] = useState("");
   const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
   const {
@@ -199,6 +203,21 @@ const Transaction = () => {
                             IconComponent: () => <DropdownBlack style={{ marginRight: "10px" }} />,
                           }}
                         >
+                          <SearchContainer>
+                            <CustomInput
+                              InputProps={{
+                                startAdornment: <SearchIcon />,
+                              }}
+                              placeholder={"Search"}
+                              size='small'
+                              hiddenLabel
+                              fullWidth
+                              height='35px'
+                              color='primary'
+                              styleTextField='disable'
+                              width='100%'
+                            />
+                          </SearchContainer>
                           {listTokenState.currentListTokens.data
                             .filter(token => token.rpcUrls === networkState.currentListTokens.data)
                             .map(coin => (
@@ -383,6 +402,9 @@ const TransferSuccessSub = styled.div`
   color: #42526e;
   width: 418px;
   margin-top: 20px;
+`;
+const SearchContainer = styled.div`
+  margin: 10px 10px;
 `;
 const AddressContainer = styled.div`
   display: flex;
