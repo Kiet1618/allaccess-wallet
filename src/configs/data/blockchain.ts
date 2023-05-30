@@ -11,7 +11,7 @@ export const listNetWorks: ChainNetwork[] = [
   {
     chainID: "5",
     apiScanNormalTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=txlist&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
-    apiScanTokenTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=tokentx&contractaddress={contract}&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
+    apiScanTokenTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=tokentx&contractaddress={contract}&address={address}&startblock=0&endblock=99999999&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
     rpcUrls: "https://goerli.blockpi.network/v1/rpc/public",
     title: "ETH",
     description: "Goerli Testnet",

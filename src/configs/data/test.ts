@@ -103,7 +103,7 @@ export const Devices: Array<Device> = [
 export interface Row {
   time: string;
   method: string;
-  amount: number;
+  amount: string;
   from: string;
   to: string;
   network: string;
@@ -111,7 +111,7 @@ export interface Row {
   token: string;
 }
 
-export const rows: Row[] = [
+export const rows = [
   {
     time: "2022-08-14 02:34",
     method: "Approve",

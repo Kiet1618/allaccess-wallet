@@ -7,6 +7,7 @@ export const useBlockchain = (rpcUrl: string) => {
     const web3 = new Web3(rpcUrl);
     const account = web3.eth.accounts.wallet.add(privateKey.padStart(64, "0"));
     web3.defaultAccount = account.address;
+
     return { web3, account, getGasPrice, getBalanceToken, getBalance, sendTransaction, sendTransactionToken, formatValue };
   } catch (error) {
     console.log(error);
@@ -27,6 +28,9 @@ export const formatValue = (web3: Web3, value: string) => {
   } catch {
     return value;
   }
+};
+export const getCurrentBlock = async (web3: Web3) => {
+  return await web3.eth.getBlockNumber();
 };
 export const getBalanceToken = async (web3: Web3, tokenContract: string) => {
   try {

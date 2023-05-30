@@ -9,7 +9,7 @@ import base from "../../styles/theme/base";
 import { createBreakpoint } from "styled-components-breakpoint";
 const breakpoint = createBreakpoint(base.breakpoints);
 import { Dropdown } from "../../assets/icon";
-import { sliceAddress, copyAddress } from "../../utils";
+import { sliceAddress, copyAddress, preProcessHistoryResponse } from "../../utils";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { setNetworkState } from "../../store/redux/network/actions";
 import { ModalCustom, HeaderModalInfoTransaction, HeaderModalGroupLeft, TitleModal } from "../Table";
@@ -17,6 +17,9 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import TagChangeNetwork from "./changeNetwork";
+import { setHistoriesAddress } from "../../store/redux/history/actions";
+import { PreProcessHistoryResponse } from "../../utils/history";
+import { Token } from "../../types/blockchain.type";
 export const NetworkContainer = () => {
   const networkState = useAppSelector(state => state.network);
   const [network, setNetwork] = useState(networkState.currentListTokens.data);
@@ -24,9 +27,19 @@ export const NetworkContainer = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const listTokenState = useAppSelector(state => state.token);
+  const historyState = useAppSelector(state => state.history);
+  const fetchData = async (e: string = "") => {
+    const rpc = e ? e : network;
+    const currentNetwork = listNetWorks.find(networkTemp => networkTemp.rpcUrls === rpc);
+    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === rpc && tokens.tokenContract !== undefined);
+    const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
+    dispatch(setHistoriesAddress(historyTransaction));
+  };
   const handleChange = async (event: any) => {
-    await setNetwork(event.target.value);
+    setNetwork(event.target.value);
     handleOpen();
+    await fetchData(event.target.value);
   };
   const [isDesktop, setIsDesktop] = useState(true);
   const handleResize = () => {
@@ -46,7 +59,9 @@ export const NetworkContainer = () => {
   }, []);
   useEffect(() => {
     dispatch(setNetworkState(network));
+    if (!historyState.getHistoriesAddress.data.length) fetchData();
   }, [network]);
+
   const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   return (
     <Container>

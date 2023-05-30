@@ -22,7 +22,7 @@ import { rows } from "../../configs/data/test";
 import { Empty, Filter, SearchIcon } from "../../assets/icon";
 
 const History = () => {
-  // const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   const [time, setTime] = useState("30");
   const [method, setMethod] = useState("All");
   const [network, setNetwork] = useState("0");
@@ -37,6 +37,7 @@ const History = () => {
   const handleOpenFilter = () => setOpenFilter(true);
   const handleCloseFilter = () => setOpenFilter(false);
   const [isDesktop, setIsDesktop] = useState(true);
+
   const handleResize = () => {
     if (window.innerWidth < 600) {
       setIsDesktop(false);
