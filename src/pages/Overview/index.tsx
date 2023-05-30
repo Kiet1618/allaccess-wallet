@@ -60,33 +60,8 @@ const Overview = () => {
     }
   }, [networkState.currentListTokens.data]);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const currentNetwork = listNetWorks.find(
-  //       (network) => network.rpcUrls === networkState.currentListTokens.data
-  //     );
-  //     const listToken = listTokenState.currentListTokens.data.filter(
-  //       (tokens) =>
-  //         tokens.rpcUrls === networkState.currentListTokens.data &&
-  //         tokens.tokenContract !== undefined
-  //     );
-  //     const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
-  //     // if (!historyState.getHistoriesAddress.data.length) {
-  //     //   if (historyTransaction?.length > 6) {
-  //     //     setNumber(6);
-  //     //   }
-  //     //   else {
-  //     //     setNumber(historyTransaction.length);
-  //     //   }
-  //     // }
-  //     dispatch(setHistoriesAddress(historyTransaction))
-  //   };
-  //   if (!historyState.getHistoriesAddress.data.length)
-  //     fetchData();
-  // }, [networkState.currentListTokens.data]);
   const handleOpenAllTransactions = () => {
     try {
-      // setNumber("0");
     } catch (e) {
       console.log(e);
     }

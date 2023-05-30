@@ -166,4 +166,5 @@ export const EmptyContainer = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
+  width: 100%;
 `;

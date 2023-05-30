@@ -20,6 +20,9 @@ import Web3 from "web3";
 import { setHistoriesAddress } from "../../store/redux/history/actions";
 import { preProcessHistoryResponse } from "../../utils";
 import { Token } from "../../types/blockchain.type";
+import { Empty } from "../../assets/icon";
+
+import { EmptyContainer } from "../../pages/Overview/overview.css";
 const breakpoint = createBreakpoint(base.breakpoints);
 const sliceAddressIdTableCell = (str: string) => {
   if (str.length > 35) {
@@ -95,18 +98,21 @@ const TableWithPagination: React.FC = () => {
       <TableContainer>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>Time</TableCell>
-              <TableCell>Method</TableCell>
-              <TableCellCustom>Amount</TableCellCustom>
-              <TableCellCustom>From</TableCellCustom>
-              <TableCellCustom></TableCellCustom>
-              <TableCellCustom>To</TableCellCustom>
-              <TableCellCustom>Network</TableCellCustom>
-              <TableCell>TxID</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
+            {historyState.getHistoriesAddress.data?.length ? (
+              <TableRow>
+                <TableCell>Time</TableCell>
+                <TableCell>Method</TableCell>
+                <TableCellCustom>Amount</TableCellCustom>
+                <TableCellCustom>From</TableCellCustom>
+                <TableCellCustom></TableCellCustom>
+                <TableCellCustom>To</TableCellCustom>
+                <TableCellCustom>Network</TableCellCustom>
+                <TableCell>TxID</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            ) : null}
           </TableHead>
+
           <TableBody>
             {historyState.getHistoriesAddress.data?.length ? (
               historyState.getHistoriesAddress.data.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage).map(row => (
@@ -160,7 +166,12 @@ const TableWithPagination: React.FC = () => {
                 </TableRow>
               ))
             ) : (
-              <></>
+              <EmptyContainer>
+                <div>
+                  <Empty></Empty>
+                  <p>Assets not found in your wallet</p>
+                </div>
+              </EmptyContainer>
             )}
           </TableBody>
         </Table>
@@ -171,6 +182,7 @@ const TableWithPagination: React.FC = () => {
         onChange={handleChangePage}
         shape='rounded'
       />
+
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style} width={isDesktop ? 700 : 300}>
           <HeaderModalInfoTransaction>
