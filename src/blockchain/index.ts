@@ -2,6 +2,8 @@ import Web3 from "web3";
 import abi from "../common/ERC20_ABI.json";
 import { FormData } from "../pages/Transaction";
 import { privateKey } from "../configs/data/test";
+import { AbiItem } from "web3-utils";
+
 export const useBlockchain = (rpcUrl: string) => {
   try {
     const web3 = new Web3(rpcUrl);
@@ -101,5 +103,39 @@ export const sendTransactionToken = async (web3: Web3, data: FormData, tokenCont
   } catch (error) {
     console.log(error);
     return "Error";
+  }
+};
+
+export const getNameToken = async (web3: Web3, addressToken: string) => {
+  try {
+    const tokenContract = new web3.eth.Contract(abi as AbiItem[], addressToken);
+
+    const name: string = await tokenContract.methods.name().call((error: Error | null, name: string) => {
+      if (error) {
+        console.error(error);
+      } else {
+        return name;
+      }
+    });
+    return name;
+  } catch {
+    return "";
+  }
+};
+
+export const getSymbolToken = async (web3: Web3, addressToken: string) => {
+  try {
+    const tokenContract = new web3.eth.Contract(abi as AbiItem[], addressToken);
+
+    const symbol: string = await tokenContract.methods.symbol().call((error: Error | null, symbol: string) => {
+      if (error) {
+        console.error(error);
+      } else {
+        return symbol;
+      }
+    });
+    return symbol;
+  } catch {
+    return "";
   }
 };

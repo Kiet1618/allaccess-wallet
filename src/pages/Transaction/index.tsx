@@ -21,13 +21,15 @@ import { sliceAddress, copyAddress } from "../../utils";
 import styled from "styled-components";
 import { setCurrentListTokens } from "../../store/redux/token/actions";
 import Web3 from "web3";
-import { sendTransaction, getBalanceToken, useBlockchain, getBalance } from "../../blockchain";
+import { sendTransaction, getBalanceToken, useBlockchain, getBalance, getNameToken, getSymbolToken } from "../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { ModalCustom, HeaderModalInfoTransaction } from "../../components/Table";
 import Snackbar, { SnackbarOrigin } from "@mui/material/Snackbar";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import { sendTransactionToken } from "../../blockchain";
+import { Token } from "../../types/blockchain.type";
+import { listNetWorks } from "../../configs/data";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
@@ -74,8 +76,12 @@ const Transaction = () => {
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const handleCloseAlert = () => setOpenAlert(false);
-
+  const [tokenAddress, setTokenAddress] = useState("");
+  const [symbolToken, setSymbolToken] = useState("");
+  const [nameToken, setNameToken] = useState("");
   const [balance, setBalance] = useState("");
+  const dispatch = useAppDispatch();
+
   const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
   const {
     register,
@@ -138,6 +144,27 @@ const Transaction = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+  useEffect(() => {
+    getNameToken(web3 as Web3, tokenAddress).then(res => setNameToken(res ? res : ""));
+    getSymbolToken(web3 as Web3, tokenAddress).then(res => setSymbolToken(res ? res : ""));
+    try {
+      if (symbolToken && nameToken) {
+        const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentListTokens.data);
+
+        dispatch(
+          setCurrentListTokens({
+            chainId: currentNetwork?.chainID,
+            rpcUrls: currentNetwork?.rpcUrls,
+            img: "",
+            symbol: symbolToken,
+            name: nameToken,
+            tokenContract: tokenAddress,
+          } as Token)
+        );
+      }
+    } catch (err) {}
+  }, [tokenAddress]);
+
   useEffect(() => {
     try {
       setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
@@ -211,6 +238,7 @@ const Transaction = () => {
                               color='primary'
                               styleTextField='disable'
                               width='100%'
+                              onChange={e => setTokenAddress(e.target.value)}
                             />
                           </SearchContainer>
                           {listTokenState.currentListTokens.data
