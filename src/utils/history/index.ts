@@ -75,7 +75,6 @@ export const getHistoryTransactionToken = async (currentNetwork: ChainNetwork | 
         return get(data, "result", []);
       })
     );
-
     const result: HistoryResponseERC20[] = listHistory.flat();
     return result;
   } catch (error) {

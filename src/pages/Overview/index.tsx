@@ -40,7 +40,7 @@ import CustomButton from "../../components/Button";
 import Web3 from "web3";
 import { PreProcessHistoryResponse } from "../../utils/history";
 const Overview = () => {
-  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const myAddress = "0x04e407c7d7c2a6aa7f2e66b0b8c0dbcafa5e3afe";
   const historyState = useAppSelector(state => state.history);
   const [number, setNumber] = useState(6);
   const listTokenState = useAppSelector(state => state.token);

@@ -33,7 +33,7 @@ const sliceAddressIdTableCell = (str: string) => {
 const TableWithPagination: React.FC = () => {
   const [page, setPage] = useState(1);
   const rowsPerPage = 5;
-  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const myAddress = "0x04e407c7d7c2a6aa7f2e66b0b8c0dbcafa5e3afe";
   const listTokenState = useAppSelector(state => state.token);
   const networkState = useAppSelector(state => state.network);
   const historyState = useAppSelector(state => state.history);
@@ -130,9 +130,7 @@ const TableWithPagination: React.FC = () => {
                     </CopyAddressContainer>
                   </TableCellCustom>
                   <TableCellCustom>
-                    <TableCellCustomInOut text={row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}>
-                      {row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}
-                    </TableCellCustomInOut>
+                    <TableCellCustomInOut text={row.from === myAddress ? "Out" : "In"}>{row.from === myAddress ? "Out" : "In"}</TableCellCustomInOut>
                   </TableCellCustom>
                   <TableCellCustom>
                     <CopyAddressContainer onClick={() => copyAddress(row.to)}>
@@ -189,9 +187,7 @@ const TableWithPagination: React.FC = () => {
             <HeaderModalGroupLeft>
               <TitleModal>Transfer details</TitleModal>
               <CustomMethod>{row.method}</CustomMethod>
-              <TableCellCustomInOut text={row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}>
-                {row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}
-              </TableCellCustomInOut>
+              <TableCellCustomInOut text={row.from === myAddress ? "Out" : "In"}>{row.from === "myAddress" ? "Out" : "In"}</TableCellCustomInOut>
             </HeaderModalGroupLeft>
             <div>
               <IconButton onClick={handleClose}>

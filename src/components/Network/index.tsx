@@ -30,11 +30,15 @@ export const NetworkContainer = () => {
   const listTokenState = useAppSelector(state => state.token);
   const historyState = useAppSelector(state => state.history);
   const fetchData = async (e: string = "") => {
-    const rpc = e ? e : network;
-    const currentNetwork = listNetWorks.find(networkTemp => networkTemp.rpcUrls === rpc);
-    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === rpc && tokens.tokenContract !== undefined);
-    const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
-    dispatch(setHistoriesAddress(historyTransaction));
+    try {
+      const rpc = e ? e : network;
+      const currentNetwork = listNetWorks.find(networkTemp => networkTemp.rpcUrls === rpc);
+      const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === rpc && tokens.tokenContract !== undefined);
+      const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
+      dispatch(setHistoriesAddress(historyTransaction));
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handleChange = async (event: any) => {
     setNetwork(event.target.value);
