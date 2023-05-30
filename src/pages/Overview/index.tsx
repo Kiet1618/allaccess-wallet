@@ -2,10 +2,15 @@ import { Page } from "../../styles";
 import { Grid } from "@mui/material";
 import { NetworkContainer } from "../../components/Network";
 import { myListCoin, rows } from "../../configs/data/test";
+import { listNetWorks } from "../../configs/data/blockchain";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import { sliceAddress } from "../../utils";
-import React, { useState } from "react";
+import { sliceAddress, getHistoryTransaction, getHistoryTransactionToken, preProcessHistoryResponse } from "../../utils";
+import React, { useEffect, useState, useLayoutEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { formatValue, sendTransaction, getBalanceToken, useBlockchain, getBalance, getCurrentBlock } from "../../blockchain";
+import { setHistoriesAddress } from "../../store/redux/history/actions";
+import _ from "lodash";
 import {
   NetworkContainerFixed,
   SubHeaderPage,
@@ -22,19 +27,45 @@ import {
   TextCoin,
   FromToAddressContainer,
   TransactionLinkContainer,
-  HaaderPageBalance,
+  HeaderPageBalance,
   ContentPageContainer,
   TilePageContainer,
   EmptyContainer,
 } from "./overview.css";
 import { TitlePage } from "../../styles";
 import { ChooseToken } from "../../assets/icon";
-import SearchComponet from "../../components/TextField";
-import { SearchIcon, ReceiveTransactionHistoty, SendTransactionHistoty, LinkTransaction, Empty } from "../../assets/icon";
+import SearchComponent from "../../components/TextField";
+import { SearchIcon, ReceiveTransactionHistory, SendTransactionHistory, LinkTransaction, Empty } from "../../assets/icon";
 import CustomButton from "../../components/Button";
+import Web3 from "web3";
+import { PreProcessHistoryResponse } from "../../utils/history";
 const Overview = () => {
-  const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const myAddress = "0x04e407c7d7c2a6aa7f2e66b0b8c0dbcafa5e3afe";
+  const historyState = useAppSelector(state => state.history);
   const [number, setNumber] = useState(6);
+  const listTokenState = useAppSelector(state => state.token);
+  const networkState = useAppSelector(state => state.network);
+  const [currenToken, setCurrenToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
+  const { web3 } = useBlockchain(networkState.currentListTokens.data);
+  const [balance, setBalance] = useState("");
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    try {
+      setCurrenToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
+    } catch {}
+    try {
+      getBalance(web3 as Web3).then(res => setBalance(res));
+    } catch {
+      setBalance("Error");
+    }
+  }, [networkState.currentListTokens.data]);
+
+  const handleOpenAllTransactions = () => {
+    try {
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <Page>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -50,14 +81,16 @@ const Overview = () => {
         </Grid>
         <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
           <Grid item xs={100} sm={100} md={100} lg={50} xl={60}>
-            <HaaderPageBalance>
+            <HeaderPageBalance>
               <SubHeaderPage>Estimated balance</SubHeaderPage>
               <BalanceContainer>
-                <TextBlue>1.868 BTC </TextBlue>
+                <TextBlue>
+                  {balance} {currenToken}{" "}
+                </TextBlue>
                 <ChooseToken /> ~ $56,040
               </BalanceContainer>
               <Divider />
-            </HaaderPageBalance>
+            </HeaderPageBalance>
           </Grid>
         </Grid>
       </Grid>
@@ -66,7 +99,7 @@ const Overview = () => {
           <OverviewHeaderTopCoin>
             <TextHeaderOverview>My Assets</TextHeaderOverview>
             <SearchContainer>
-              <SearchComponet
+              <SearchComponent
                 InputProps={{
                   startAdornment: <SearchIcon />,
                 }}
@@ -83,19 +116,21 @@ const Overview = () => {
 
           <ContentPageContainer>
             <ListItemMyAssets>
-              {myListCoin ? (
-                myListCoin.map(item => (
-                  <ItemMyAssets key={item.symbol}>
-                    <ItemMyAssetsLeft>
-                      <img style={{ marginRight: "10px" }} width={"30px"} src={item.img}></img>
-                      <TextCoin>{item.name}</TextCoin>
-                      {item.symbol}
-                    </ItemMyAssetsLeft>
-                    <ItemMyAssetsRight>
-                      <TextCoin> {item.balance} </TextCoin>~ $0.6868
-                    </ItemMyAssetsRight>
-                  </ItemMyAssets>
-                ))
+              {listTokenState.currentListTokens.data ? (
+                listTokenState.currentListTokens.data
+                  .filter(token => token.rpcUrls === networkState.currentListTokens.data)
+                  .map(item => (
+                    <ItemMyAssets key={item.symbol}>
+                      <ItemMyAssetsLeft>
+                        <img style={{ marginRight: "10px" }} width={"30px"} src={item.img}></img>
+                        <TextCoin>{item.name}</TextCoin>
+                        {item.symbol}
+                      </ItemMyAssetsLeft>
+                      <ItemMyAssetsRight>
+                        <TextCoin> 0.12 </TextCoin>~ $0.6868
+                      </ItemMyAssetsRight>
+                    </ItemMyAssets>
+                  ))
               ) : (
                 <EmptyContainer>
                   <div>
@@ -113,9 +148,9 @@ const Overview = () => {
           </OverviewHeaderTopCoin>
           <ContentPageContainer>
             <ListItemMyAssets>
-              {rows ? (
-                rows.slice(0, number).map(item => (
-                  <ItemMyAssets key={item.amount}>
+              {historyState.getHistoriesAddress.data?.length ? (
+                historyState.getHistoriesAddress.data.slice(0, number).map(item => (
+                  <ItemMyAssets key={item.id}>
                     <TransactionLinkContainer>
                       <Tooltip title='Link to view full about this transaction' placement='top-start'>
                         <IconButton>
@@ -134,9 +169,9 @@ const Overview = () => {
                     <CustomButton
                       spaceBetween={true}
                       width='150px'
-                      text={item.amount + " " + item.token}
+                      text={(item.value ? formatValue(web3 as Web3, item.value as string) : "Error") + " " + (item.tokenSymbol ? item.tokenSymbol : currenToken)}
                       styleButton='default'
-                      iconRight={item.from === myAdress ? SendTransactionHistoty : ReceiveTransactionHistoty}
+                      iconRight={item.from === myAddress ? SendTransactionHistory : ReceiveTransactionHistory}
                     ></CustomButton>
                   </ItemMyAssets>
                 ))
@@ -151,7 +186,14 @@ const Overview = () => {
             </ListItemMyAssets>
           </ContentPageContainer>
           <OverviewHeaderTopCoin>
-            <CustomButton onClick={() => setNumber(rows.length)} width='100%' boder='none' text='View all transactions'></CustomButton>
+            <CustomButton
+              onClick={() => {
+                handleOpenAllTransactions();
+              }}
+              width='100%'
+              border='none'
+              text='View all transactions'
+            ></CustomButton>
           </OverviewHeaderTopCoin>
         </Grid>
       </Grid>

@@ -31,7 +31,7 @@ const MultipleFactors = () => {
           Login to <strong>allaccess.one</strong> from any of the following devices to complete the security verification.
         </SubHeaderText>
         {Devices.map(device => (
-          <ConatainerDevice key={device.id}>
+          <ContainerDevice key={device.id}>
             <GroupLeftItemDevice>
               <Computer />
               <ContainerText>
@@ -40,7 +40,7 @@ const MultipleFactors = () => {
               </ContainerText>
             </GroupLeftItemDevice>
             <IdText>Reference ID: {device.id}</IdText>
-          </ConatainerDevice>
+          </ContainerDevice>
         ))}
       </ContainerBackgroundCard>
       <ContainerBackgroundCard>
@@ -152,7 +152,7 @@ export const ContainerBackgroundCard = styled.div`
     `}
     margin-top: 5vh;
 `;
-export const ConatainerDevice = styled.div`
+export const ContainerDevice = styled.div`
   padding: 10px 10px;
   border-radius: 8px;
   border: 2px solid ${props => props.theme.colors.neutrals.gray200};

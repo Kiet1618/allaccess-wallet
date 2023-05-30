@@ -2,9 +2,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { Overview, Login, History, Profile, Error, Transaction, MultipleFactors } from "./pages";
 import { ProtectProp } from "./types/protectProp.type";
 import { LayoutApp } from "./components";
-import React from "react";
+import React, { useEffect } from "react";
+import { setHistoriesAddress } from "./store/redux/history/actions";
+import { PreProcessHistoryResponse } from "./utils/history";
+import { useAppDispatch, useAppSelector } from "./store";
+import { preProcessHistoryResponse } from "./utils";
+import { listNetWorks } from "./configs/data";
 
-// import { useSelector, useDispatch } from 'react-redux'
 // import { login, logout } from './store/features/login/reducer'
 // import type { RootState } from './store/store'
 const RouterApp = () => {
@@ -15,7 +19,6 @@ const RouterApp = () => {
     return children;
   };
 
-  // const user = useSelector((state: RootState) => state.login.value)
   const user = true;
   return (
     <Router>

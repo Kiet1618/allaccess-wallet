@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Slider from "../Sidebar";
 import { Menu } from "../../assets/icon";
-import SearchComponet from "../TextField";
+import SearchComponent from "../TextField";
 import { SearchIcon } from "../../assets/icon";
 import base from "../../styles/theme/base";
 import { createBreakpoint } from "styled-components-breakpoint";
@@ -14,7 +14,7 @@ const breakpoint = createBreakpoint(base.breakpoints);
 
 const Header = () => {
   const location = useLocation();
-  const breadcumbs = routes.find(route => route.path === location.pathname);
+  const breadcrumbs = routes.find(route => route.path === location.pathname);
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -29,14 +29,14 @@ const Header = () => {
   });
   return (
     <HeaderApp>
-      <TextBreadcumb>{breadcumbs?.breadcrumbName}</TextBreadcumb>
+      <TextBreadcrumb>{breadcrumbs?.breadcrumbName}</TextBreadcrumb>
       <ButtonCustom>
         <Button onClick={handleOpen}>
           <Menu />
         </Button>
       </ButtonCustom>
       <SearchContainer>
-        <SearchComponet
+        <SearchComponent
           InputProps={{
             startAdornment: <SearchIcon />,
           }}
@@ -90,7 +90,7 @@ const HeaderApp = styled.div`
     `}
 `;
 
-const TextBreadcumb = styled.div`
+const TextBreadcrumb = styled.div`
   ${breakpoint("xs")`
         color: ${props => props.theme.colors.neutrals.gray900};
         font-weight: ${props => props.theme.fontWeights.semiBold};

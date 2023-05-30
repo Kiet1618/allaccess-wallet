@@ -52,7 +52,7 @@ export const ContentPageContainer = styled.div`
     margin: 44px 44px;
   `}
 `;
-export const HaaderPageBalance = styled.div`
+export const HeaderPageBalance = styled.div`
   ${breakpoint("xs")`
     margin: 10px 10px;
     `}
@@ -166,4 +166,5 @@ export const EmptyContainer = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
+  width: 100%;
 `;

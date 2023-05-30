@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import base from "../../styles/theme/base";
 import { createBreakpoint } from "styled-components-breakpoint";
-import { Button, ButtonProps } from "@mui/material";
+import { LoadingButton, LoadingButtonProps } from "@mui/lab";
 
 const breakpoint = createBreakpoint(base.breakpoints);
 
@@ -18,7 +18,7 @@ type Props = {
       title?: string | undefined;
     }
   >;
-  boder?: string;
+  border?: string;
   width?: string;
   height?: string;
   borderRadius?: string;
@@ -29,7 +29,7 @@ type Props = {
   pLeft?: string;
   pTop?: string;
   pRight?: string;
-  pBotton?: string;
+  pBottom?: string;
   padding?: string;
   gap?: string;
   fontSize?: string;
@@ -38,7 +38,7 @@ type Props = {
   spaceBetween?: boolean;
 };
 
-const ButtonComponent = styled(Button)<ButtonProps & Props>`
+const ButtonComponent = styled(LoadingButton)<LoadingButtonProps & Props>`
   margin-left: ${props => props.mLeft} !important;
   margin-right: ${props => props.mRight} !important;
   margin-top: ${props => props.mTop} !important;
@@ -71,7 +71,7 @@ const ButtonComponent = styled(Button)<ButtonProps & Props>`
       return `solid 1px ${props.theme.colors.brands.blue500}`;
     }
   }} !important;
-  border: ${props => props.boder} !important;
+  border: ${props => props.border} !important;
 
   color: ${props => {
     if (props.styleButton === "primary") {
@@ -105,7 +105,7 @@ const ButtonComponent = styled(Button)<ButtonProps & Props>`
   justify-content: ${props => (props.spaceBetween ? "space-between" : "center")} !important;
 `;
 
-const ButtonTemplate: React.FC<ButtonProps & Props> = (props: ButtonProps & Props) => {
+const ButtonTemplate: React.FC<LoadingButtonProps & Props> = (props: LoadingButtonProps & Props) => {
   return (
     <ButtonComponent {...props}>
       {props.iconLeft ? <props.iconLeft></props.iconLeft> : null}

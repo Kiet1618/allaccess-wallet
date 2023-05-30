@@ -26,6 +26,9 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
     .css-1h9z7r5-MuiButtonBase-root-MuiTab-root{
       text-transform: none !important;
     }
+    .css-h4t5eh-MuiButtonBase-root-MuiButton-root-MuiLoadingButton-root .css-1vqlznj-MuiButtonBase-root-MuiButton-root-MuiLoadingButton-root{
+      text-transform: none !important;
+    }
     .css-k4qjio-MuiFormHelperText-root{
       background-color: rgb(250, 250, 250) !important;
       margin: 0;
@@ -43,6 +46,9 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
     }
     .css-1ps6pg7-MuiPaper-root{
       box-shadow: none !important;
+    }
+    .MuiLoadingButton-root{
+      text-transform: none !important;
     }
   }
 `;

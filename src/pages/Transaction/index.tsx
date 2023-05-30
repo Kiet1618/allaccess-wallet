@@ -9,32 +9,39 @@ import CustomButton from "../../components/Button";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import CustomInput from "../../components/TextField";
-import LoadingButton from "../../components/LoadingButton";
 import { NetworkContainer } from "../../components/Network";
 import { myListCoin, privateKey } from "../../configs/data/test";
-import { Copy, DropdownBlack } from "../../assets/icon";
+import { Copy, DropdownBlack, Success, SearchIcon } from "../../assets/icon";
 import QRCode from "react-qr-code";
 import { OverviewHeaderTopCoin, TextHeaderOverview } from "../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress } from "../../utils";
 import styled from "styled-components";
+import { setCurrentListTokens } from "../../store/redux/token/actions";
 import Web3 from "web3";
-import { sendTransaction, useBlockchain } from "../../blockchain";
-// import { TransferNative } from "../../blockchain"
+import { sendTransaction, getBalanceToken, useBlockchain, getBalance } from "../../blockchain";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { ModalCustom, HeaderModalInfoTransaction } from "../../components/Table";
+import Snackbar, { SnackbarOrigin } from "@mui/material/Snackbar";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import Box from "@mui/material/Box";
+import { sendTransactionToken } from "../../blockchain";
 
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
+});
 export type FormData = {
   token: string;
   addressTo: string;
   amount: string;
-  tokenContract?: string;
 };
-interface TabPanelProps {
+type TabPanelProps = {
   children?: React.ReactNode;
   index: number;
   value: number;
-}
+};
 const breakpoint = createBreakpoint(base.breakpoints);
 
 function TabPanel(props: TabPanelProps) {
@@ -58,13 +65,18 @@ function a11yProps(index: number) {
 
 const Transaction = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { web3, getBalance } = useBlockchain("5");
-
-  const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const networkState = useAppSelector(state => state.network);
+  const listTokenState = useAppSelector(state => state.token);
+  const { web3 } = useBlockchain(networkState.currentListTokens.data);
+  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const [openAlert, setOpenAlert] = useState(false);
   const [value, setValue] = useState(0);
-  // const [open, setOpen] = React.useState(false);
-  // const handleOpen = () => setOpen(true);
-  // const handleClose = () => setOpen(false);
+  const [open, setOpen] = useState(false);
+  const handleClose = () => setOpen(false);
+  const handleCloseAlert = () => setOpenAlert(false);
+
+  const [balance, setBalance] = useState("");
+  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
   const {
     register,
     handleSubmit,
@@ -73,10 +85,9 @@ const Transaction = () => {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      token: "ETH",
+      token: token,
       addressTo: "",
       amount: "",
-      tokenContract: "",
     },
   });
 
@@ -89,7 +100,22 @@ const Transaction = () => {
   };
   const onSubmit = React.useCallback(async (values: FormData) => {
     setIsSubmitting(true);
-    await sendTransaction(web3 as Web3, values, privateKey);
+    const currentToken = await listTokenState.currentListTokens.data.filter(e => e.rpcUrls === networkState.currentListTokens.data).find(e => e.symbol === values.token);
+    currentToken?.tokenContract
+      ? await sendTransactionToken(web3 as Web3, values, currentToken.tokenContract).then(res => {
+          if (res === "Error") {
+            setOpenAlert(true);
+          } else {
+            setOpen(true);
+          }
+        })
+      : await sendTransaction(web3 as Web3, values).then(res => {
+          if (res === "Error") {
+            setOpenAlert(true);
+          } else {
+            setOpen(true);
+          }
+        });
     setIsSubmitting(false);
     reset();
   }, []);
@@ -97,7 +123,34 @@ const Transaction = () => {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
-  const [token, setToken] = React.useState("ETH");
+  const [isDesktop, setIsDesktop] = useState(true);
+  const handleResize = () => {
+    if (window.innerWidth < 600) {
+      setIsDesktop(false);
+    } else {
+      setIsDesktop(true);
+    }
+  };
+  useLayoutEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  useEffect(() => {
+    try {
+      setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
+    } catch {}
+  }, [networkState.currentListTokens.data]);
+  useEffect(() => {
+    try {
+      const currentToken = listTokenState.currentListTokens.data.filter(e => e.rpcUrls === networkState.currentListTokens.data).find(e => e.symbol === token);
+      currentToken?.tokenContract ? getBalanceToken(web3 as Web3, currentToken.tokenContract).then(res => setBalance(res)) : getBalance(web3 as Web3).then(res => setBalance(res));
+    } catch {
+      setBalance("Error");
+    }
+  }, [networkState.currentListTokens.data, token]);
   return (
     <Page>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -114,7 +167,6 @@ const Transaction = () => {
             <NetworkContainer />
           </NetworkContainerFixed>
         </Grid>
-
         <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
           <Grid>
             <ContainerTabs value={value} index={0}>
@@ -147,14 +199,30 @@ const Transaction = () => {
                             IconComponent: () => <DropdownBlack style={{ marginRight: "10px" }} />,
                           }}
                         >
-                          {myListCoin.map(coin => (
-                            <MenuItem key={coin.symbol} value={coin.symbol}>
-                              <SelectCoin>
-                                <img width={"20px"} src={coin.img}></img>
-                                {coin.name}
-                              </SelectCoin>
-                            </MenuItem>
-                          ))}
+                          <SearchContainer>
+                            <CustomInput
+                              InputProps={{
+                                startAdornment: <SearchIcon />,
+                              }}
+                              placeholder={"Search"}
+                              size='small'
+                              hiddenLabel
+                              fullWidth
+                              color='primary'
+                              styleTextField='disable'
+                              width='100%'
+                            />
+                          </SearchContainer>
+                          {listTokenState.currentListTokens.data
+                            .filter(token => token.rpcUrls === networkState.currentListTokens.data)
+                            .map(coin => (
+                              <MenuItem key={coin.symbol} value={coin.symbol}>
+                                <SelectCoin>
+                                  <img width={"20px"} src={coin.img}></img>
+                                  {coin.name}
+                                </SelectCoin>
+                              </MenuItem>
+                            ))}
                         </CustomInput>
                       </ContainerTextField>
                     </FormControl>
@@ -228,7 +296,7 @@ const Transaction = () => {
                       <TextHeaderOverview>$12.34</TextHeaderOverview>
                     </ContainerFlexSpace>
                     <ContainerRight>
-                      <LoadingButton variant='contained' loadingPosition='end' loading={isSubmitting} type='submit' text='Transfer' styleButton='primary' width='150px' height='50px'></LoadingButton>
+                      <CustomButton variant='contained' loadingPosition='end' loading={isSubmitting} type='submit' text='Transfer' styleButton='primary' width='150px' height='50px'></CustomButton>
                     </ContainerRight>
                   </FormGroup>
                 </form>
@@ -239,11 +307,11 @@ const Transaction = () => {
             <ContainerTabs value={value} index={0}>
               <BackgroundPage>
                 <ReceiveTagHeader>Account balance</ReceiveTagHeader>
-                <CopyAddressContainer onClick={() => copyAddress(myAdress)}>
-                  {sliceAddress(myAdress)} <Copy />
+                <CopyAddressContainer onClick={() => copyAddress(myAddress)}>
+                  {sliceAddress(myAddress)} <Copy />
                 </CopyAddressContainer>
                 <BalanceNumberCard>
-                  {myListCoin.find(coin => coin.symbol === token)?.balance} {token}
+                  {balance} {token}
                 </BalanceNumberCard>
               </BackgroundPage>
             </ContainerTabs>
@@ -268,7 +336,7 @@ const Transaction = () => {
                   </CopyAddressContainer>
                 </ContainerFlexSpace>
                 <AddressContainer>
-                  <CustomInput size='small' disabled defaultValue={myAdress} variant='outlined' fullWidth margin='normal' styleTextField='disable' />
+                  <CustomInput size='small' disabled defaultValue={myAddress} variant='outlined' fullWidth margin='normal' styleTextField='disable' />
                 </AddressContainer>
               </BackgroundPage>
             </TabPanel>
@@ -277,13 +345,34 @@ const Transaction = () => {
             <TabPanel value={value} index={1}>
               <ContainerQRCode>
                 <BackgroundPageQR>
-                  <QRCode value={myAdress}></QRCode>
+                  <QRCode value={myAddress}></QRCode>
                 </BackgroundPageQR>
               </ContainerQRCode>
             </TabPanel>
           </Grid>
         </Grid>
       </Grid>
+      <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
+        <Box sx={style} width={isDesktop ? 700 : 300}>
+          <HeaderModalInfoTransaction>
+            <ContainerIconSuccess>
+              <Success />
+            </ContainerIconSuccess>
+          </HeaderModalInfoTransaction>
+          <TransferSuccessTitle>Transfer successfully</TransferSuccessTitle>
+          <TransferSuccessSub>You are done the transaction successfully. You can now review your transaction in your history</TransferSuccessSub>
+
+          <ContainerTwoButtonModal>
+            <CustomButton onClick={() => handleClose()} width='230px' height='44px' styleButton='inactive' text='View transfer history'></CustomButton>
+            <CustomButton onClick={() => handleClose()} width='135px' height='44px' styleButton='primary' text='Ok, I got it'></CustomButton>
+          </ContainerTwoButtonModal>
+        </Box>
+      </ModalCustom>
+      <Snackbar anchorOrigin={{ vertical: "top", horizontal: "right" }} open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+        <Alert onClose={handleCloseAlert} severity='error' sx={{ width: "100%", borderRadius: "8px" }}>
+          Transaction failure!
+        </Alert>
+      </Snackbar>
     </Page>
   );
 };
@@ -295,7 +384,23 @@ const BackgroundPageQR = styled.div`
   border-radius: 8px;
   box-shadow: 5px 5px 5px 5px rgba(88, 88, 88, 0.2);
 `;
-
+const TransferSuccessTitle = styled.div`
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 40px;
+  color: rgba(0, 0, 0, 0.85);
+`;
+const TransferSuccessSub = styled.div`
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #42526e;
+  width: 418px;
+  margin-top: 20px;
+`;
+const SearchContainer = styled.div`
+  margin: 20px 10px;
+`;
 const AddressContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -470,19 +575,32 @@ export const ContainerTextField = styled.div`
   justify-content: left;
 `;
 
-// const style = {
-//   position: "absolute" as "absolute",
-//   top: "50%",
-//   left: "50%",
-//   transform: "translate(-50%, -50%)",
-//   bgcolor: "background.paper",
-//   boxShadow: 24,
-//   p: 4,
-//   borderRadius: 4,
-//   display: "flex",
-//   justifyContent: "center",
-//   flexDirection: "column",
-//   textAlign: "center",
-//   alignItems: "center",
-//   width: 600,
-// };
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 4,
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: "column",
+  textAlign: "center",
+  alignItems: "center",
+};
+
+const ContainerIconSuccess = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
+`;
+const ContainerTwoButtonModal = styled.div`
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  align-items: center;
+`;

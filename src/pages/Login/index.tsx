@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid";
 import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
-import { FristSlider, SecondarySlider, ThirdSlider } from "../../assets/img";
+import { FirstSlider, SecondarySlider, ThirdSlider } from "../../assets/img";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Button from "../../components/Button";
@@ -60,7 +60,7 @@ const Login = () => {
           <BackgroundImg>
             <CustomSlider {...settings}>
               <ContainerSlider>
-                <ImgSlider src={FristSlider}></ImgSlider>
+                <ImgSlider src={FirstSlider}></ImgSlider>
                 <TextSlider>Quick one-click login when logging in with Gmail and you can directly use the wallet immediately!</TextSlider>
               </ContainerSlider>
               <ContainerSlider>

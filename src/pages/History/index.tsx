@@ -7,9 +7,9 @@ const breakpoint = createBreakpoint(base.breakpoints);
 import MenuItem from "@mui/material/MenuItem";
 import CustomInput from "../../components/TextField";
 import CustomButton from "../../components/Button";
-import { listNetWorks } from "../../configs/data/menu";
+import { listNetWorks } from "../../configs/data";
 import { TimeDropdown } from "../../assets/icon";
-import TableCustom, { ModalCustom, HeaderModalInforTransaction, TitleModal } from "../../components/Table";
+import TableCustom, { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../components/Table";
 import dayjs, { Dayjs } from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -22,7 +22,7 @@ import { rows } from "../../configs/data/test";
 import { Empty, Filter, SearchIcon } from "../../assets/icon";
 
 const History = () => {
-  // const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   const [time, setTime] = useState("30");
   const [method, setMethod] = useState("All");
   const [network, setNetwork] = useState("0");
@@ -37,6 +37,7 @@ const History = () => {
   const handleOpenFilter = () => setOpenFilter(true);
   const handleCloseFilter = () => setOpenFilter(false);
   const [isDesktop, setIsDesktop] = useState(true);
+
   const handleResize = () => {
     if (window.innerWidth < 600) {
       setIsDesktop(false);
@@ -131,18 +132,18 @@ const History = () => {
       </ContainerDataTable>
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style} width={isDesktop ? 500 : 320}>
-          <HeaderModalInforTransaction>
+          <HeaderModalInfoTransaction>
             <TitleModal>Customize time range</TitleModal>
             <div>
               <IconButton onClick={handleClose}>
                 <CloseIcon />
               </IconButton>
             </div>
-          </HeaderModalInforTransaction>
-          <HeaderModalInforTransaction>
+          </HeaderModalInfoTransaction>
+          <HeaderModalInfoTransaction>
             <ModalSubtitle>Select your time range with in 12 months</ModalSubtitle>
-          </HeaderModalInforTransaction>
-          <HeaderModalInforTransaction>
+          </HeaderModalInfoTransaction>
+          <HeaderModalInfoTransaction>
             <ContainerTextFieldTimeCustom>
               <label style={{ marginBottom: "5px" }}>Start time</label>
               <CustomInput
@@ -179,7 +180,7 @@ const History = () => {
                 </LocalizationProvider>
               </CustomInput>
             </ContainerTextFieldTimeCustom>
-          </HeaderModalInforTransaction>
+          </HeaderModalInfoTransaction>
           <CustomButton onClick={handleClose} mTop='30px' size='large' styleButton='primary' width='100%' text='Continue' />
         </Box>
       </ModalCustom>

@@ -1,5 +1,6 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import { Table, TableContainer, TableBody, TableCell, TableHead, TableRow, Pagination } from "@mui/material";
+import Box from "@mui/material/Box";
 import styled from "styled-components";
 import base from "../../styles/theme/base";
 import { createBreakpoint } from "styled-components-breakpoint";
@@ -7,10 +8,21 @@ import { Copy, Eyes } from "../../assets/icon";
 import { CopyAddressContainer } from "../../pages/Transaction";
 import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import { sliceAddress, copyAddress } from "../../utils";
 import { rows, Row } from "../../configs/data/test";
+import axios from "axios";
+import { get } from "lodash";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { listNetWorks } from "../../configs/data/blockchain";
+import { formatValue, sendTransaction, getCurrentBlock, getBalanceToken, useBlockchain, getBalance } from "../../blockchain";
+import Web3 from "web3";
+import { setHistoriesAddress } from "../../store/redux/history/actions";
+import { preProcessHistoryResponse } from "../../utils";
+import { Token } from "../../types/blockchain.type";
+import { Empty } from "../../assets/icon";
+
+import { EmptyContainer } from "../../pages/Overview/overview.css";
 const breakpoint = createBreakpoint(base.breakpoints);
 const sliceAddressIdTableCell = (str: string) => {
   if (str.length > 35) {
@@ -21,7 +33,11 @@ const sliceAddressIdTableCell = (str: string) => {
 const TableWithPagination: React.FC = () => {
   const [page, setPage] = useState(1);
   const rowsPerPage = 5;
-
+  const myAddress = "0x04e407c7d7c2a6aa7f2e66b0b8c0dbcafa5e3afe";
+  const listTokenState = useAppSelector(state => state.token);
+  const networkState = useAppSelector(state => state.network);
+  const historyState = useAppSelector(state => state.history);
+  const { web3 } = useBlockchain(networkState.currentListTokens.data);
   const handleChangePage = (event: React.ChangeEvent<unknown>, newPage: number) => {
     setPage(newPage);
   };
@@ -43,17 +59,27 @@ const TableWithPagination: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const dispatch = useAppDispatch();
   const [row, setRow] = React.useState<Row>({
     time: "",
     method: "",
-    amount: 0,
+    amount: "",
     from: "",
     to: "",
     network: "",
     id: "",
     token: "",
   });
-  const handleInfo = (time: string, method: string, amount: number, from: string, to: string, network: string, id: string, token: string) => {
+  const fetchData = async () => {
+    const currentNetwork = listNetWorks.find(networkTemp => networkTemp.rpcUrls === networkState.currentListTokens.data);
+    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === networkState.currentListTokens.data && tokens.tokenContract !== undefined);
+    const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
+    dispatch(setHistoriesAddress(historyTransaction));
+  };
+  useEffect(() => {
+    if (!historyState.getHistoriesAddress.data.length) fetchData();
+  }, [networkState.currentListTokens.data]);
+  const handleInfo = (time: string, method: string, amount: string, from: string, to: string, network: string, id: string, token: string) => {
     setRow({
       time: time,
       method: method,
@@ -72,122 +98,149 @@ const TableWithPagination: React.FC = () => {
       <TableContainer>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>Time</TableCell>
-              <TableCell>Method</TableCell>
-              <TableCellCustom>Amount</TableCellCustom>
-              <TableCellCustom>From</TableCellCustom>
-              <TableCellCustom></TableCellCustom>
-              <TableCellCustom>To</TableCellCustom>
-              <TableCellCustom>Network</TableCellCustom>
-              <TableCell>TxID</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage).map(row => (
-              <TableRow key={row.id}>
-                <TableCell>{row.time}</TableCell>
-                <TableCell>
-                  <CustomMethod>{row.method}</CustomMethod>
-                </TableCell>
-                <TableCellCustom>
-                  {row.amount} {row.token}
-                </TableCellCustom>
-                <TableCellCustom>
-                  <CopyAddressContainer onClick={() => copyAddress(row.from)}>
-                    {sliceAddress(row.from)} <Copy />
-                  </CopyAddressContainer>
-                </TableCellCustom>
-                <TableCellCustom>
-                  <TableCellCustomInOut text={row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}>
-                    {row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}
-                  </TableCellCustomInOut>
-                </TableCellCustom>
-                <TableCellCustom>
-                  <CopyAddressContainer onClick={() => copyAddress(row.to)}>
-                    {sliceAddress(row.to)} <Copy />
-                  </CopyAddressContainer>
-                </TableCellCustom>
-                <TableCellCustom>{row.network}</TableCellCustom>
-                <TableCell>
-                  <CopyAddressContainer onClick={() => copyAddress(row.id)}>
-                    {isDesktop ? sliceAddress(row.id) : sliceAddressIdTableCell(row.id)} <Copy />
-                  </CopyAddressContainer>
-                </TableCell>
-                <TableCell>
-                  <IconButton onClick={() => handleInfo(row.time, row.method, row.amount, row.from, row.to, row.network, row.id, row.token)}>
-                    <Eyes />
-                  </IconButton>
-                </TableCell>
+            {historyState.getHistoriesAddress.data?.length ? (
+              <TableRow>
+                <TableCell>Time</TableCell>
+                <TableCell>Method</TableCell>
+                <TableCellCustom>Amount</TableCellCustom>
+                <TableCellCustom>From</TableCellCustom>
+                <TableCellCustom></TableCellCustom>
+                <TableCellCustom>To</TableCellCustom>
+                <TableCellCustom>Network</TableCellCustom>
+                <TableCell>TxID</TableCell>
+                <TableCell></TableCell>
               </TableRow>
-            ))}
+            ) : null}
+          </TableHead>
+
+          <TableBody>
+            {historyState.getHistoriesAddress.data?.length ? (
+              historyState.getHistoriesAddress.data.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage).map(row => (
+                <TableRow key={row.id}>
+                  <TableCell>{row.timeStamp}</TableCell>
+                  <TableCell>
+                    <CustomMethod>{row.method}</CustomMethod>
+                  </TableCell>
+                  <TableCellCustom>
+                    {formatValue(web3 as Web3, row.value as string)} {row.tokenSymbol ? row.tokenSymbol : "ETH"}
+                  </TableCellCustom>
+                  <TableCellCustom>
+                    <CopyAddressContainer onClick={() => copyAddress(row.from)}>
+                      {sliceAddress(row.from ? row.from : "")} <Copy />
+                    </CopyAddressContainer>
+                  </TableCellCustom>
+                  <TableCellCustom>
+                    <TableCellCustomInOut text={row.from === myAddress ? "Out" : "In"}>{row.from === myAddress ? "Out" : "In"}</TableCellCustomInOut>
+                  </TableCellCustom>
+                  <TableCellCustom>
+                    <CopyAddressContainer onClick={() => copyAddress(row.to)}>
+                      {sliceAddress(row.to ? row.to : "")} <Copy />
+                    </CopyAddressContainer>
+                  </TableCellCustom>
+                  <TableCellCustom>Ethereum Network</TableCellCustom>
+                  <TableCell>
+                    <CopyAddressContainer onClick={() => copyAddress(row.blockHash)}>
+                      {isDesktop ? sliceAddress(row.blockHash ? row.blockHash : "") : sliceAddressIdTableCell(row.blockHash ? row.blockHash : "")} <Copy />
+                    </CopyAddressContainer>
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      onClick={() =>
+                        handleInfo(
+                          row?.timeStamp ? row?.timeStamp : "",
+                          "Approve",
+                          formatValue(web3 as Web3, row.value.toString()),
+                          row.from,
+                          row.to,
+                          "Ethereum Network",
+                          row.blockHash,
+                          row.tokenSymbol ? row.tokenSymbol : "ETH"
+                        )
+                      }
+                    >
+                      <Eyes />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <EmptyContainer>
+                <div>
+                  <Empty></Empty>
+                  <p>Assets not found in your wallet</p>
+                </div>
+              </EmptyContainer>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
-      <Pagination count={Math.ceil(rows.length / rowsPerPage)} page={page} onChange={handleChangePage} shape='rounded' />
+      <Pagination
+        count={Math.ceil((historyState.getHistoriesAddress.data?.length ? historyState.getHistoriesAddress.data?.length : 0) / rowsPerPage)}
+        page={page}
+        onChange={handleChangePage}
+        shape='rounded'
+      />
+
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style} width={isDesktop ? 700 : 300}>
-          <HeaderModalInforTransaction>
+          <HeaderModalInfoTransaction>
             <HeaderModalGroupLeft>
               <TitleModal>Transfer details</TitleModal>
               <CustomMethod>{row.method}</CustomMethod>
-              <TableCellCustomInOut text={row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}>
-                {row.from === "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe" ? "In" : "Out"}
-              </TableCellCustomInOut>
+              <TableCellCustomInOut text={row.from === myAddress ? "Out" : "In"}>{row.from === "myAddress" ? "Out" : "In"}</TableCellCustomInOut>
             </HeaderModalGroupLeft>
             <div>
               <IconButton onClick={handleClose}>
                 <CloseIcon />
               </IconButton>
             </div>
-          </HeaderModalInforTransaction>
+          </HeaderModalInfoTransaction>
           <ContainerInfoTransactions>
-            <HeaderModalInforTransaction>
+            <HeaderModalInfoTransaction>
               <div>Status</div>
               <div>Completed</div>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>Date</div>
               <div>{row.time}</div>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>Method</div>
               <div>Approve</div>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>TxID</div>
               <CopyAddressContainer onClick={() => copyAddress(row.id)}>
                 {isDesktop ? row.id : sliceAddress(row.id)} <Copy />
               </CopyAddressContainer>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>Coin</div>
               <div>{row.token}</div>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>Network</div>
               <div>{row.network}</div>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>From</div>
               <CopyAddressContainer onClick={() => copyAddress(row.from)}>
                 {isDesktop ? row.from : sliceAddress(row.from)} <Copy />
               </CopyAddressContainer>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>To</div>
               <CopyAddressContainer onClick={() => copyAddress(row.to)}>
                 {isDesktop ? row.to : sliceAddress(row.to)} <Copy />
               </CopyAddressContainer>
-            </HeaderModalInforTransaction>
-            <HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
+            <HeaderModalInfoTransaction>
               <div>Fee</div>
               <div>
                 0.12
                 <span>{row.token}</span>
               </div>
-            </HeaderModalInforTransaction>
+            </HeaderModalInfoTransaction>
           </ContainerInfoTransactions>
         </Box>
       </ModalCustom>
@@ -215,13 +268,13 @@ const ContainerInfoTransactions = styled.div`
   color: ${props => props.theme.colors.black};
 `;
 
-export const HeaderModalInforTransaction = styled.div`
+export const HeaderModalInfoTransaction = styled.div`
   display: flex;
   justify-content: space-between !important;
   width: 100%;
   margin-bottom: 20px;
 `;
-const HeaderModalGroupLeft = styled.div`
+export const HeaderModalGroupLeft = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
