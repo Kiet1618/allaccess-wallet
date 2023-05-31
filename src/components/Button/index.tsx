@@ -1,10 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import base from "../../styles/theme/base";
-import { createBreakpoint } from "styled-components-breakpoint";
+import { breakpoint } from "../../utils";
 import { LoadingButton, LoadingButtonProps } from "@mui/lab";
-
-const breakpoint = createBreakpoint(base.breakpoints);
 
 type Props = {
   text?: string;

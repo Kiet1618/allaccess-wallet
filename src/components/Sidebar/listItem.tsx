@@ -1,12 +1,12 @@
-import React from "react";
-import ListItemButton from "@mui/material/ListItemButton";
+import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import List from "@mui/material/List";
 import Collapse from "@mui/material/Collapse";
+import ListItemButton from "@mui/material/ListItemButton";
 import { subMenuItem } from "../../types/subMenuItem.type";
 import { ArrowRight, ArrowDown } from "../../assets/icon";
 import { MenuLink, IconArrowMenu, ListItemDiv, NavLinkCustom } from "./sidebar.css";
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+
 type Props = {
   name: string;
   icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & { title?: string }>;

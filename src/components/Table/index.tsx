@@ -1,29 +1,23 @@
 import React, { useState, useLayoutEffect, useEffect } from "react";
-import { Table, TableContainer, TableBody, TableCell, TableHead, TableRow, Pagination } from "@mui/material";
-import Box from "@mui/material/Box";
-import styled from "styled-components";
-import base from "../../styles/theme/base";
-import { createBreakpoint } from "styled-components-breakpoint";
-import { Copy, Eyes } from "../../assets/icon";
-import { CopyAddressContainer } from "../../pages/Transaction";
-import IconButton from "@mui/material/IconButton";
-import Modal from "@mui/material/Modal";
-import CloseIcon from "@mui/icons-material/Close";
-import { sliceAddress, copyAddress } from "../../utils";
-import { rows, Row } from "../../configs/data/test";
-import axios from "axios";
-import { get } from "lodash";
-import { useAppDispatch, useAppSelector } from "../../store";
-import { listNetWorks } from "../../configs/data/blockchain";
-import { formatValue, sendTransaction, getCurrentBlock, getBalanceToken, useBlockchain, getBalance } from "../../blockchain";
 import Web3 from "web3";
-import { setHistoriesAddress } from "../../store/redux/history/actions";
-import { preProcessHistoryResponse } from "../../utils";
-import { Token } from "../../types/blockchain.type";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import { Table, TableContainer, TableBody, TableCell, TableHead, TableRow, Pagination } from "@mui/material";
+import { Copy, Eyes } from "../../assets/icon";
 import { Empty } from "../../assets/icon";
-
+import { InfoModal } from "./type";
+import { Token } from "../../types/blockchain.type";
+import { sliceAddress, copyAddress } from "../../utils";
+import { listNetWorks } from "../../configs/data/blockchain";
+import { formatValue, useBlockchain } from "../../blockchain";
+import { preProcessHistoryResponse } from "../../utils";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { setHistoriesAddress } from "../../store/redux/history/actions";
 import { EmptyContainer } from "../../pages/Overview/overview.css";
-const breakpoint = createBreakpoint(base.breakpoints);
+import { CopyAddressContainer } from "../../pages/Transaction/transaction.css";
+import { TitleModal, ContainerInfoTransactions, HeaderModalInfoTransaction, style, HeaderModalGroupLeft, ModalCustom, CustomMethod, TableCellCustomInOut, TableCellCustom } from "./table.css";
+
 const sliceAddressIdTableCell = (str: string) => {
   if (str.length > 35) {
     return str.substr(0, 5) + "..." + str.substr(str.length - 3, str.length);
@@ -31,36 +25,17 @@ const sliceAddressIdTableCell = (str: string) => {
   return str;
 };
 const TableWithPagination: React.FC = () => {
-  const [page, setPage] = useState(1);
   const rowsPerPage = 5;
   const myAddress = "0x04e407c7d7c2a6aa7f2e66b0b8c0dbcafa5e3afe";
   const listTokenState = useAppSelector(state => state.token);
   const networkState = useAppSelector(state => state.network);
   const historyState = useAppSelector(state => state.history);
-  const { web3 } = useBlockchain(networkState.currentListTokens.data);
-  const handleChangePage = (event: React.ChangeEvent<unknown>, newPage: number) => {
-    setPage(newPage);
-  };
-  const [isDesktop, setIsDesktop] = useState(true);
-  const handleResize = () => {
-    if (window.innerWidth < 600) {
-      setIsDesktop(false);
-    } else {
-      setIsDesktop(true);
-    }
-  };
-  useLayoutEffect(() => {
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const dispatch = useAppDispatch();
-  const [row, setRow] = React.useState<Row>({
+  const { web3 } = useBlockchain(networkState.currentListTokens.data);
+  const [page, setPage] = useState(1);
+  const [isDesktop, setIsDesktop] = useState(true);
+  const [open, setOpen] = React.useState(false);
+  const [row, setRow] = React.useState<InfoModal>({
     time: "",
     method: "",
     amount: "",
@@ -70,15 +45,19 @@ const TableWithPagination: React.FC = () => {
     id: "",
     token: "",
   });
-  const fetchData = async () => {
-    const currentNetwork = listNetWorks.find(networkTemp => networkTemp.rpcUrls === networkState.currentListTokens.data);
-    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === networkState.currentListTokens.data && tokens.tokenContract !== undefined);
-    const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
-    dispatch(setHistoriesAddress(historyTransaction));
+  const handleChangePage = (event: React.ChangeEvent<unknown>, newPage: number) => {
+    setPage(newPage);
   };
-  useEffect(() => {
-    if (!historyState.getHistoriesAddress.data.length) fetchData();
-  }, [networkState.currentListTokens.data]);
+  const handleResize = () => {
+    if (window.innerWidth < 600) {
+      setIsDesktop(false);
+    } else {
+      setIsDesktop(true);
+    }
+  };
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const handleInfo = (time: string, method: string, amount: string, from: string, to: string, network: string, id: string, token: string) => {
     setRow({
       time: time,
@@ -92,7 +71,22 @@ const TableWithPagination: React.FC = () => {
     });
     handleOpen();
   };
-
+  useLayoutEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  useEffect(() => {
+    if (!historyState.getHistoriesAddress.data.length) fetchData();
+  }, [networkState.currentListTokens.data]);
+  const fetchData = async () => {
+    const currentNetwork = listNetWorks.find(networkTemp => networkTemp.rpcUrls === networkState.currentListTokens.data);
+    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === networkState.currentListTokens.data && tokens.tokenContract !== undefined);
+    const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
+    dispatch(setHistoriesAddress(historyTransaction));
+  };
   return (
     <>
       <TableContainer>
@@ -247,112 +241,4 @@ const TableWithPagination: React.FC = () => {
     </>
   );
 };
-
-const App: React.FC = () => {
-  return <TableWithPagination />;
-};
-
-export default App;
-
-export const TitleModal = styled.div`
-  font-style: normal;
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 30px;
-  color: black;
-  margin-right: 10px;
-`;
-const ContainerInfoTransactions = styled.div`
-  width: 100%;
-  margin-top: 40px;
-  color: ${props => props.theme.colors.black};
-`;
-
-export const HeaderModalInfoTransaction = styled.div`
-  display: flex;
-  justify-content: space-between !important;
-  width: 100%;
-  margin-bottom: 20px;
-`;
-export const HeaderModalGroupLeft = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-type PropsInOut = {
-  text: string;
-};
-export const ModalCustom = styled(Modal)`
-  .igUPum {
-    display: flex;
-    -webkit-box-pack: justify !important;
-    justify-content: space-between;
-    width: 100% !important;
-  }
-`;
-const CustomMethod = styled.div`
-  text-align: center;
-  padding: 5px 5px;
-  border: solid 1px #cfd6dd;
-  color: #272e35;
-  border-radius: 8px;
-  ${breakpoint("xs")`
-       width: auto !important;
-    `}
-  ${breakpoint("md")`
-        width: 100px !important;
-  `}
-`;
-const TableCellCustomInOut = styled.div<PropsInOut>`
-  background-color: ${props => {
-    if (props.text === "In") {
-      return "rgb(29, 233, 182, 0.25)";
-    } else {
-      return "rgb(247, 206, 57, 0.25)";
-    }
-  }};
-  border-radius: 8px;
-  margin: 5px 5px;
-  padding: 5px 5px;
-  width: 50px;
-  color: ${props => {
-    if (props.text === "In") {
-      return "#1DE9B6";
-    } else {
-      return "#F7CE39";
-    }
-  }};
-  border: ${props => {
-    if (props.text === "In") {
-      return "solid 1px #1DE9B6";
-    } else {
-      return "solid 1px #F7CE39";
-    }
-  }};
-  text-align: center;
-`;
-
-const TableCellCustom = styled(TableCell)`
-  ${breakpoint("xs")`
-      display: none !important;
-    `}
-  ${breakpoint("md")`
-      display: table-cell !important;
-  `}
-`;
-
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: 4,
-  display: "flex",
-  justifyContent: "center",
-  flexDirection: "column",
-  textAlign: "center",
-  alignItems: "center",
-};
+export default TableWithPagination;

@@ -1,6 +1,6 @@
 import Web3 from "web3";
 import abi from "../common/ERC20_ABI.json";
-import { FormData } from "../pages/Transaction";
+import { FormData } from "../pages/Transaction/Transfer/type";
 import { privateKey } from "../configs/data/test";
 import { AbiItem } from "web3-utils";
 

@@ -50,5 +50,9 @@ export const GlobalStyles = createGlobalStyle<{ theme: Theme }>`
     .MuiLoadingButton-root{
       text-transform: none !important;
     }
+    .css-ahj2mt-MuiTypography-root {
+    width: 100% !important;
+    padding: 0 !important;
+   } 
   }
 `;
