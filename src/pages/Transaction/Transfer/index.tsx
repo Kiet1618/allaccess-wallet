@@ -61,6 +61,7 @@ const Transfer = () => {
   const [tokenImport, setTokenImport] = useState<Token>();
   const [balance, setBalance] = useState("");
   const [isDesktop, setIsDesktop] = useState(true);
+  const [searchText, setSearchText] = useState("");
   const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
   const handleClose = () => setOpen(false);
   const handleCloseAlert = () => setOpenAlert(false);
@@ -85,6 +86,7 @@ const Transfer = () => {
     }
     return true;
   };
+
   const onSubmit = React.useCallback(async (values: FormData) => {
     setIsSubmitting(true);
     const currentToken = await listTokenState.currentListTokens.data.filter(e => e.rpcUrls === networkState.currentListTokens.data).find(e => e.symbol === values.token);
@@ -121,18 +123,25 @@ const Transfer = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  useEffect(() => {
+  const handleAddToken = async () => {
     try {
       const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentListTokens.data);
-      getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string).then(res => setTokenImport(res));
-      if (tokenImport) {
+      const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
+      const check = listTokenState.currentListTokens.data.filter(token => token.tokenContract === tokenAddress).length;
+      if (!check) {
+        setTokenImport(addToken);
+      }
+      if (tokenImport && !check) {
         dispatch(setCurrentListTokens(tokenImport));
       }
+      setSearchText("");
     } catch (err) {
       console.error(err);
     }
-  }, [tokenAddress]);
-
+  };
+  useEffect(() => {
+    handleAddToken();
+  }, [searchText]);
   useEffect(() => {
     try {
       setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
@@ -148,6 +157,10 @@ const Transfer = () => {
       setBalance("Error");
     }
   }, [networkState.currentListTokens.data, token]);
+  const handleChangeSearch = (e: string) => {
+    setSearchText(e);
+    setTokenAddress(e);
+  };
   return (
     <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid>
@@ -190,11 +203,12 @@ const Transfer = () => {
                         color='primary'
                         styleTextField='disable'
                         width='100%'
-                        onChange={e => setTokenAddress(e.target.value)}
+                        onChange={e => handleChangeSearch(e.target.value)}
                       />
                     </SearchContainer>
                     {listTokenState.currentListTokens.data
                       .filter(token => token.rpcUrls === networkState.currentListTokens.data)
+                      .filter(searchText ? token => token.symbol.toLowerCase().includes(searchText.toLowerCase()) || token.name.toLowerCase().includes(searchText.toLowerCase()) : token => token)
                       .map(coin => (
                         <MenuItem key={coin.symbol} value={coin.symbol}>
                           <SelectCoin>
