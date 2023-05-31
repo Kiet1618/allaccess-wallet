@@ -1,13 +1,18 @@
-import { Page } from "../../styles";
-import { Grid } from "@mui/material";
-import { NetworkContainer } from "../../components/Network";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import { sliceAddress } from "../../utils";
 import React, { useEffect, useState } from "react";
+import Web3 from "web3";
+import { Grid } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import { sliceAddress } from "../../utils";
 import { useAppSelector } from "../../store";
+import { Page } from "../../styles";
+import { TitlePage } from "../../styles";
+import { ChooseToken } from "../../assets/icon";
+import CustomButton from "../../components/Button";
+import SearchComponent from "../../components/TextField";
+import { NetworkContainer } from "../../components/Network";
 import { formatValue, useBlockchain, getBalance } from "../../blockchain";
-import _ from "lodash";
+import { SearchIcon, ReceiveTransactionHistory, SendTransactionHistory, LinkTransaction, Empty } from "../../assets/icon";
 import {
   NetworkContainerFixed,
   SubHeaderPage,
@@ -29,25 +34,24 @@ import {
   TilePageContainer,
   EmptyContainer,
 } from "./overview.css";
-import { TitlePage } from "../../styles";
-import { ChooseToken } from "../../assets/icon";
-import SearchComponent from "../../components/TextField";
-import { SearchIcon, ReceiveTransactionHistory, SendTransactionHistory, LinkTransaction, Empty } from "../../assets/icon";
-import CustomButton from "../../components/Button";
-import Web3 from "web3";
+
 const Overview = () => {
   const myAddress = "0x04e407c7d7c2a6aa7f2e66b0b8c0dbcafa5e3afe";
   const historyState = useAppSelector(state => state.history);
-  const [number, setNumber] = useState(6);
+  //const [number, setNumber] = useState(6);
+  const number = 6;
   const listTokenState = useAppSelector(state => state.token);
   const networkState = useAppSelector(state => state.network);
   const [currenToken, setCurrenToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
   const { web3 } = useBlockchain(networkState.currentListTokens.data);
   const [balance, setBalance] = useState("");
+  const [searchText, setSearchText] = useState("");
   useEffect(() => {
     try {
       setCurrenToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
-    } catch {}
+    } catch (e) {
+      console.log(e);
+    }
     try {
       getBalance(web3 as Web3).then(res => setBalance(res));
     } catch {
@@ -55,12 +59,6 @@ const Overview = () => {
     }
   }, [networkState.currentListTokens.data]);
 
-  const handleOpenAllTransactions = () => {
-    try {
-    } catch (e) {
-      console.log(e);
-    }
-  };
   return (
     <Page>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -105,6 +103,7 @@ const Overview = () => {
                 color='primary'
                 styleTextField='disable'
                 width='100%'
+                onChange={e => setSearchText(e.target.value)}
               />
             </SearchContainer>
           </OverviewHeaderTopCoin>
@@ -114,6 +113,7 @@ const Overview = () => {
               {listTokenState.currentListTokens.data ? (
                 listTokenState.currentListTokens.data
                   .filter(token => token.rpcUrls === networkState.currentListTokens.data)
+                  .filter(searchText ? token => token.symbol.toLowerCase().includes(searchText.toLowerCase()) || token.name.toLowerCase().includes(searchText.toLowerCase()) : token => token)
                   .map(item => (
                     <ItemMyAssets key={item.symbol}>
                       <ItemMyAssetsLeft>
@@ -181,14 +181,7 @@ const Overview = () => {
             </ListItemMyAssets>
           </ContentPageContainer>
           <OverviewHeaderTopCoin>
-            <CustomButton
-              onClick={() => {
-                handleOpenAllTransactions();
-              }}
-              width='100%'
-              border='none'
-              text='View all transactions'
-            ></CustomButton>
+            <CustomButton width='100%' border='none' text='View all transactions' />
           </OverviewHeaderTopCoin>
         </Grid>
       </Grid>

@@ -1,5 +1,6 @@
-import { OverviewHeaderTopCoin } from "../../pages/Overview/overview.css";
+import React from "react";
 import Typography from "@mui/material/Typography";
+import { OverviewHeaderTopCoin } from "../../pages/Overview/overview.css";
 type TabPanelProps = {
   children?: React.ReactNode;
   index: number;

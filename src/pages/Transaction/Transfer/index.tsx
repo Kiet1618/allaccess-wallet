@@ -12,7 +12,7 @@ import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress } from "../../../utils";
 import { setCurrentListTokens } from "../../../store/redux/token/actions";
 import Web3 from "web3";
-import { sendTransaction, getBalanceToken, useBlockchain, getBalance, getNameToken, getSymbolToken } from "../../../blockchain";
+import { sendTransaction, getBalanceToken, useBlockchain, getBalance, getToken } from "../../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { ModalCustom, HeaderModalInfoTransaction } from "../../../components/Table/table.css";
 import Snackbar from "@mui/material/Snackbar";
@@ -23,6 +23,7 @@ import { Token } from "../../../types/blockchain.type";
 import { listNetWorks } from "../../../configs/data";
 import { FormData } from "./type";
 import {
+  style,
   ContainerBalanceCard,
   TransferSuccessTitle,
   TransferSuccessSub,
@@ -40,27 +41,29 @@ import {
   ContainerTextField,
   ContainerIconSuccess,
   ContainerTwoButtonModal,
-  style,
 } from "./transfer.css";
+
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
+
 const Transfer = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+
   const networkState = useAppSelector(state => state.network);
   const listTokenState = useAppSelector(state => state.token);
+  const dispatch = useAppDispatch();
   const { web3 } = useBlockchain(networkState.currentListTokens.data);
-  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [open, setOpen] = useState(false);
+  const [tokenAddress, setTokenAddress] = useState("");
+  const [tokenImport, setTokenImport] = useState<Token>();
+  const [balance, setBalance] = useState("");
+  const [isDesktop, setIsDesktop] = useState(true);
+  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
   const handleClose = () => setOpen(false);
   const handleCloseAlert = () => setOpenAlert(false);
-  const [tokenAddress, setTokenAddress] = useState("");
-  const [symbolToken, setSymbolToken] = useState("");
-  const [nameToken, setNameToken] = useState("");
-  const [balance, setBalance] = useState("");
-  const dispatch = useAppDispatch();
-  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
   const {
     register,
     handleSubmit,
@@ -104,7 +107,6 @@ const Transfer = () => {
     reset();
   }, []);
 
-  const [isDesktop, setIsDesktop] = useState(true);
   const handleResize = () => {
     if (window.innerWidth < 600) {
       setIsDesktop(false);
@@ -120,30 +122,23 @@ const Transfer = () => {
     };
   }, []);
   useEffect(() => {
-    getNameToken(web3 as Web3, tokenAddress).then(res => setNameToken(res ? res : ""));
-    getSymbolToken(web3 as Web3, tokenAddress).then(res => setSymbolToken(res ? res : ""));
     try {
-      if (symbolToken && nameToken) {
-        const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentListTokens.data);
-
-        dispatch(
-          setCurrentListTokens({
-            chainId: currentNetwork?.chainID,
-            rpcUrls: currentNetwork?.rpcUrls,
-            img: "",
-            symbol: symbolToken,
-            name: nameToken,
-            tokenContract: tokenAddress,
-          } as Token)
-        );
+      const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentListTokens.data);
+      getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string).then(res => setTokenImport(res));
+      if (tokenImport) {
+        dispatch(setCurrentListTokens(tokenImport));
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error(err);
+    }
   }, [tokenAddress]);
 
   useEffect(() => {
     try {
       setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
-    } catch {}
+    } catch (e) {
+      console.log(e);
+    }
   }, [networkState.currentListTokens.data]);
   useEffect(() => {
     try {
