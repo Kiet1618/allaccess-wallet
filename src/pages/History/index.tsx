@@ -1,28 +1,42 @@
-import { Page, TitlePage } from "../../styles";
-import base from "../../styles/theme/base";
-import { createBreakpoint } from "styled-components-breakpoint";
 import React, { useState, useLayoutEffect } from "react";
-import styled from "styled-components";
-const breakpoint = createBreakpoint(base.breakpoints);
-import MenuItem from "@mui/material/MenuItem";
-import CustomInput from "../../components/TextField";
-import CustomButton from "../../components/Button";
-import { listNetWorks } from "../../configs/data";
-import { TimeDropdown } from "../../assets/icon";
-import TableCustom, { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../components/Table";
 import dayjs, { Dayjs } from "dayjs";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import { EmptyContainer } from "../Overview/overview.css";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import { listNetWorks } from "../../configs/data";
+import { TimeDropdown } from "../../assets/icon";
 import { rows } from "../../configs/data/test";
 import { Empty, Filter, SearchIcon } from "../../assets/icon";
-
+import CustomInput from "../../components/TextField";
+import CustomButton from "../../components/Button";
+import TableCustom from "../../components/Table";
+import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../components/Table/table.css";
+import { EmptyContainer } from "../Overview/overview.css";
+import { Page, TitlePage } from "../../styles";
+import {
+  ContainerButtonModalFilter,
+  ModalSubtitle,
+  ModalTo,
+  ContainerFilter,
+  ContainerDataTable,
+  TilePageContainer,
+  ContainerItemEmpty,
+  SubTitlePage,
+  ContainerFilterButton,
+  ContainerTextFieldTime,
+  ContainerTextFieldMethod,
+  ContainerTextFieldTimeCustom,
+  ContainerTextFieldNetwork,
+  ContainerTextFieldStatus,
+  ContainerTextFieldId,
+  style,
+  styleMobile,
+} from "./history.css";
 const History = () => {
-  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   const [time, setTime] = useState("30");
   const [method, setMethod] = useState("All");
   const [network, setNetwork] = useState("0");
@@ -31,12 +45,13 @@ const History = () => {
   const [customTimeFrom, setCustomTimeFrom] = useState<Dayjs | null>(dayjs("2022-04-17"));
   const [customTimeTo, setCustomTimeTo] = useState<Dayjs | null>(dayjs("2022-04-17"));
   const [open, setOpen] = React.useState(false);
+  const [openFilter, setOpenFilter] = React.useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [openFilter, setOpenFilter] = React.useState(false);
   const handleOpenFilter = () => setOpenFilter(true);
   const handleCloseFilter = () => setOpenFilter(false);
-  const [isDesktop, setIsDesktop] = useState(true);
 
   const handleResize = () => {
     if (window.innerWidth < 600) {
@@ -252,187 +267,3 @@ const History = () => {
   );
 };
 export default History;
-
-const ContainerButtonModalFilter = styled.div`
-  margin-top: 30px;
-  display: flex;
-  justify-content: right;
-`;
-
-export const ModalSubtitle = styled.div`
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 24px;
-`;
-const ModalTo = styled.div`
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  margin-top: 40px;
-`;
-const ContainerFilter = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  ${breakpoint("xs")`
-    display: none;
-`}
-  ${breakpoint("md")`
-     display: flex;
-  `}
-`;
-const ContainerDataTable = styled.div`
-  ${breakpoint("xs")`
-    margin: 10px 10px;
-  `}
-  ${breakpoint("lg")`
-    margin: 10px 44px;
-  `}
-`;
-
-export const TilePageContainer = styled.div`
-  ${breakpoint("xs")`
-    margin: 0px 10px;
-`}
-  ${breakpoint("lg")`
-    margin: 22px 44px;
-  `}
-  position: static;
-  justify-content: center;
-  align-items: center;
-`;
-const ContainerItemEmpty = styled.div`
-  height: 50vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-const SubTitlePage = styled.div`
-  font-weight: ${({ theme }) => theme.fontWeights.regular};
-  font-size: ${({ theme }) => theme.fontSizes.xs + "px"};
-  line-height: 24px;
-
-  color: ${({ theme }) => theme.colors.neutrals.gray600};
-  ${breakpoint("xs")`
-    width: 100%;
-`}
-  ${breakpoint("sm")`
-     margin: 20px 0;
-     width: 100%;
-  `}
-  ${breakpoint("md")`
-     margin: 20px 0;
-     width: 100%;
-  `}
-  ${breakpoint("lg")`
-     margin: 20px 0;
-     width: 60%;
-  `}
-`;
-const ContainerFilterButton = styled.div`
-  margin: 20px 10px;
-  ${breakpoint("xs")`
-    display: block;
-  `}
-  ${breakpoint("md")`
-     display: none;
-  `}
-`;
-export const ContainerTextFieldTime = styled.div`
-  margin: 10px 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: left !important;
-  align-items: left !important;
-  text-align: left !important;
-  width: 30%;
-  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
-    color: rgb(113, 128, 150) !important;
-  }
-`;
-
-export const ContainerTextFieldTimeCustom = styled.div`
-  margin: 10px 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: left !important;
-  align-items: left !important;
-  text-align: left !important;
-  width: 40%;
-  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
-    color: rgb(113, 128, 150) !important;
-  }
-`;
-export const ContainerTextFieldMethod = styled.div`
-  margin: 10px 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: left;
-  width: 20%;
-  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
-    color: rgb(113, 128, 150) !important;
-  }
-`;
-export const ContainerTextFieldNetwork = styled.div`
-  margin: 10px 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: left;
-  width: 30%;
-  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
-    color: rgb(113, 128, 150) !important;
-  }
-`;
-export const ContainerTextFieldStatus = styled.div`
-  margin: 10px 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: left;
-  width: 20%;
-  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
-    color: rgb(113, 128, 150) !important;
-  }
-`;
-export const ContainerTextFieldId = styled.div`
-  margin: 10px 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: left;
-  width: 35%;
-  .css-9ddj71-MuiInputBase-root-MuiOutlinedInput-root {
-    color: rgb(113, 128, 150) !important;
-  }
-`;
-
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: 4,
-  display: "flex",
-  justifyContent: "center",
-  flexDirection: "column",
-  textAlign: "center",
-  alignItems: "center",
-};
-
-const styleMobile = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: 4,
-  display: "flex",
-  justifyContent: "center",
-  flexDirection: "column",
-  textAlign: "left",
-  alignItems: "left",
-};

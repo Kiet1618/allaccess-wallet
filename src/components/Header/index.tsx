@@ -8,9 +8,7 @@ import Slider from "../Sidebar";
 import { Menu } from "../../assets/icon";
 import SearchComponent from "../TextField";
 import { SearchIcon } from "../../assets/icon";
-import base from "../../styles/theme/base";
-import { createBreakpoint } from "styled-components-breakpoint";
-const breakpoint = createBreakpoint(base.breakpoints);
+import { breakpoint } from "../../utils";
 
 const Header = () => {
   const location = useLocation();

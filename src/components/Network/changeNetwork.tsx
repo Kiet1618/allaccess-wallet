@@ -1,11 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-// import base from "../../styles/theme/base";
-// import { createBreakpoint } from "styled-components-breakpoint";
-import { sliceAddress, copyAddress } from "../../utils";
+import { sliceAddress } from "../../utils";
 import { Move } from "../../assets/icon";
-//const breakpoint = createBreakpoint(base.breakpoints);
-
 type Props = {
   text1: string;
   text2: string;

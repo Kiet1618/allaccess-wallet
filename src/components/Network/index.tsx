@@ -1,25 +1,18 @@
 import React, { useState, useLayoutEffect, useEffect } from "react";
-import styled from "styled-components";
-import MenuItem from "@mui/material/MenuItem";
-import ButtonCustom from "../Button";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { listNetWorks } from "../../configs/data";
-import base from "../../styles/theme/base";
-import { createBreakpoint } from "styled-components-breakpoint";
-const breakpoint = createBreakpoint(base.breakpoints);
-import { Dropdown } from "../../assets/icon";
-import { sliceAddress, copyAddress, preProcessHistoryResponse } from "../../utils";
-import { useAppDispatch, useAppSelector } from "../../store";
-import { setNetworkState } from "../../store/redux/network/actions";
-import { ModalCustom, HeaderModalInfoTransaction, HeaderModalGroupLeft, TitleModal } from "../Table";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import TagChangeNetwork from "./changeNetwork";
-import { setHistoriesAddress } from "../../store/redux/history/actions";
-import { PreProcessHistoryResponse } from "../../utils/history";
+import ButtonCustom from "../Button";
+import { Dropdown } from "../../assets/icon";
+import { listNetWorks } from "../../configs/data";
 import { Token } from "../../types/blockchain.type";
+import { useAppDispatch, useAppSelector } from "../../store";
+import { setNetworkState } from "../../store/redux/network/actions";
+import { setHistoriesAddress } from "../../store/redux/history/actions";
+import { sliceAddress, copyAddress, preProcessHistoryResponse } from "../../utils";
+import { ModalCustom, HeaderModalInfoTransaction, HeaderModalGroupLeft, TitleModal } from "../Table/table.css";
+import { ChangeNetworkTag, ChangeNetworkTagSub, FormControlCustom, SelectCustom, Container, MenuItemCustom, style, TagNetwork } from "./network.css";
 export const NetworkContainer = () => {
   const networkState = useAppSelector(state => state.network);
   const [network, setNetwork] = useState(networkState.currentListTokens.data);
@@ -101,101 +94,3 @@ export const NetworkContainer = () => {
     </Container>
   );
 };
-const ChangeNetworkTag = styled.div`
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 24px;
-  color: #42526e;
-  margin-bottom: 20px;
-`;
-export const ChangeNetworkTagSub = styled.div`
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-  color: #42526e;
-  width: 318px;
-  height: 48px;
-  margin-bottom: 30px;
-`;
-const FormControlCustom = styled(FormControl)`
-  background-color: #4a5568;
-  ${breakpoint("xs")`
-       width: 50% !important;
-
-      `}
-  ${breakpoint("sm")`
-       width: 250px !important;
-    `}
-  border-radius: 8px !important;
-  height: 40px !important;
-  margin-left: 10px !important;
-  box-sizing: border-box;
-`;
-
-const SelectCustom = styled(Select)`
-  height: 40px !important;
-  border-radius: 8px;
-  color: #fff !important;
-  font-family: "Inter" !important;
-  font-style: normal !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
-  line-height: 24px !important;
-  &:hover {
-    border-radius: 8px !important;
-  }
-  box-sizing: border-box;
-  border-radius: 8px !important;
-  .css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input {
-    border-radius: 8px !important;
-  }
-`;
-const Container = styled.div`
-  ${breakpoint("xs")`
-      margin: 10px 10px
-      `}
-  ${breakpoint("sm")`
-       margin: 44px 35px;
-    `}
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-const MenuItemCustom = styled(MenuItem)`
-  height: 50px;
-`;
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: 4,
-  display: "flex",
-  justifyContent: "center",
-  flexDirection: "column",
-  textAlign: "center",
-  alignItems: "center",
-};
-const TagNetwork = styled.div`
-  text-align: center;
-  padding: 8px 16px;
-  border: solid 1px #d9d9d9;
-  color: #42526e;
-  gap: 8px;
-  background-color: #f1f1f1;
-  border-radius: 32px;
-  ${breakpoint("xs")`
-       width: auto !important;
-    `}
-  ${breakpoint("md")`
-        width: 270px !important;
-  `}
-`;

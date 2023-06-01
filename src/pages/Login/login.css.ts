@@ -1,11 +1,8 @@
-import styled from "styled-components";
 import { Background } from "../../assets/img";
 import Grid from "@mui/material/Grid";
-import base from "../../styles/theme/base";
-import { createBreakpoint } from "styled-components-breakpoint";
 import Slider from "react-slick";
-
-const breakpoint = createBreakpoint(base.breakpoints);
+import styled from "styled-components";
+import { breakpoint } from "../../utils";
 export const CustomSlider = styled(Slider)`
   .slick-dots li button:before {
     font-size: 10px;

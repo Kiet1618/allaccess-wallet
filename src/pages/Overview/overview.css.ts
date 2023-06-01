@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import base from "../../styles/theme/base";
 import { createBreakpoint } from "styled-components-breakpoint";
-const breakpoint = createBreakpoint(base.breakpoints);
+export const breakpoint = createBreakpoint(base.breakpoints);
 
 export const NetworkContainerFixed = styled.div`
   background-color: ${props => props.theme.colors.white};

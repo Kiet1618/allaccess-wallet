@@ -1,9 +1,21 @@
 import React from "react";
 import styled from "styled-components";
-import { createBreakpoint } from "styled-components-breakpoint";
-import base from "../../styles/theme/base";
-const breakpoint = createBreakpoint(base.breakpoints);
+import { breakpoint } from "../../utils";
 import { Grid } from "@mui/material";
+
+const Footer = () => {
+  return (
+    <FooterApp item xs={100} sm={74} md={80} lg={84}>
+      <FooterContainer>© 2023 Allaccess wallet</FooterContainer>
+      <FooterContainer>
+        <a>About Us</a>
+        <a>Contact Us</a>
+      </FooterContainer>
+    </FooterApp>
+  );
+};
+
+export default Footer;
 
 const FooterApp = styled(Grid)`
   height: 56px;
@@ -40,16 +52,3 @@ const FooterContainer = styled.div`
     margin: 0 5px;
   }
 `;
-const Footer = () => {
-  return (
-    <FooterApp item xs={100} sm={74} md={80} lg={84}>
-      <FooterContainer>© 2023 Allaccess wallet</FooterContainer>
-      <FooterContainer>
-        <a>About Us</a>
-        <a>Contact Us</a>
-      </FooterContainer>
-    </FooterApp>
-  );
-};
-
-export default Footer;
