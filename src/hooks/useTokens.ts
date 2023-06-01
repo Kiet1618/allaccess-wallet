@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocalStorage } from "usehooks-ts";
-
 import { useAppSelector } from "@app/store";
-
-export const useTokens = () => {
+import Web3 from "web3";
+export const useTokens = (web3: Web3, addressToken: string, networkRpc: string, chainId: string) => {
   const [tokens, setTokens] = useState([]);
 
   // Get list token from local storage or redux
