@@ -3,7 +3,6 @@ import { TitlePage } from "../../../styles";
 import CustomButton from "../../../components/Button";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import CustomInput from "../../../components/TextField";
 import { Copy, DropdownBlack, Success, SearchIcon } from "../../../assets/icon";
@@ -30,11 +29,9 @@ import {
   ContainerBalanceCard,
   TransferSuccessTitle,
   TransferSuccessSub,
-  SearchContainer,
   ReceiveTagHeader,
   SubTitlePage,
   BackgroundPage,
-  SelectCoin,
   ContainerFlexSpace,
   ContainerRight,
   CopyAddressContainer,
@@ -45,7 +42,7 @@ import {
   ContainerIconSuccess,
   ContainerTwoButtonModal,
 } from "./transfer.css";
-
+import { useTokens } from "../../../hooks";
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
@@ -68,10 +65,12 @@ const Transfer = () => {
   const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data));
   const [openSelect, setOpenSelect] = useState(false);
   const handleClose = () => setOpen(false);
-  const handleCloseSelect = () => setOpenSelect(false);
+  const handleCloseSelect = () => {
+    setOpenSelect(false);
+    setSearchText("");
+  };
   const handleCloseAlert = () => setOpenAlert(false);
   const {
-    register,
     handleSubmit,
     reset,
     control,
@@ -82,8 +81,6 @@ const Transfer = () => {
       amount: "",
     },
   });
-  const { setValue } = useForm();
-
   const validateAmount = (value: string) => {
     const parsedValue = Number(value);
     if (isNaN(parsedValue) || parsedValue <= 0) {
@@ -131,11 +128,12 @@ const Transfer = () => {
   const handleAddToken = async () => {
     try {
       const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentListTokens.data);
-      const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
+      const currentToken = useTokens(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
+      // const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
+      const addToken = await currentToken.importToken();
       const check = listTokenState.currentListTokens.data.filter(token => token.tokenContract === tokenAddress).length;
       if (!check) {
         setTokenImport(addToken);
-        setSearchText("");
       }
       if (tokenImport && !check) {
         dispatch(setCurrentListTokens(tokenImport));
@@ -185,46 +183,6 @@ const Transfer = () => {
                     Select coin <SpanRed>*</SpanRed>
                   </label>
                   <CustomButton onClick={() => setOpenSelect(true)} imgLeft={token?.img || ""} textAlign='left' text={token?.name || ""} fullWidth styleButton='default' iconRight={DropdownBlack} />
-                  {/* <CustomInput
-                    value={token}
-                    styleTextField='default'
-                    select
-                    id='token'
-                    size='small'
-                    {...register("token", {
-                      onChange: e => setToken(e.target.value),
-                    })}
-                    SelectProps={{
-                      IconComponent: () => <DropdownBlack style={{ marginRight: "10px" }} />,
-                    }}
-                  >
-                    <SearchContainer>
-                      <CustomInput
-                        InputProps={{
-                          startAdornment: <SearchIcon />,
-                        }}
-                        placeholder={"Search"}
-                        size='small'
-                        hiddenLabel
-                        fullWidth
-                        color='primary'
-                        styleTextField='disable'
-                        width='100%'
-                        onChange={e => handleChangeSearch(e.target.value)}
-                      />
-                    </SearchContainer>
-                    {listTokenState.currentListTokens.data
-                      .filter(token => token.rpcUrls === networkState.currentListTokens.data)
-                      .filter(searchText ? token => token.symbol.toLowerCase().includes(searchText.toLowerCase()) || token.name.toLowerCase().includes(searchText.toLowerCase()) : token => token)
-                      .map(coin => (
-                        <MenuItem key={coin.symbol} value={coin.symbol}>
-                          <SelectCoin>
-                            <img width={"20px"} src={coin.img}></img>
-                            {coin.name}
-                          </SelectCoin>
-                        </MenuItem>
-                      ))}
-                  </CustomInput> */}
                 </ContainerTextField>
               </FormControl>
               <ContainerTextField>

@@ -77,7 +77,7 @@ export const listToken = createSlice({
     builder.addCase(actions.setCurrentListTokens.fulfilled, (state, action) => {
       state.currentListTokens.data = [...state.currentListTokens.data, action.payload];
       state.currentListTokens.loading = false;
-      //localStorage.setItem('currentListTokens', JSON.stringify(state.currentListTokens.data)); // Save to local storage
+      localStorage.setItem("currentListTokens", JSON.stringify(state.currentListTokens.data)); // Save to local storage
     });
     builder.addCase(actions.setCurrentListTokens.rejected, (state, action) => {
       state.currentListTokens.error = action.payload;
