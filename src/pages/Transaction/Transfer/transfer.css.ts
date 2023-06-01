@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { breakpoint } from "../../../utils";
+import { MenuItem } from "@mui/material";
 
 export const ContainerBalanceCard = styled.div`
   ${breakpoint("xs")`
@@ -24,7 +25,13 @@ export const TransferSuccessSub = styled.div`
   width: 418px;
   margin-top: 20px;
 `;
-
+export const CustomMenuItem = styled(MenuItem)`
+  height: 50px;
+  width: 100%;
+  font-family: "Inter", sans-serif !important;
+  font-style: normal !important;
+  color: black !important;
+`;
 export const SearchContainer = styled.div`
   margin: 20px 10px;
 `;

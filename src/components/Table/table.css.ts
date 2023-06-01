@@ -36,6 +36,8 @@ export const ModalCustom = styled(Modal)`
     justify-content: space-between;
     width: 100% !important;
   }
+  max-height: 50vh;
+  margin-top: 25vh;
 `;
 export const CustomMethod = styled.div`
   text-align: center;

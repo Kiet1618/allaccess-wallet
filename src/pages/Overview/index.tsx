@@ -162,7 +162,6 @@ const Overview = () => {
                       </div>
                     </TransactionLinkContainer>
                     <CustomButton
-                      spaceBetween={true}
                       width='150px'
                       text={(item.value ? formatValue(web3 as Web3, item.value as string) : "Error") + " " + (item.tokenSymbol ? item.tokenSymbol : currenToken)}
                       styleButton='default'
