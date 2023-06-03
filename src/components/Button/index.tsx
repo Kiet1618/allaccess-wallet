@@ -15,6 +15,8 @@ type Props = {
       title?: string | undefined;
     }
   >;
+  imgLeft?: string;
+  imgRight?: string;
   border?: string;
   width?: string;
   height?: string;
@@ -32,7 +34,9 @@ type Props = {
   fontSize?: string;
   styleButton?: "primary" | "default" | "inactive" | "style";
   float?: string;
-  spaceBetween?: boolean;
+  justifyContent?: string;
+  textAlign?: string;
+  alignItems?: string;
 };
 
 const ButtonComponent = styled(LoadingButton)<LoadingButtonProps & Props>`
@@ -84,8 +88,7 @@ const ButtonComponent = styled(LoadingButton)<LoadingButtonProps & Props>`
   padding: ${props => props.padding} !important;
   gap: ${props => props.gap} !important;
   display: flex;
-  align-items: center;
-  text-align: center;
+
   line-height: ${props => props.height} !important;
   font-size: ${props => props.fontSize} !important;
   ${breakpoint("xs")`
@@ -99,15 +102,18 @@ const ButtonComponent = styled(LoadingButton)<LoadingButtonProps & Props>`
         margin-right: 0;
     `}
     cursor: pointer;
-  justify-content: ${props => (props.spaceBetween ? "space-between" : "center")} !important;
+  align-items: center;
+  justify-content: ${props => (props.justifyContent ? props.justifyContent : "center")} !important;
+  text-align: ${props => (props.textAlign ? props.textAlign : "center")} !important;
 `;
 
 const ButtonTemplate: React.FC<LoadingButtonProps & Props> = (props: LoadingButtonProps & Props) => {
   return (
     <ButtonComponent {...props}>
       {props.iconLeft ? <props.iconLeft></props.iconLeft> : null}
-      <p style={{ margin: "0 10px" }}>{props.text}</p>
-      {props.iconRight ? <props.iconRight></props.iconRight> : null}
+      {props.imgLeft ? <img src={props.imgLeft} width={"20px"} /> : null}
+      <p style={{ margin: "0 10px", width: "90%" }}>{props.text}</p>
+      {props.iconRight ? <props.iconRight style={{ float: "right" }}></props.iconRight> : null}
     </ButtonComponent>
   );
 };

@@ -1,7 +1,8 @@
-import { Grid } from "@mui/material";
+import { Grid, Menu } from "@mui/material";
 import { TitlePage } from "../../../styles";
 import CustomButton from "../../../components/Button";
-import MenuItem from "@mui/material/MenuItem";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import FormControl from "@mui/material/FormControl";
 import CustomInput from "../../../components/TextField";
 import { Copy, DropdownBlack, Success, SearchIcon } from "../../../assets/icon";
@@ -14,7 +15,7 @@ import { setCurrentListTokens } from "../../../store/redux/token/actions";
 import Web3 from "web3";
 import { sendTransaction, getBalanceToken, useBlockchain, getBalance, getToken } from "../../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../../store";
-import { ModalCustom, HeaderModalInfoTransaction } from "../../../components/Table/table.css";
+import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../../components/Table/table.css";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Box from "@mui/material/Box";
@@ -24,14 +25,13 @@ import { listNetWorks } from "../../../configs/data";
 import { FormData } from "./type";
 import {
   style,
+  CustomMenuItem,
   ContainerBalanceCard,
   TransferSuccessTitle,
   TransferSuccessSub,
-  SearchContainer,
   ReceiveTagHeader,
   SubTitlePage,
   BackgroundPage,
-  SelectCoin,
   ContainerFlexSpace,
   ContainerRight,
   CopyAddressContainer,
@@ -42,7 +42,7 @@ import {
   ContainerIconSuccess,
   ContainerTwoButtonModal,
 } from "./transfer.css";
-
+import { useTokens } from "../../../hooks";
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
@@ -62,23 +62,25 @@ const Transfer = () => {
   const [balance, setBalance] = useState("");
   const [isDesktop, setIsDesktop] = useState(true);
   const [searchText, setSearchText] = useState("");
-  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
+  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data));
+  const [openSelect, setOpenSelect] = useState(false);
   const handleClose = () => setOpen(false);
+  const handleCloseSelect = () => {
+    setOpenSelect(false);
+    setSearchText("");
+  };
   const handleCloseAlert = () => setOpenAlert(false);
   const {
-    register,
     handleSubmit,
     reset,
     control,
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      token: token,
       addressTo: "",
       amount: "",
     },
   });
-
   const validateAmount = (value: string) => {
     const parsedValue = Number(value);
     if (isNaN(parsedValue) || parsedValue <= 0) {
@@ -87,11 +89,11 @@ const Transfer = () => {
     return true;
   };
 
-  const onSubmit = React.useCallback(async (values: FormData) => {
+  const onSubmit = async (values: FormData) => {
     setIsSubmitting(true);
-    const currentToken = await listTokenState.currentListTokens.data.filter(e => e.rpcUrls === networkState.currentListTokens.data).find(e => e.symbol === values.token);
-    currentToken?.tokenContract
-      ? await sendTransactionToken(web3 as Web3, values, currentToken.tokenContract).then(res => {
+    console.log(token);
+    token?.tokenContract
+      ? await sendTransactionToken(web3 as Web3, values, token.tokenContract).then(res => {
           if (res === "Error") {
             setOpenAlert(true);
           } else {
@@ -107,7 +109,7 @@ const Transfer = () => {
         });
     setIsSubmitting(false);
     reset();
-  }, []);
+  };
 
   const handleResize = () => {
     if (window.innerWidth < 600) {
@@ -123,36 +125,40 @@ const Transfer = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  const handleAddToken = async () => {
+  const handleGetInfoToken = async () => {
     try {
       const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentListTokens.data);
+      //const currentToken = useTokens(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
+      //const addToken = await currentToken.importToken();
       const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
       const check = listTokenState.currentListTokens.data.filter(token => token.tokenContract === tokenAddress).length;
       if (!check) {
         setTokenImport(addToken);
       }
-      if (tokenImport && !check) {
-        dispatch(setCurrentListTokens(tokenImport));
-      }
-      setSearchText("");
     } catch (err) {
       console.error(err);
     }
   };
+  const handleAddToken = () => {
+    const check = listTokenState.currentListTokens.data.filter(token => token.tokenContract === tokenAddress).length;
+    if (tokenImport && !check) {
+      dispatch(setCurrentListTokens(tokenImport));
+    }
+  };
   useEffect(() => {
-    handleAddToken();
+    handleGetInfoToken();
   }, [searchText]);
   useEffect(() => {
     try {
-      setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
+      setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data));
     } catch (e) {
       console.log(e);
     }
   }, [networkState.currentListTokens.data]);
   useEffect(() => {
     try {
-      const currentToken = listTokenState.currentListTokens.data.filter(e => e.rpcUrls === networkState.currentListTokens.data).find(e => e.symbol === token);
-      currentToken?.tokenContract ? getBalanceToken(web3 as Web3, currentToken.tokenContract).then(res => setBalance(res)) : getBalance(web3 as Web3).then(res => setBalance(res));
+      token?.tokenContract ? getBalanceToken(web3 as Web3, token.tokenContract).then(res => setBalance(res)) : getBalance(web3 as Web3).then(res => setBalance(res));
+      console.log(listTokenState.currentListTokens.data);
     } catch {
       setBalance("Error");
     }
@@ -160,6 +166,7 @@ const Transfer = () => {
   const handleChangeSearch = (e: string) => {
     setSearchText(e);
     setTokenAddress(e);
+    console.log(e);
   };
   return (
     <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -178,46 +185,7 @@ const Transfer = () => {
                   <label>
                     Select coin <SpanRed>*</SpanRed>
                   </label>
-                  <CustomInput
-                    value={token}
-                    styleTextField='default'
-                    select
-                    id='token'
-                    size='small'
-                    {...register("token", {
-                      onChange: e => setToken(e.target.value),
-                    })}
-                    SelectProps={{
-                      IconComponent: () => <DropdownBlack style={{ marginRight: "10px" }} />,
-                    }}
-                  >
-                    <SearchContainer>
-                      <CustomInput
-                        InputProps={{
-                          startAdornment: <SearchIcon />,
-                        }}
-                        placeholder={"Search"}
-                        size='small'
-                        hiddenLabel
-                        fullWidth
-                        color='primary'
-                        styleTextField='disable'
-                        width='100%'
-                        onChange={e => handleChangeSearch(e.target.value)}
-                      />
-                    </SearchContainer>
-                    {listTokenState.currentListTokens.data
-                      .filter(token => token.rpcUrls === networkState.currentListTokens.data)
-                      .filter(searchText ? token => token.symbol.toLowerCase().includes(searchText.toLowerCase()) || token.name.toLowerCase().includes(searchText.toLowerCase()) : token => token)
-                      .map(coin => (
-                        <MenuItem key={coin.symbol} value={coin.symbol}>
-                          <SelectCoin>
-                            <img width={"20px"} src={coin.img}></img>
-                            {coin.name}
-                          </SelectCoin>
-                        </MenuItem>
-                      ))}
-                  </CustomInput>
+                  <CustomButton onClick={() => setOpenSelect(true)} imgLeft={token?.img || ""} textAlign='left' text={token?.name || ""} fullWidth styleButton='default' iconRight={DropdownBlack} />
                 </ContainerTextField>
               </FormControl>
               <ContainerTextField>
@@ -304,7 +272,7 @@ const Transfer = () => {
               {sliceAddress(myAddress)} <Copy />
             </CopyAddressContainer>
             <BalanceNumberCard>
-              {balance} {token}
+              {balance} {token?.symbol}
             </BalanceNumberCard>
           </BackgroundPage>
         </ContainerBalanceCard>
@@ -330,6 +298,75 @@ const Transfer = () => {
           Transaction failure!
         </Alert>
       </Snackbar>
+      <ModalCustom open={openSelect} onClose={handleCloseSelect} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
+        <Box sx={style} width={isDesktop ? 500 : 300}>
+          <HeaderModalInfoTransaction>
+            <TitleModal>Select coin to transfer</TitleModal>
+            <div>
+              <IconButton onClick={handleCloseSelect}>
+                <CloseIcon />
+              </IconButton>
+            </div>
+          </HeaderModalInfoTransaction>
+
+          <CustomInput
+            InputProps={{
+              startAdornment: <SearchIcon />,
+            }}
+            placeholder={"Search"}
+            size='small'
+            hiddenLabel
+            fullWidth
+            color='primary'
+            styleTextField='disable'
+            width='100%'
+            onChange={e => handleChangeSearch(e.target.value)}
+            margin='dense'
+          />
+          {listTokenState.currentListTokens.data
+            .filter(coin => coin.rpcUrls === networkState.currentListTokens.data)
+            .filter(
+              searchText
+                ? coin => coin.symbol.toLowerCase().includes(searchText.toLowerCase()) || coin.name.toLowerCase().includes(searchText.toLowerCase()) || coin.tokenContract?.includes(searchText)
+                : coin => coin
+            ).length ? (
+            listTokenState.currentListTokens.data
+              .filter(coin => coin.rpcUrls === networkState.currentListTokens.data)
+              .filter(
+                searchText
+                  ? coin => coin.symbol.toLowerCase().includes(searchText.toLowerCase()) || coin.name.toLowerCase().includes(searchText.toLowerCase()) || coin.tokenContract?.includes(searchText)
+                  : coin => coin
+              )
+              .map(coin => (
+                <CustomMenuItem
+                  onClick={() => {
+                    setToken(coin);
+                    handleCloseSelect();
+                  }}
+                  key={coin.symbol}
+                  value={coin.symbol}
+                >
+                  <img width={"20px"} style={{ marginRight: "20px" }} src={coin.img} alt={coin.symbol} />
+                  {coin.name}
+                </CustomMenuItem>
+              ))
+          ) : tokenImport ? (
+            <CustomMenuItem
+              onClick={() => {
+                handleAddToken();
+                setToken(tokenImport);
+                handleCloseSelect();
+              }}
+              //key={coin.symbol}
+              value={tokenImport?.symbol}
+            >
+              <img width={"20px"} style={{ marginRight: "20px" }} src={tokenImport.img} alt={tokenImport.symbol} />
+              <p style={{ width: "80%", textAlign: "left" }}>{tokenImport?.name}</p>
+              <p style={{ color: "#CCC" }}>Import</p>
+            </CustomMenuItem>
+          ) : null}
+        </Box>
+      </ModalCustom>
     </Grid>
   );
 };

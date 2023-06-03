@@ -90,7 +90,7 @@ const History = () => {
               <MenuItem value={30}>Past 30 days</MenuItem>
               <MenuItem value={90}>Past 90 days</MenuItem>
               <MenuItem onClick={handleOpen} value={0}>
-                Custimized
+                Customized
               </MenuItem>
             </CustomInput>
           </ContainerTextFieldTime>
@@ -231,7 +231,7 @@ const History = () => {
             <MenuItem value={30}>Past 30 days</MenuItem>
             <MenuItem value={90}>Past 90 days</MenuItem>
             <MenuItem onClick={handleOpen} value={0}>
-              Custimized
+              Customized
             </MenuItem>
           </CustomInput>
           <label style={{ marginBottom: "5px", marginTop: "5px" }}>Method</label>
