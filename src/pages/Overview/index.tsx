@@ -7,11 +7,12 @@ import { sliceAddress } from "../../utils";
 import { useAppSelector } from "../../store";
 import { Page } from "../../styles";
 import { TitlePage } from "../../styles";
+import { Token } from "../../types/blockchain.type";
 import { ChooseToken } from "../../assets/icon";
 import CustomButton from "../../components/Button";
 import SearchComponent from "../../components/TextField";
 import { NetworkContainer } from "../../components/Network";
-import { formatValue, useBlockchain, getBalance } from "../../blockchain";
+import { formatValue, useBlockchain, getBalance, getBalanceToken } from "../../blockchain";
 import { SearchIcon, ReceiveTransactionHistory, SendTransactionHistory, LinkTransaction, Empty } from "../../assets/icon";
 import {
   NetworkContainerFixed,
@@ -34,30 +35,65 @@ import {
   TilePageContainer,
   EmptyContainer,
 } from "./overview.css";
-
+type ListTokenBalance = Token & {
+  balance?: string;
+};
 const Overview = () => {
   const myAddress = "0x04e407c7d7c2a6aa7f2e66b0b8c0dbcafa5e3afe";
   const historyState = useAppSelector(state => state.history);
   //const [number, setNumber] = useState(6);
   const number = 6;
   const listTokenState = useAppSelector(state => state.token);
+
+  const [listTokensBalance, setListTokensBalance] = useState<ListTokenBalance[]>(listTokenState.currentListTokens.data);
   const networkState = useAppSelector(state => state.network);
   const [currenToken, setCurrenToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
   const { web3 } = useBlockchain(networkState.currentListTokens.data);
   const [balance, setBalance] = useState("");
   const [searchText, setSearchText] = useState("");
   useEffect(() => {
-    try {
-      setCurrenToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
-    } catch (e) {
-      console.log(e);
-    }
-    try {
-      getBalance(web3 as Web3).then(res => setBalance(res));
-    } catch {
-      setBalance("Error");
-    }
+    const fetchData = async () => {
+      try {
+        setCurrenToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
+      } catch (e) {
+        console.log(e);
+      }
+      try {
+        const balance = await getBalance(web3 as Web3);
+        setBalance(balance);
+      } catch (error) {
+        console.log(error);
+        setBalance("Error");
+      }
+      try {
+        const updateBalance = await Promise.all(
+          listTokensBalance.map(async item => {
+            try {
+              const balance = await handleGetBalance(item);
+              return {
+                ...item,
+                balance: balance,
+              };
+            } catch (error) {
+              console.log(error);
+              return item;
+            }
+          })
+        );
+        setListTokensBalance(updateBalance);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
   }, [networkState.currentListTokens.data]);
+
+  const handleGetBalance = async (item: Token) => {
+    let result: string;
+    item.tokenContract ? (result = await getBalanceToken(web3 as Web3, item.tokenContract)) : (result = await getBalance(web3 as Web3).then());
+    return result;
+  };
 
   return (
     <Page>
@@ -110,10 +146,15 @@ const Overview = () => {
 
           <ContentPageContainer>
             <ListItemMyAssets>
-              {listTokenState.currentListTokens.data ? (
-                listTokenState.currentListTokens.data
+              {listTokensBalance ? (
+                listTokensBalance
                   .filter(token => token.rpcUrls === networkState.currentListTokens.data)
-                  .filter(searchText ? token => token.symbol.toLowerCase().includes(searchText.toLowerCase()) || token.name.toLowerCase().includes(searchText.toLowerCase()) : token => token)
+                  .filter(
+                    searchText
+                      ? token =>
+                          token.symbol.toLowerCase().includes(searchText.toLowerCase()) || token.name.toLowerCase().includes(searchText.toLowerCase()) || token.tokenContract?.includes(searchText)
+                      : token => token
+                  )
                   .map(item => (
                     <ItemMyAssets key={item.symbol}>
                       <ItemMyAssetsLeft>
@@ -122,7 +163,7 @@ const Overview = () => {
                         {item.symbol}
                       </ItemMyAssetsLeft>
                       <ItemMyAssetsRight>
-                        <TextCoin> 0.12 </TextCoin>~ $0.6868
+                        <TextCoin> {item.balance}</TextCoin>~ $0.6868
                       </ItemMyAssetsRight>
                     </ItemMyAssets>
                   ))

@@ -32,6 +32,7 @@ export const CustomMenuItem = styled(MenuItem)`
   font-style: normal !important;
   color: black !important;
 `;
+
 export const SearchContainer = styled.div`
   margin: 20px 10px;
 `;

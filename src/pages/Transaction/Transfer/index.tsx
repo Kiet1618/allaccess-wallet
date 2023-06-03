@@ -125,25 +125,28 @@ const Transfer = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  const handleAddToken = async () => {
+  const handleGetInfoToken = async () => {
     try {
       const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentListTokens.data);
-      const currentToken = useTokens(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
-      // const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
-      const addToken = await currentToken.importToken();
+      //const currentToken = useTokens(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
+      //const addToken = await currentToken.importToken();
+      const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
       const check = listTokenState.currentListTokens.data.filter(token => token.tokenContract === tokenAddress).length;
       if (!check) {
         setTokenImport(addToken);
-      }
-      if (tokenImport && !check) {
-        dispatch(setCurrentListTokens(tokenImport));
       }
     } catch (err) {
       console.error(err);
     }
   };
+  const handleAddToken = () => {
+    const check = listTokenState.currentListTokens.data.filter(token => token.tokenContract === tokenAddress).length;
+    if (tokenImport && !check) {
+      dispatch(setCurrentListTokens(tokenImport));
+    }
+  };
   useEffect(() => {
-    handleAddToken();
+    handleGetInfoToken();
   }, [searchText]);
   useEffect(() => {
     try {
@@ -155,7 +158,7 @@ const Transfer = () => {
   useEffect(() => {
     try {
       token?.tokenContract ? getBalanceToken(web3 as Web3, token.tokenContract).then(res => setBalance(res)) : getBalance(web3 as Web3).then(res => setBalance(res));
-      console.log(token);
+      console.log(listTokenState.currentListTokens.data);
     } catch {
       setBalance("Error");
     }
@@ -300,7 +303,7 @@ const Transfer = () => {
           <HeaderModalInfoTransaction>
             <TitleModal>Select coin to transfer</TitleModal>
             <div>
-              <IconButton onClick={handleClose}>
+              <IconButton onClick={handleCloseSelect}>
                 <CloseIcon />
               </IconButton>
             </div>
@@ -322,20 +325,46 @@ const Transfer = () => {
           />
           {listTokenState.currentListTokens.data
             .filter(coin => coin.rpcUrls === networkState.currentListTokens.data)
-            .filter(searchText ? coin => coin.symbol.toLowerCase().includes(searchText.toLowerCase()) || coin.name.toLowerCase().includes(searchText.toLowerCase()) : coin => coin)
-            .map(coin => (
-              <CustomMenuItem
-                onClick={() => {
-                  setToken(coin);
-                  handleCloseSelect();
-                }}
-                key={coin.symbol}
-                value={coin.symbol}
-              >
-                <img width={"20px"} style={{ marginRight: "20px" }} src={coin.img} alt={coin.symbol} />
-                {coin.name}
-              </CustomMenuItem>
-            ))}
+            .filter(
+              searchText
+                ? coin => coin.symbol.toLowerCase().includes(searchText.toLowerCase()) || coin.name.toLowerCase().includes(searchText.toLowerCase()) || coin.tokenContract?.includes(searchText)
+                : coin => coin
+            ).length ? (
+            listTokenState.currentListTokens.data
+              .filter(coin => coin.rpcUrls === networkState.currentListTokens.data)
+              .filter(
+                searchText
+                  ? coin => coin.symbol.toLowerCase().includes(searchText.toLowerCase()) || coin.name.toLowerCase().includes(searchText.toLowerCase()) || coin.tokenContract?.includes(searchText)
+                  : coin => coin
+              )
+              .map(coin => (
+                <CustomMenuItem
+                  onClick={() => {
+                    setToken(coin);
+                    handleCloseSelect();
+                  }}
+                  key={coin.symbol}
+                  value={coin.symbol}
+                >
+                  <img width={"20px"} style={{ marginRight: "20px" }} src={coin.img} alt={coin.symbol} />
+                  {coin.name}
+                </CustomMenuItem>
+              ))
+          ) : tokenImport ? (
+            <CustomMenuItem
+              onClick={() => {
+                handleAddToken();
+                setToken(tokenImport);
+                handleCloseSelect();
+              }}
+              //key={coin.symbol}
+              value={tokenImport?.symbol}
+            >
+              <img width={"20px"} style={{ marginRight: "20px" }} src={tokenImport.img} alt={tokenImport.symbol} />
+              <p style={{ width: "80%", textAlign: "left" }}>{tokenImport?.name}</p>
+              <p style={{ color: "#CCC" }}>Import</p>
+            </CustomMenuItem>
+          ) : null}
         </Box>
       </ModalCustom>
     </Grid>

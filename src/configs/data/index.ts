@@ -1,4 +1,5 @@
 import { listMenu } from "./menu";
 import { routes } from "./route";
 import { listNetWorks } from "./blockchain";
-export { listMenu, routes, listNetWorks };
+import { listTokens } from "./token";
+export { listMenu, routes, listNetWorks, listTokens };

@@ -2,14 +2,14 @@ import Web3 from "web3";
 import abi from "../common/ERC20_ABI.json";
 import { AbiItem } from "web3-utils";
 import { Token } from "../types/blockchain.type";
+import { LogoNew } from "../assets/img";
 export const getToken = async (web3: Web3, addressToken: string, networkRpc: string, chainId: string) => {
   const symbolToken = await getSymbolToken(web3, addressToken);
   const nameToken = await getNameToken(web3, addressToken);
   if (symbolToken && nameToken) {
     return {
-      chainId: chainId,
       rpcUrls: networkRpc,
-      img: "https://upload.wikimedia.org/wikipedia/commons/6/61/MemeCoin_Crypto_Currency_Logo.png",
+      img: LogoNew,
       symbol: symbolToken,
       name: nameToken,
       tokenContract: addressToken,

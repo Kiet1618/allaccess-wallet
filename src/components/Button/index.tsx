@@ -103,7 +103,7 @@ const ButtonComponent = styled(LoadingButton)<LoadingButtonProps & Props>`
     `}
     cursor: pointer;
   align-items: center;
-  justify-content: ${props => (props.justifyContent ? "center" : "center")} !important;
+  justify-content: ${props => (props.justifyContent ? props.justifyContent : "center")} !important;
   text-align: ${props => (props.textAlign ? props.textAlign : "center")} !important;
 `;
 
