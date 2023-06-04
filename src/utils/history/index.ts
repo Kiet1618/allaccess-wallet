@@ -90,33 +90,36 @@ export const preProcessHistoryResponse = async (currentNetwork: ChainNetwork | u
     let preProcessHistory: PreProcessHistoryResponse[] = [];
     let idCounter = 0;
     historyResponseNormal.forEach(item => {
-      const preProcessedItem: PreProcessHistoryResponse = {
-        id: idCounter++,
-        timeStamp: item.timeStamp,
-        method: "Approve",
-        tokenSymbol: currentNetwork?.title || "",
-        value: item.value,
-        from: item.from,
-        to: item.to,
-        blockHash: item.blockHash,
-      };
+      if (typeof item.from === "string") {
+        const preProcessedItem: PreProcessHistoryResponse = {
+          id: idCounter++,
+          timeStamp: item.timeStamp,
+          method: "Approve",
+          tokenSymbol: currentNetwork?.title || "",
+          value: item.value,
+          from: item.from,
+          to: item.to,
+          blockHash: item.blockHash,
+        };
 
-      preProcessHistory.push(preProcessedItem);
+        preProcessHistory.push(preProcessedItem);
+      }
     });
 
     historyResponseERC20.forEach(item => {
-      const preProcessedItem: PreProcessHistoryResponse = {
-        id: idCounter++,
-        timeStamp: item.timeStamp,
-        method: "Approve",
-        tokenSymbol: item.tokenSymbol,
-        value: item.value,
-        from: item.from,
-        to: item.to,
-        blockHash: item.blockHash,
-      };
-
-      preProcessHistory.push(preProcessedItem);
+      if (typeof item.from === "string") {
+        const preProcessedItem: PreProcessHistoryResponse = {
+          id: idCounter++,
+          timeStamp: item.timeStamp,
+          method: "Approve",
+          tokenSymbol: item.tokenSymbol,
+          value: item.value,
+          from: item.from,
+          to: item.to,
+          blockHash: item.blockHash,
+        };
+        preProcessHistory.push(preProcessedItem);
+      }
     });
 
     return preProcessHistory.sort((a, b) => Number(b.timeStamp) - Number(a.timeStamp));
