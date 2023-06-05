@@ -2,6 +2,7 @@ import Web3 from "web3";
 import { FormData } from "../pages/Transaction/Transfer/type";
 import { privateKey } from "../configs/data/test";
 import abi from "../common/ERC20_ABI.json";
+import { useState } from "react";
 export const sendTransaction = async (web3: Web3, data: FormData) => {
   const { addressTo, amount } = data;
   try {
@@ -25,9 +26,14 @@ export const sendTransaction = async (web3: Web3, data: FormData) => {
       data: "0x",
     };
     const signedTransaction: any = await web3.eth.accounts.signTransaction(tx, privateKey);
-    const sendSignedTransaction = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
-    console.log(sendSignedTransaction.transactionHash);
-    return sendSignedTransaction.transactionHash;
+    const sendSignedTransaction = web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+    return sendSignedTransaction
+      .on("transactionHash", () => {
+        console.log("transactionHash");
+      })
+      .on("receipt", () => {
+        console.log("success");
+      });
   } catch (error) {
     console.log(error);
     return "Error";
@@ -52,9 +58,11 @@ export const sendTransactionToken = async (web3: Web3, data: FormData, tokenCont
     const transactionReceipt = web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
     return transactionReceipt
       .on("transactionHash", () => {
-        // display modal loading
+        console.log("transactionHash");
       })
-      .on("receipt", () => {});
+      .on("receipt", () => {
+        console.log("success");
+      });
   } catch (error) {
     console.log(error);
     return "Error";

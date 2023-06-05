@@ -64,8 +64,9 @@ const Transfer = () => {
   const [searchText, setSearchText] = useState("");
   const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data));
   const [openSelect, setOpenSelect] = useState(false);
-  const [gasPrice, setGasPrice] = useState(0);
-  const [gasLimit, setGasLimit] = useState(0);
+  const [gasPrice, setGasPrice] = useState<string | 0>("0");
+  const [gasLimit, setGasLimit] = useState<string | 0>("0");
+  const [reRenderGas, setRenderGasLimit] = useState<string>("0");
   const handleClose = () => setOpen(false);
   const handleCloseSelect = () => {
     setOpenSelect(false);
@@ -96,11 +97,13 @@ const Transfer = () => {
       const addressTo = getValues("addressTo");
       const amount = getValues("amount");
       const gasLimitValue = await getGasLimit(web3 as Web3, addressTo, amount, token?.tokenContract);
+      console.log("run");
+
       setGasLimit(gasLimitValue);
     };
 
     updateGasLimit();
-  }, [getValues, token, networkState.currentListTokens.data]);
+  }, [reRenderGas, token?.symbol, networkState.currentListTokens.data]);
   useEffect(() => {
     const updateGasPrice = async () => {
       const gasPriceValue = await getGasPrice(web3 as Web3);
@@ -111,7 +114,6 @@ const Transfer = () => {
 
   const onSubmit = async (values: FormData) => {
     setIsSubmitting(true);
-    console.log(token);
     token?.tokenContract
       ? await sendTransactionToken(web3 as Web3, values, token.tokenContract).then(res => {
           if (res === "Error") {
@@ -178,7 +180,6 @@ const Transfer = () => {
   useEffect(() => {
     try {
       token?.tokenContract ? getBalanceToken(web3 as Web3, token.tokenContract).then(res => setBalance(res)) : getBalance(web3 as Web3).then(res => setBalance(res));
-      console.log(listTokenState.currentListTokens.data);
     } catch {
       setBalance("Error");
     }
@@ -186,7 +187,6 @@ const Transfer = () => {
   const handleChangeSearch = (e: string) => {
     setSearchText(e);
     setTokenAddress(e);
-    console.log(e);
   };
   return (
     <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -216,7 +216,10 @@ const Transfer = () => {
                   render={({ field: { name, value, onChange } }) => (
                     <CustomInput
                       error={!!errors.addressTo}
-                      onChange={onChange}
+                      onChange={e => {
+                        setRenderGasLimit(e.target.value);
+                        onChange(e);
+                      }}
                       name={name}
                       value={value}
                       helperText={errors.addressTo && "Invalid address"}
@@ -246,7 +249,10 @@ const Transfer = () => {
                   render={({ field: { name, value, onChange } }) => (
                     <CustomInput
                       error={!!errors.amount}
-                      onChange={onChange}
+                      onChange={e => {
+                        setRenderGasLimit(e.target.value);
+                        onChange(e);
+                      }}
                       name={name}
                       placeholder='Enter amount'
                       id='amount'
@@ -280,7 +286,7 @@ const Transfer = () => {
               <ContainerFlexSpace>
                 <TextHeaderOverview>Total cost</TextHeaderOverview>
                 <TextHeaderOverview>
-                  {gasLimit + gasPrice} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentListTokens.data)?.symbol}
+                  {(Number(gasLimit) + Number(gasPrice)).toFixed(15)} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentListTokens.data)?.symbol}
                 </TextHeaderOverview>
               </ContainerFlexSpace>
               <ContainerRight>
