@@ -7,12 +7,20 @@ export const sendTransaction = async (web3: Web3, data: FormData) => {
   try {
     const weiValue = Math.round(parseFloat(amount) * 10 ** 18);
     const hexValue = web3.utils.toHex(weiValue ? weiValue : 0);
+
     const price = await web3.eth.getGasPrice();
+    const gasLimit = await web3.eth.estimateGas({
+      to: addressTo,
+      from: web3.defaultAccount as string,
+      value: hexValue,
+      data: "0x",
+    });
+
     const tx = {
       to: addressTo,
       from: web3.defaultAccount as string,
       value: hexValue,
-      gas: 210000,
+      gas: gasLimit,
       gasPrice: price,
       data: "0x",
     };
@@ -41,8 +49,12 @@ export const sendTransactionToken = async (web3: Web3, data: FormData, tokenCont
       data: transferData,
     };
     const signedTransaction: any = await web3.eth.accounts.signTransaction(transactionObject, privateKey);
-    const transactionReceipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
-    return transactionReceipt.transactionHash;
+    const transactionReceipt = web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+    return transactionReceipt
+      .on("transactionHash", () => {
+        // display modal loading
+      })
+      .on("receipt", () => {});
   } catch (error) {
     console.log(error);
     return "Error";
