@@ -43,12 +43,14 @@ import {
   ContainerTwoButtonModal,
 } from "./transfer.css";
 import { useTokens } from "../../../hooks";
+import { getTorusKey } from "../../../storage/storage-service";
+
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
 
 const Transfer = () => {
-  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const myAddress = getTorusKey().ethAddress;
 
   const networkState = useAppSelector(state => state.network);
   const listTokenState = useAppSelector(state => state.token);

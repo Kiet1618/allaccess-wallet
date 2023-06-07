@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocalStorage } from "usehooks-ts";
+import { useLocalStorage, useScreen } from "usehooks-ts";
 import { useAppSelector, useAppDispatch } from "../store";
 import Web3 from "web3";
 import { getListTokens } from "../storage/storage-service";

@@ -8,9 +8,10 @@ import { sliceAddress, copyAddress } from "../../../utils";
 import { TitlePageBlack } from "../../../styles";
 import { BackgroundPage, TitlePageContainer } from "../profile.css";
 import { SubTitlePage, CopyAddressContainer, ContainerTextField } from "../../Transaction/transaction.css";
+import { getTorusKey } from "../../../storage/storage-service";
 import { ContainerAvatar, ContainerInfo } from "./info.css";
 const Info = () => {
-  const myAdress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const myAddress = getTorusKey().ethAddress;
   return (
     <>
       <TitlePageContainer>
@@ -25,8 +26,8 @@ const Info = () => {
                 <ContainerAvatar>
                   <Avatar alt='Remy Sharp' src='https://images.ctfassets.net/fu9did2d8yaw/2rUzSj8VDtr9YBmrU61c2G/a84a48f14f027886374cc618df4ae176/BAYC.png' sx={{ width: 200, height: 200 }} />
                   <CustomButton mTop='20px' mBottom='20px' text='Change avatar' styleButton='primary'></CustomButton>
-                  <CopyAddressContainer onClick={() => copyAddress(myAdress)}>
-                    {sliceAddress(myAdress)} <Copy />
+                  <CopyAddressContainer onClick={() => copyAddress(myAddress)}>
+                    {sliceAddress(myAddress)} <Copy />
                   </CopyAddressContainer>
                 </ContainerAvatar>
               </Grid>

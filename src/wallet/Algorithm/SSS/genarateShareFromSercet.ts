@@ -28,9 +28,9 @@ function generateSharesLagrangeInterpolation(shares: BN[], nodeIndex: BN[], priK
   }
 }
 const shares = (priKey: BN) => {
-  let temp: BN[] = [new BN(crypto.randomBytes(64).toString("hex"), "hex").umod(ecInstance.n as BN)];
-  temp[1] = generateSharesLagrangeInterpolation(temp, nodeIndex, priKey) as BN;
-  return temp;
+  let listShares: BN[] = [new BN(crypto.randomBytes(64).toString("hex"), "hex").umod(ecInstance.n as BN)];
+  listShares[1] = generateSharesLagrangeInterpolation(listShares, nodeIndex, priKey) as BN;
+  return listShares;
 };
 
 export { shares };

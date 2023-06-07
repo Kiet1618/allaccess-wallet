@@ -1,3 +1,3 @@
 import { lagrangeInterpolation } from "./SSS/combinationShares";
-
-export { lagrangeInterpolation };
+import { shares } from "./SSS/genarateShareFromSercet";
+export { lagrangeInterpolation, shares };

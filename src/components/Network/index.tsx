@@ -13,7 +13,9 @@ import { setHistoriesAddress } from "../../store/redux/history/actions";
 import { sliceAddress, copyAddress, preProcessHistoryResponse } from "../../utils";
 import { ModalCustom, HeaderModalInfoTransaction, HeaderModalGroupLeft, TitleModal } from "../Table/table.css";
 import { ChangeNetworkTag, ChangeNetworkTagSub, FormControlCustom, SelectCustom, Container, MenuItemCustom, style, TagNetwork } from "./network.css";
+import { getTorusKey } from "../../storage/storage-service";
 export const NetworkContainer = () => {
+  const myAddress = getTorusKey()?.ethAddress;
   const networkState = useAppSelector(state => state.network);
   const [network, setNetwork] = useState(networkState.currentListTokens.data);
   const dispatch = useAppDispatch();
@@ -59,7 +61,6 @@ export const NetworkContainer = () => {
     if (!historyState.getHistoriesAddress.data.length) fetchData();
   }, [network]);
 
-  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
   return (
     <Container>
       <ButtonCustom onClick={() => copyAddress(myAddress)} width='40%' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text={sliceAddress(myAddress)} />

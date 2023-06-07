@@ -4,9 +4,10 @@ import { formatValue } from "./format";
 import { getGasPrice, getGasLimit } from "./blockchain";
 import { getBalanceToken, getBalance } from "./balance";
 import { sendTransaction, sendTransactionToken } from "./transfer";
-import { privateKey } from "../configs/data/test";
+import { getTorusKey } from "../storage/storage-service";
 export const useBlockchain = (rpcUrl: string) => {
   try {
+    const privateKey = getTorusKey().priKey;
     const web3 = new Web3(rpcUrl);
     const account = web3.eth.accounts.wallet.add(privateKey.padStart(64, "0"));
     web3.defaultAccount = account.address;
