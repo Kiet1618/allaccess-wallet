@@ -5,9 +5,10 @@ import CustomInput from "../../../components/TextField";
 import { Copy } from "../../../assets/icon";
 import QRCode from "react-qr-code";
 import { TitlePageContainer, SubTitlePage, ReceiveTagHeader, BackgroundPage, ContainerFlexSpace, CopyAddressContainer, AddressContainer, ContainerQRCode, BackgroundPageQR } from "./receive.css";
+import { getTorusKey } from "../../../storage/storage-service";
 
 const Receive = () => {
-  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const myAddress = getTorusKey().ethAddress;
   return (
     <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid item xs={100}>

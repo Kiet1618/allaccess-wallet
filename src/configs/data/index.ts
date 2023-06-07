@@ -2,4 +2,5 @@ import { listMenu } from "./menu";
 import { routes } from "./route";
 import { listNetWorks } from "./blockchain";
 import { listTokens } from "./token";
-export { listMenu, routes, listNetWorks, listTokens };
+import { torusTestLocal } from "./node-service";
+export { torusTestLocal, listMenu, routes, listNetWorks, listTokens };

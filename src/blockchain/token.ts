@@ -23,13 +23,7 @@ const getNameToken = async (web3: Web3, addressToken: string) => {
   try {
     const tokenContract = new web3.eth.Contract(abi as AbiItem[], addressToken);
 
-    const name: string = await tokenContract.methods.name().call((error: Error | null, name: string) => {
-      if (error) {
-        console.error(error);
-      } else {
-        return name;
-      }
-    });
+    const name: string = await tokenContract.methods.name().call();
     return name;
   } catch {
     return "";
@@ -40,13 +34,7 @@ const getSymbolToken = async (web3: Web3, addressToken: string) => {
   try {
     const tokenContract = new web3.eth.Contract(abi as AbiItem[], addressToken);
 
-    const symbol: string = await tokenContract.methods.symbol().call((error: Error | null, symbol: string) => {
-      if (error) {
-        console.error(error);
-      } else {
-        return symbol;
-      }
-    });
+    const symbol: string = await tokenContract.methods.symbol().call();
     return symbol;
   } catch {
     return "";

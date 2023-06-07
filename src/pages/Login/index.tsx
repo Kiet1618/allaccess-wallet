@@ -8,9 +8,12 @@ import { Google, LogoText } from "../../assets/icon";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import React from "react";
+import axios from "axios";
+import { useSessionStorage } from "usehooks-ts";
+import { KeyPair, getShareBSuccess } from "../../wallet/node-service";
 const Login = () => {
   const navigate = useNavigate();
-
+  const [_, setMasterKey] = useSessionStorage<KeyPair>("master-key", { ethAddress: "", priKey: "" });
   var settings = {
     dots: true,
     infinite: true,
@@ -25,14 +28,10 @@ const Login = () => {
   const login = useGoogleLogin({
     onSuccess: async tokenResponse => {
       console.log(tokenResponse);
+      const torusKey = await getShareBSuccess("", "", "");
+      setMasterKey(torusKey);
+      sessionStorage.setItem("torusKey", JSON.stringify(torusKey));
       navigate("/overview");
-
-      // const userInfo = await axios
-      //   .get('https://www.googleapis.com/oauth2/v3/userinfo', {
-      //     headers: { Authorization: `Bearer ${tokenResponse.code}` },
-      //   })
-      //   .then(res => res.data);
-      // console.log(userInfo);
     },
     flow: "auth-code",
   });

@@ -1,3 +1,4 @@
+import { KeyPair } from "../wallet/node-service";
 function getWindow(): Window | undefined {
   try {
     if (typeof window !== "undefined") return window;
@@ -19,5 +20,25 @@ export const getListTokens = () => {
     return null;
   } catch {
     return null;
+  }
+};
+
+export const getTorusKey = (): KeyPair => {
+  try {
+    if (typeof win !== "undefined") {
+      const data = win.sessionStorage.getItem("torusKey");
+      if (typeof data === "string") {
+        return JSON.parse(data);
+      }
+    }
+    return {
+      ethAddress: "",
+      priKey: "",
+    };
+  } catch {
+    return {
+      ethAddress: "",
+      priKey: "",
+    };
   }
 };

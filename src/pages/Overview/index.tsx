@@ -35,11 +35,12 @@ import {
   TilePageContainer,
   EmptyContainer,
 } from "./overview.css";
+import { getTorusKey } from "../../storage/storage-service";
 type ListTokenBalance = Token & {
   balance?: string;
 };
 const Overview = () => {
-  const myAddress = "0x04e407c7d7c2a6aa7f2e66b0b8c0dbcafa5e3afe";
+  const myAddress = getTorusKey()?.ethAddress;
   const historyState = useAppSelector(state => state.history);
   //const [number, setNumber] = useState(6);
   const number = 6;

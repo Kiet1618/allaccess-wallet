@@ -13,7 +13,7 @@ import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress } from "../../../utils";
 import { setCurrentListTokens } from "../../../store/redux/token/actions";
 import Web3 from "web3";
-import { sendTransaction, getBalanceToken, useBlockchain, getBalance, getToken } from "../../../blockchain";
+import { sendTransaction, getBalanceToken, useBlockchain, getBalance, getToken, getGasPrice, getGasLimit } from "../../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../../components/Table/table.css";
 import Snackbar from "@mui/material/Snackbar";
@@ -43,12 +43,14 @@ import {
   ContainerTwoButtonModal,
 } from "./transfer.css";
 import { useTokens } from "../../../hooks";
+import { getTorusKey } from "../../../storage/storage-service";
+
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
 
 const Transfer = () => {
-  const myAddress = "0x04E407C7d7C2A6aA7f2e66B0B8C0dBcafA5E3Afe";
+  const myAddress = getTorusKey().ethAddress;
 
   const networkState = useAppSelector(state => state.network);
   const listTokenState = useAppSelector(state => state.token);
@@ -64,6 +66,9 @@ const Transfer = () => {
   const [searchText, setSearchText] = useState("");
   const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data));
   const [openSelect, setOpenSelect] = useState(false);
+  const [gasPrice, setGasPrice] = useState<string | 0>("0");
+  const [gasLimit, setGasLimit] = useState<string | 0>("0");
+  const [reRenderGas, setRenderGasLimit] = useState<string>("0");
   const handleClose = () => setOpen(false);
   const handleCloseSelect = () => {
     setOpenSelect(false);
@@ -75,6 +80,7 @@ const Transfer = () => {
     reset,
     control,
     formState: { errors },
+    getValues,
   } = useForm<FormData>({
     defaultValues: {
       addressTo: "",
@@ -88,10 +94,28 @@ const Transfer = () => {
     }
     return true;
   };
+  useEffect(() => {
+    const updateGasLimit = async () => {
+      const addressTo = getValues("addressTo");
+      const amount = getValues("amount");
+      const gasLimitValue = await getGasLimit(web3 as Web3, addressTo, amount, token?.tokenContract);
+      console.log("run");
+
+      setGasLimit(gasLimitValue);
+    };
+
+    updateGasLimit();
+  }, [reRenderGas, token?.symbol, networkState.currentListTokens.data]);
+  useEffect(() => {
+    const updateGasPrice = async () => {
+      const gasPriceValue = await getGasPrice(web3 as Web3);
+      setGasPrice(gasPriceValue);
+    };
+    updateGasPrice();
+  }, [networkState.currentListTokens.data]);
 
   const onSubmit = async (values: FormData) => {
     setIsSubmitting(true);
-    console.log(token);
     token?.tokenContract
       ? await sendTransactionToken(web3 as Web3, values, token.tokenContract).then(res => {
           if (res === "Error") {
@@ -158,7 +182,6 @@ const Transfer = () => {
   useEffect(() => {
     try {
       token?.tokenContract ? getBalanceToken(web3 as Web3, token.tokenContract).then(res => setBalance(res)) : getBalance(web3 as Web3).then(res => setBalance(res));
-      console.log(listTokenState.currentListTokens.data);
     } catch {
       setBalance("Error");
     }
@@ -166,7 +189,6 @@ const Transfer = () => {
   const handleChangeSearch = (e: string) => {
     setSearchText(e);
     setTokenAddress(e);
-    console.log(e);
   };
   return (
     <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -196,7 +218,10 @@ const Transfer = () => {
                   render={({ field: { name, value, onChange } }) => (
                     <CustomInput
                       error={!!errors.addressTo}
-                      onChange={onChange}
+                      onChange={e => {
+                        setRenderGasLimit(e.target.value);
+                        onChange(e);
+                      }}
                       name={name}
                       value={value}
                       helperText={errors.addressTo && "Invalid address"}
@@ -226,7 +251,10 @@ const Transfer = () => {
                   render={({ field: { name, value, onChange } }) => (
                     <CustomInput
                       error={!!errors.amount}
-                      onChange={onChange}
+                      onChange={e => {
+                        setRenderGasLimit(e.target.value);
+                        onChange(e);
+                      }}
                       name={name}
                       placeholder='Enter amount'
                       id='amount'
@@ -246,16 +274,22 @@ const Transfer = () => {
                 />
               </ContainerTextField>
               <ContainerFlexSpace>
-                <div>Maxium desposit</div>
-                <div>0.00001 ETH</div>
+                <div>Gas price</div>
+                <div>
+                  {gasPrice} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentListTokens.data)?.symbol}
+                </div>
               </ContainerFlexSpace>
               <ContainerFlexSpace>
-                <div>Network desposit</div>
-                <div>$12.34</div>
+                <div>Gas limit</div>
+                <div>
+                  {gasLimit} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentListTokens.data)?.symbol}
+                </div>
               </ContainerFlexSpace>
               <ContainerFlexSpace>
                 <TextHeaderOverview>Total cost</TextHeaderOverview>
-                <TextHeaderOverview>$12.34</TextHeaderOverview>
+                <TextHeaderOverview>
+                  {(Number(gasLimit) + Number(gasPrice)).toFixed(15)} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentListTokens.data)?.symbol}
+                </TextHeaderOverview>
               </ContainerFlexSpace>
               <ContainerRight>
                 <CustomButton variant='contained' loadingPosition='end' loading={isSubmitting} type='submit' text='Transfer' styleButton='primary' width='150px' height='50px'></CustomButton>
