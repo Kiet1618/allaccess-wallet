@@ -5,15 +5,15 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Button from "../../components/Button";
 import { Google, LogoText } from "../../assets/icon";
-import { useGoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, GoogleLoginProps } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
-import React from "react";
 import axios from "axios";
 import { useSessionStorage } from "usehooks-ts";
-import { KeyPair, getShareBSuccess } from "../../wallet/node-service";
+import { KeyPair, getMasterKey } from "../../wallet/node-service";
+import { UserGoogle } from "@app/types/oauth.type";
 const Login = () => {
   const navigate = useNavigate();
-  const [_, setMasterKey] = useSessionStorage<KeyPair>("master-key", { ethAddress: "", priKey: "" });
+  const [_, setMasterKey] = useSessionStorage<KeyPair>("master-key", { ethAddress: "", priKey: "", pubKey: "" });
   var settings = {
     dots: true,
     infinite: true,
@@ -25,16 +25,22 @@ const Login = () => {
     arrows: false,
   };
 
-  const login = useGoogleLogin({
-    onSuccess: async tokenResponse => {
-      console.log(tokenResponse);
-      const torusKey = await getShareBSuccess("", "", "");
-      setMasterKey(torusKey);
-      sessionStorage.setItem("torusKey", JSON.stringify(torusKey));
-      navigate("/overview");
+  const callbacksGoogle: GoogleLoginProps = {
+    onSuccess: async credentialResponse => {
+      const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: credentialResponse.credential } });
+      const { error, key } = await getMasterKey("google", profile.email, credentialResponse.credential || "");
+      if (error) {
+        // Notification message for user
+        alert(error);
+        return;
+      }
+      // Set key and navigate to MFA page, or Overview page
+      setMasterKey((key as KeyPair) || {});
     },
-    flow: "auth-code",
-  });
+    onError: () => {
+      console.log("Login Failed");
+    },
+  };
 
   return (
     <>
@@ -46,7 +52,8 @@ const Login = () => {
           <LoginH1>Log in or sign up</LoginH1>
           <Subtitle>Select how you would like to continue</Subtitle>
           <ContainerLoginButton>
-            <Button onClick={() => login()} width='80%' height='48px' styleButton='default' fontSize='18px' iconLeft={Google} text='Continue with Google' />
+            <GoogleLogin {...callbacksGoogle} />
+            <Button width='80%' height='48px' styleButton='default' fontSize='18px' iconLeft={Google} text='Continue with Google' />
             <OrLineContainer>
               <hr></hr>
               <p>or</p>

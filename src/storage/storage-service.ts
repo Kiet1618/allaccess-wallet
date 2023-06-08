@@ -34,11 +34,13 @@ export const getTorusKey = (): KeyPair => {
     return {
       ethAddress: "",
       priKey: "",
+      pubKey: "",
     };
   } catch {
     return {
       ethAddress: "",
       priKey: "",
+      pubKey: "",
     };
   }
 };
