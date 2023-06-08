@@ -1,4 +1,7 @@
 const webpack = require("webpack");
+const path = require("path");
+const ModuleScopePlugin = require("react-dev-utils/ModuleScopePlugin");
+
 module.exports = function override(config) {
   const fallback = config.resolve.fallback || {};
   Object.assign(fallback, {
@@ -9,6 +12,7 @@ module.exports = function override(config) {
     https: require.resolve("https-browserify"),
     os: require.resolve("os-browserify"),
     url: require.resolve("url"),
+    "@app": path.resolve(__dirname, "src"),
   });
   config.resolve.fallback = fallback;
   config.plugins = (config.plugins || []).concat([
@@ -17,5 +21,6 @@ module.exports = function override(config) {
       Buffer: ["buffer", "Buffer"],
     }),
   ]);
+  config.resolve.plugins = config.resolve.plugins.filter(plugin => !(plugin instanceof ModuleScopePlugin));
   return config;
 };
