@@ -1,19 +1,23 @@
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
-import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
-import { FirstSlider, SecondarySlider, ThirdSlider } from "../../assets/img";
+import { GoogleLogin, GoogleLoginProps } from "@react-oauth/google";
+import { useSessionStorage } from "usehooks-ts";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Button from "../../components/Button";
-import { Google, LogoText } from "../../assets/icon";
-import { GoogleLogin, GoogleLoginProps } from "@react-oauth/google";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { useSessionStorage } from "usehooks-ts";
-import { KeyPair } from "../../wallet/node-service";
+
+import { FirstSlider, SecondarySlider, ThirdSlider } from "@app/assets/img";
+import Button from "@app/components/Button";
+import { Google, LogoText } from "@app/assets/icon";
+import { KeyPair } from "@app/wallet/node-service";
 import { UserGoogle } from "@app/types/oauth.type";
 import { useFetchWallet } from "@app/hooks";
+import { InfoMasterKey } from "@app/wallet/metadata";
+
+import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
+
 const Login = () => {
-  const { getInfoMasterKey } = useFetchWallet();
+  const { getInfoWallet } = useFetchWallet();
   const navigate = useNavigate();
   const [_, setMasterKey] = useSessionStorage<KeyPair>("master-key", { ethAddress: "", priKey: "", pubKey: "" });
   var settings = {
@@ -30,8 +34,13 @@ const Login = () => {
   const callbacksGoogle: GoogleLoginProps = {
     onSuccess: async credentialResponse => {
       const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: credentialResponse.credential } });
-      const info = await getInfoMasterKey("google", profile.email, credentialResponse.credential || "");
-      console.log("🚀 ~ file: index.tsx:34 ~ Login ~ info:", info);
+      const { error, info } = await getInfoWallet("google", profile.email, credentialResponse.credential || "");
+      console.log("🚀 ~ file: index.tsx:38 ~ Login ~ info:", info);
+      if (error) {
+        alert(error);
+        return;
+      }
+      const {} = info as InfoMasterKey;
     },
     onError: () => {
       console.log("Login Failed");

@@ -35,7 +35,7 @@ const Slider: React.FC<Props> = (props: Props) => {
       <Collapse in={open}>
         <NavLinkCustom>
           {props.subMenu.map(e => (
-            <ListItemButton component={MenuLink} to={e.route}>
+            <ListItemButton key={e.name} component={MenuLink} to={e.route}>
               {e.name}
             </ListItemButton>
           ))}

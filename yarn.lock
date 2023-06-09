@@ -21,6 +21,18 @@
     loglevel "^1.8.1"
     web3-utils "^1.8.1"
 
+"@allaccessone/eccrypto@^1.1.8":
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/@allaccessone/eccrypto/-/eccrypto-1.1.8.tgz#978d4f83a9379ca558ae143f81e7df6952d73a64"
+  integrity sha512-G9Toi/XDVch4sbUiEOZhUZZ32B1UWZ17IkvMI4Vv1XBosEfB+qOQZQoX8ra38ybCi7HJ8mwVJgc66lQAEuaUbQ==
+  dependencies:
+    acorn "^8.4.1"
+    elliptic "^6.5.4"
+    es6-promise "^4.2.8"
+    nan "^2.14.2"
+  optionalDependencies:
+    secp256k1 "^3.8.0"
+
 "@allaccessone/fetch-node-details@^4.0.3":
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/@allaccessone/fetch-node-details/-/fetch-node-details-4.0.3.tgz#0501ffa084e1663e48e8bac9452975711c73b8c9"

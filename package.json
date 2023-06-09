@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@allaccessone/allaccessone.js": "^6.3.4",
+    "@allaccessone/eccrypto": "^1.1.8",
     "@allaccessone/fetch-node-details": "^4.0.3",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
