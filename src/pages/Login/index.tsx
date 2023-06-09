@@ -9,9 +9,11 @@ import { GoogleLogin, GoogleLoginProps } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSessionStorage } from "usehooks-ts";
-import { KeyPair, getMasterKey } from "../../wallet/node-service";
+import { KeyPair } from "../../wallet/node-service";
 import { UserGoogle } from "@app/types/oauth.type";
+import { useFetchWallet } from "@app/hooks";
 const Login = () => {
+  const { getInfoMasterKey } = useFetchWallet();
   const navigate = useNavigate();
   const [_, setMasterKey] = useSessionStorage<KeyPair>("master-key", { ethAddress: "", priKey: "", pubKey: "" });
   var settings = {
@@ -28,14 +30,8 @@ const Login = () => {
   const callbacksGoogle: GoogleLoginProps = {
     onSuccess: async credentialResponse => {
       const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: credentialResponse.credential } });
-      const { error, key } = await getMasterKey("google", profile.email, credentialResponse.credential || "");
-      if (error) {
-        // Notification message for user
-        alert(error);
-        return;
-      }
-      // Set key and navigate to MFA page, or Overview page
-      setMasterKey((key as KeyPair) || {});
+      const info = await getInfoMasterKey("google", profile.email, credentialResponse.credential || "");
+      console.log("🚀 ~ file: index.tsx:34 ~ Login ~ info:", info);
     },
     onError: () => {
       console.log("Login Failed");
