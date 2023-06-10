@@ -1,7 +1,9 @@
 import axios from "axios";
-import { PartialShallow, get } from "lodash";
+import { get } from "lodash";
 import { Ecies } from "@allaccessone/eccrypto";
 import { METADATA_HOST } from "@app/configs";
+import { generatePublicKeyFromPrivateKey, generateRandomPrivateKey } from "./algorithm";
+import { KeyPair } from "./node-service";
 
 export type AdditionalTypes<T, Additional> = {
   [K in keyof T]: T[K] | Additional;
@@ -10,6 +12,7 @@ export type AdditionalTypes<T, Additional> = {
 type ShareType = "network-key" | "device" | "recovery-phrase";
 
 export type InfoMasterKey = {
+  masterPrivateKey?: string;
   masterPublicKey: string;
   networkPublicKey: string; // Public key of Network key
   verifier: string; // google
@@ -30,9 +33,15 @@ export type ShareInfo = {
   deletedAt: Date;
 };
 
-export type GetOrSetMasterKeyRequest = Partial<InfoMasterKey>;
+export type GetInfoMasterKeyRequest = {
+  publicKey: string;
+};
 
-export type GetOrSetMasterKeyResponse = InfoMasterKey;
+export type GetInfoMasterKeyResponse = InfoMasterKey;
+
+export type SetMasterKeyRequest = Partial<InfoMasterKey>;
+
+export type SetMasterKeyResponse = InfoMasterKey;
 
 export type GetSharesByMasterPublicKeyRequest = {
   masterPublicKey: string;
@@ -48,12 +57,48 @@ export type InitialSharesRequest = {
   encryptedData: AdditionalTypes<Ecies, string>;
 };
 
-export type InitialSharesResponse = boolean;
+export type InitialSharesResponse = ShareInfo[];
 
-export const getOrSetInfoMasterKey = async (payload: GetOrSetMasterKeyRequest): Promise<{ error: string; data: GetOrSetMasterKeyResponse | null }> => {
+export const setInfoMasterKey = async (payload: SetMasterKeyRequest): Promise<{ error: string; data: SetMasterKeyRequest | null }> => {
   try {
-    const { data } = await axios.post<GetOrSetMasterKeyResponse>(`${METADATA_HOST}/info-keys`, payload);
+    const { data } = await axios.post<SetMasterKeyRequest>(`${METADATA_HOST}/info-keys`, payload);
     return { error: "", data };
+  } catch (error) {
+    return {
+      error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
+      data: null,
+    };
+  }
+};
+
+export const getOrSetInfoMasterKey = async (verifier: string, verifierId: string, networkKey: KeyPair): Promise<{ error: string; data: InfoMasterKey | null }> => {
+  try {
+    const { pubKey } = networkKey;
+    const { data: existed } = await axios.get<GetInfoMasterKeyResponse>(`${METADATA_HOST}/info-keys`, {
+      params: {
+        publicKey: networkKey.pubKey,
+      },
+    });
+    if (existed?.initialed) {
+      return { error: "", data: existed };
+    }
+    // Get info master key or create
+    const randomPrivateKey = generateRandomPrivateKey();
+    const { data: created } = await axios.post<SetMasterKeyRequest>(`${METADATA_HOST}/info-keys`, {
+      verifier,
+      verifierId,
+      networkPublicKey: pubKey,
+      // Api will handle create if info not exsited
+      masterPublicKey: generatePublicKeyFromPrivateKey(randomPrivateKey).toString("hex").padStart(130, "0"),
+    });
+
+    return {
+      error: "",
+      data: {
+        ...created,
+        masterPrivateKey: randomPrivateKey.toString("hex"),
+      } as InfoMasterKey,
+    };
   } catch (error) {
     return {
       error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
@@ -83,7 +128,7 @@ export const initialedShares = async (payload: InitialSharesRequest): Promise<{ 
   } catch (error) {
     return {
       error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
-      data: false,
+      data: [],
     };
   }
 };

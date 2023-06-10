@@ -1,8 +1,7 @@
 import FetchNodeDetails from "@allaccessone/fetch-node-details";
 import TorusUtils from "@allaccessone/allaccessone.js";
 import { BN } from "bn.js";
-import { GetOrSetMasterKeyResponse, getOrSetInfoMasterKey } from "./metadata";
-import { generatePublicKeyFromPrivateKey, generateRandomPrivateKey } from "./algorithm";
+import { generatePublicKeyFromPrivateKey } from "./algorithm";
 export type KeyPair = {
   priKey: string;
   pubKey?: string;
@@ -20,21 +19,4 @@ export const getNodeKey = async (verifier: string, verifierId: string, idToken: 
     priKey: keyData.privKey,
     pubKey: generatePublicKeyFromPrivateKey(new BN(keyData.privKey, "hex")).toString("hex").padStart(130, "0"),
   };
-};
-
-export const getInfoMasterKey = async (verifier: string, verifierId: string, networkKey: KeyPair): Promise<GetOrSetMasterKeyResponse> => {
-  const { pubKey } = networkKey;
-  // Get info master key or create
-  const randomPrivateKey = generateRandomPrivateKey();
-  const { error, data: infoMasterKey } = await getOrSetInfoMasterKey({
-    verifier,
-    verifierId,
-    networkPublicKey: pubKey,
-    // Api will handle create if info not exsited
-    masterPublicKey: generatePublicKeyFromPrivateKey(randomPrivateKey).toString("hex").padStart(130, "0"),
-  });
-  if (error) {
-    throw new Error(error);
-  }
-  return infoMasterKey as GetOrSetMasterKeyResponse;
 };

@@ -1,5 +1,7 @@
 import BN from "bn.js";
 import * as EC from "elliptic";
+import * as sharmir from "shamirs-secret-sharing-ts";
+
 const ec = new EC.ec("secp256k1");
 
 export const lagrangeInterpolation = (shares: BN[], nodeIndex: BN[]): BN | null => {
@@ -30,6 +32,14 @@ export const lagrangeInterpolation = (shares: BN[], nodeIndex: BN[]): BN | null 
   }
 };
 
-export const combineTest1 = (masterPublicKey: BN): any => {
-  return "key";
+export const combineTest1 = (masterPublicKey: BN) => {};
+
+export const sharmirSplitPrivateKey = (masterPublicKey: Buffer): Buffer[] => {
+  const shares = sharmir.split(masterPublicKey, { shares: 3, threshold: 2 });
+  return shares;
+};
+
+export const sharmirCombinePrivateKey = (shares: Buffer[]): Buffer => {
+  const privKey = sharmir.combine(shares);
+  return privKey;
 };

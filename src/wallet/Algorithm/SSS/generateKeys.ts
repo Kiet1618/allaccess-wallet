@@ -1,7 +1,7 @@
 import BN from "bn.js";
 import * as EC from "elliptic";
 import * as crypto from "crypto";
-import { Ecies, getPublic, encrypt, sign } from "@allaccessone/eccrypto";
+import { Ecies, getPublic, encrypt, sign, decrypt } from "@allaccessone/eccrypto";
 import { keccak256 } from "@allaccessone/allaccessone.js";
 import { AdditionalTypes } from "@app/wallet/metadata";
 
@@ -37,7 +37,6 @@ export const encryptedMessage = async (
     mac: encrypted.mac.toString("hex"),
   };
   const hash = keccak256(JSON.stringify(encryptedToString));
-  console.log("🚀 ~ file: generateKeys.ts:37 ~ hash:", hash);
   const signature = await sign(Buffer.from(key.getPrivate("hex"), "hex"), Buffer.from(hash.slice(2, hash.length), "hex"));
   return {
     encryptedData: encrypted,
@@ -46,6 +45,17 @@ export const encryptedMessage = async (
     publicKey: publicKey,
     signature: signature.toString("hex"),
   };
+};
+
+export const decryptedMessage = async (privateKey: BN, opts: AdditionalTypes<Ecies, string>): Promise<any> => {
+  const encryptedToBuffer = {
+    ciphertext: Buffer.from(opts.ciphertext as string, "hex"),
+    ephemPublicKey: Buffer.from(opts.ephemPublicKey as string, "hex"),
+    iv: Buffer.from(opts.iv as string, "hex"),
+    mac: Buffer.from(opts.mac as string, "hex"),
+  };
+  const decrypted = await decrypt(Buffer.from(privateKey.toString("hex"), "hex"), encryptedToBuffer);
+  return decrypted;
 };
 
 export const generateSharesLagrangeInterpolation = (shares: BN[], nodeIndex: BN[], priKey: BN): BN | undefined => {
