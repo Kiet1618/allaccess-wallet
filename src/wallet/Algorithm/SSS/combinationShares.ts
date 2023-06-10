@@ -29,3 +29,7 @@ export const lagrangeInterpolation = (shares: BN[], nodeIndex: BN[]): BN | null 
     return null;
   }
 };
+
+export const combineTest1 = (masterPublicKey: BN): any => {
+  return "key";
+};

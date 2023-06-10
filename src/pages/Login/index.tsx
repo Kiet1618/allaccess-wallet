@@ -35,12 +35,10 @@ const Login = () => {
     onSuccess: async credentialResponse => {
       const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: credentialResponse.credential } });
       const { error, info } = await getInfoWallet("google", profile.email, credentialResponse.credential || "");
-      console.log("🚀 ~ file: index.tsx:38 ~ Login ~ info:", info);
       if (error) {
         alert(error);
         return;
       }
-      const {} = info as InfoMasterKey;
     },
     onError: () => {
       console.log("Login Failed");

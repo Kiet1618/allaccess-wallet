@@ -1,35 +1,48 @@
-import { useCallback, useEffect, useState } from "react";
-import { get, isEmpty } from "lodash";
+import { useCallback } from "react";
+import { get, isEmpty, map } from "lodash";
 import { useSessionStorage } from "usehooks-ts";
 import { KeyPair, getInfoMasterKey, getNodeKey } from "@app/wallet/node-service";
-import { InfoMasterKey, ShareInfo, getSharesByMasterPublicKey } from "@app/wallet/metadata";
-import { info } from "console";
+import { InfoMasterKey, ShareInfo, initialedShares } from "@app/wallet/metadata";
+import { combineTest1, encryptedMessage } from "@app/wallet/algorithm";
+import { BN } from "bn.js";
 
 export const useFetchWallet = () => {
   const [infoMasterKey, setInMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [masterKey, setMasterKey] = useSessionStorage<KeyPair>("master-key", { ethAddress: "", priKey: "", pubKey: "" });
-  const [sharesInfo, setSharesInfo] = useSessionStorage<ShareInfo[]>("shares", []);
   const [networkKey, setNetworkKey] = useSessionStorage<KeyPair>("network-key", { ethAddress: "", priKey: "", pubKey: "" });
   const [deviceKey, setDeviceKey] = useSessionStorage<KeyPair>("device-key", { ethAddress: "", priKey: "", pubKey: "" });
+
   // Get info master key
   const getInfoWallet = useCallback(async (verifier: string, verifierId: string, idToken: string): Promise<{ error: string; info: InfoMasterKey | null }> => {
     try {
       const networkKey = await getNodeKey(verifier, verifierId, idToken);
-      let info = await getInfoMasterKey(verifier, verifierId, networkKey);
-      const { error, data: shares } = await getSharesByMasterPublicKey({ masterPublicKey: info.masterPublicKey });
-      if (error) {
-        throw new Error(error);
-      }
-      // Is MFA by check existed share type "recovery"
-      const isMfa = shares.findIndex(share => share.type === "recovery-phrase");
+      const info = await getInfoMasterKey(verifier, verifierId, networkKey);
 
-      info = {
-        ...info,
-        mfa: isMfa < 0 ? false : true,
-      };
+      // set session storage
       setNetworkKey(networkKey);
-      setSharesInfo(shares);
       setInMasterKey(info);
+
+      // First, generate master-key, and initial 2 shares by network key
+      if (!info.initialed) {
+        const share1 = await encryptedMessage(Buffer.from("share1"), new BN(networkKey.priKey, "hex"));
+        const share2 = await encryptedMessage(Buffer.from("share2"), new BN(networkKey.priKey, "hex"));
+        const shares = map([share1, share2], share => {
+          return {
+            masterPublicKey: info.masterPublicKey,
+            publicKey: info.networkPublicKey,
+            encryptedData: share.encryptedToString,
+            type: "network-key" as ShareInfo["type"],
+          };
+        });
+        const encrypted = await encryptedMessage(Buffer.from(Date.now().toString()), new BN(networkKey.priKey, "hex"));
+        await initialedShares({
+          masterPublicKey: info.masterPublicKey,
+          networkPublicKey: encrypted.publicKey,
+          shares,
+          encryptedData: encrypted.encryptedToString,
+          signature: encrypted.signature,
+        });
+      }
 
       return {
         error: "",
@@ -40,29 +53,40 @@ export const useFetchWallet = () => {
     }
   }, []);
 
-  const loginWithRecovery = () => {
+  const login = useCallback(async (): Promise<{ error: string }> => {
     if (isEmpty(networkKey)) {
-      // Throw new error
-      return;
+      return { error: "Please initial network key before" };
     }
-  };
-
-  const loginWithDevice = async (): Promise<{ error: string }> => {
-    if (isEmpty(networkKey)) {
-      // Throw new error
-      return { error: "Not found network key" };
+    if (isEmpty(infoMasterKey)) {
+      return { error: "Please initial master key before" };
     }
-    // Check local device
-    if (isEmpty(deviceKey)) {
-      // Throw new error
-      return { error: "Not found device" };
+    const { mfa, initialed, shares } = infoMasterKey as InfoMasterKey;
+    if (!initialed) {
+      return { error: "Please initial shares of master key before" };
     }
-    const { mfa } = infoMasterKey as InfoMasterKey;
 
-    return { error: "Not found device" };
-  };
+    // Always get from device first
+    if (!isEmpty(deviceKey)) {
+      const deviceShare = shares?.find(share => {
+        return share.publicKey.toLowerCase().padStart(130, "0") === deviceKey.pubKey?.padStart(130, "0") && share.type === "device";
+      });
+      if (isEmpty(deviceShare)) {
+      }
 
-  //
+      // combine
+      const masterKey = combineTest1(new BN(infoMasterKey.masterPublicKey, "hex"));
+      return { error: "" };
+    }
 
-  return { networkKey, getInfoWallet, loginWithDevice };
+    if (!mfa) {
+      const sharesByNetworkKey = shares?.filter(share => {
+        return share.publicKey.toLowerCase().padStart(130, "0") === deviceKey.pubKey?.padStart(130, "0") && share.type === "network-key";
+      });
+      return { error: "" };
+    }
+
+    return { error: "Enter recovery phrase" };
+  }, []);
+
+  return { networkKey, getInfoWallet, login };
 };

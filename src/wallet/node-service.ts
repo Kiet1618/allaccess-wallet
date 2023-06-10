@@ -18,7 +18,7 @@ export const getNodeKey = async (verifier: string, verifierId: string, idToken: 
   return {
     ethAddress: keyData.ethAddress,
     priKey: keyData.privKey,
-    pubKey: generatePublicKeyFromPrivateKey(new BN(keyData.privKey, "hex")).toString("hex"),
+    pubKey: generatePublicKeyFromPrivateKey(new BN(keyData.privKey, "hex")).toString("hex").padStart(130, "0"),
   };
 };
 
@@ -31,7 +31,7 @@ export const getInfoMasterKey = async (verifier: string, verifierId: string, net
     verifierId,
     networkPublicKey: pubKey,
     // Api will handle create if info not exsited
-    masterPublicKey: generatePublicKeyFromPrivateKey(randomPrivateKey).toString("hex"),
+    masterPublicKey: generatePublicKeyFromPrivateKey(randomPrivateKey).toString("hex").padStart(130, "0"),
   });
   if (error) {
     throw new Error(error);
