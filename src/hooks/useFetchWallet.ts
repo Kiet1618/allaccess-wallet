@@ -95,6 +95,17 @@ export const useFetchWallet = () => {
       const networkShares = shares?.find(share => {
         return share.publicKey.toLowerCase().padStart(130, "0") === deviceKey.pubKey?.padStart(130, "0") && share.type === "network-key";
       });
+      const decryptedShares = await Promise.all(
+        [networkShares, deviceShare].map(async elm => {
+          return (await decryptedMessage(new BN(networkKey.priKey, "hex"), elm?.shareData ?? ({} as any))) as Buffer;
+        })
+      );
+      const masterKey = sharmirCombinePrivateKey(decryptedShares);
+      const masterKeyFormatted = formatPrivateKey(new BN(masterKey, "hex"));
+      if (masterKeyFormatted.pubKey?.toLowerCase() !== infoMasterKey.masterPublicKey.toLowerCase()) {
+        return { error: "Something went wrong, master public key not match with default" };
+      }
+      setMasterKey(masterKeyFormatted);
     }
 
     if (!mfa) {
