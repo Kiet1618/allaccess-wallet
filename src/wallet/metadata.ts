@@ -2,8 +2,10 @@ import axios from "axios";
 import { get } from "lodash";
 import { Ecies } from "@allaccessone/eccrypto";
 import { METADATA_HOST } from "@app/configs";
+import { DeviceInfo } from "@app/utils";
 import { generatePublicKeyFromPrivateKey, generateRandomPrivateKey } from "./algorithm";
-import { KeyPair } from "./node-service";
+
+import { KeyPair } from "./types";
 
 export type AdditionalTypes<T, Additional> = {
   [K in keyof T]: T[K] | Additional;
@@ -25,7 +27,7 @@ export type InfoMasterKey = {
 export type ShareInfo = {
   masterPublicKey: string;
   publicKey: string; // public key of key A,B,C
-  deviceInfo: string;
+  deviceInfo?: DeviceInfo;
   email: string; // check if type is recovery
   shareData?: AdditionalTypes<Ecies, string>;
   encryptedData?: AdditionalTypes<Ecies, string>;
@@ -58,6 +60,18 @@ export type InitialSharesRequest = {
 };
 
 export type InitialSharesResponse = ShareInfo[];
+
+export type CreateShareRequest = {
+  masterPublicKey: string;
+  publicKey: string;
+  signature: string;
+  deviceInfo?: DeviceInfo;
+  email?: string;
+  type: ShareType;
+  encryptedData: AdditionalTypes<Ecies, string>;
+};
+
+export type CreateShareResponse = ShareInfo;
 
 export const setInfoMasterKey = async (payload: SetMasterKeyRequest): Promise<{ error: string; data: SetMasterKeyRequest | null }> => {
   try {
@@ -129,6 +143,19 @@ export const initialedShares = async (payload: InitialSharesRequest): Promise<{ 
     return {
       error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
       data: [],
+    };
+  }
+};
+
+export const createShare = async (payload: CreateShareRequest): Promise<{ error: string; data?: CreateShareResponse }> => {
+  try {
+    const { data } = await axios.post<CreateShareResponse>(`${METADATA_HOST}/shares`, {
+      ...payload,
+    });
+    return { error: "", data };
+  } catch (error) {
+    return {
+      error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
     };
   }
 };

@@ -1,13 +1,14 @@
-import { useCallback } from "react";
 import { get, isEmpty, map } from "lodash";
 import { useSessionStorage } from "usehooks-ts";
-import { KeyPair, getNodeKey } from "@app/wallet/node-service";
-import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey } from "@app/wallet/metadata";
-import { combineTest1, decryptedMessage, encryptedMessage, sharmirCombinePrivateKey, sharmirSplitPrivateKey } from "@app/wallet/algorithm";
+import { getNodeKey } from "@app/wallet/node-service";
+import { KeyPair } from "@app/wallet/types";
+import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey, createShare } from "@app/wallet/metadata";
+import { decryptedMessage, encryptedMessage, formatPrivateKey, generateRandomPrivateKey, sharmirCombinePrivateKey, sharmirSplitPrivateKey } from "@app/wallet/algorithm";
 import BN from "bn.js";
+import { deviceInfo } from "@app/utils";
 
 export const useFetchWallet = () => {
-  const [infoMasterKey, setInMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
+  const [infoMasterKey, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [masterKey, setMasterKey] = useSessionStorage<KeyPair>("master-key", { ethAddress: "", priKey: "", pubKey: "" });
   const [networkKey, setNetworkKey] = useSessionStorage<KeyPair>("network-key", { ethAddress: "", priKey: "", pubKey: "" });
   const [deviceKey, setDeviceKey] = useSessionStorage<KeyPair | null>("device-key", null);
@@ -16,12 +17,12 @@ export const useFetchWallet = () => {
   const getInfoWallet = async (verifier: string, verifierId: string, idToken: string): Promise<{ error: string; info: InfoMasterKey | null }> => {
     try {
       const networkKey = await getNodeKey(verifier, verifierId, idToken);
-      const { error, data: info } = await getOrSetInfoMasterKey(verifier, verifierId, networkKey);
+      let { error, data: info } = await getOrSetInfoMasterKey(verifier, verifierId, networkKey);
       if (error) throw new Error(error);
       const { masterPrivateKey, masterPublicKey, networkPublicKey } = info as InfoMasterKey;
       // set session storage
       setNetworkKey(networkKey);
-      setInMasterKey({
+      setInfoMasterKey({
         ...info,
         // masterPrivateKey: "",
       } as InfoMasterKey);
@@ -29,8 +30,6 @@ export const useFetchWallet = () => {
       // First, generate master-key, and initial 2 shares by network key
       if (!info?.initialed) {
         const splits = sharmirSplitPrivateKey(Buffer.from(masterPrivateKey || "", "hex"));
-        const masterKey = sharmirCombinePrivateKey([splits[0], splits[1]]);
-        console.log("🚀 ~ file: useFetchWallet.ts:34 ~ getInfoWal ~ masterKey:", masterKey.toString("hex"));
 
         const share1 = await encryptedMessage(splits[0], new BN(networkKey.priKey, "hex"));
         const share2 = await encryptedMessage(splits[1], new BN(networkKey.priKey, "hex"));
@@ -51,12 +50,12 @@ export const useFetchWallet = () => {
           signature: encrypted.signature,
         });
 
-        setInMasterKey({
+        setInfoMasterKey({
           ...infoMasterKey,
           shares: createdShares.data,
         } as InfoMasterKey);
+        info!.shares = createdShares.data as ShareInfo[];
       }
-      console.log("🚀 ~ file 13323132131");
 
       return {
         error: "",
@@ -67,8 +66,12 @@ export const useFetchWallet = () => {
     }
   };
 
+  /**
+   * TODO: Using session storage error because it async
+   * @param infoMasterKey
+   * @returns
+   */
   const fetchMasterKey = async (): Promise<{ error: string }> => {
-    console.log("🚀 ~ file đâsdsa");
     if (isEmpty(networkKey)) {
       return { error: "Please initial network key before" };
     }
@@ -107,7 +110,26 @@ export const useFetchWallet = () => {
         })
       );
       const masterKey = sharmirCombinePrivateKey(decryptedShares);
-      console.log("🚀 ~ file: useFetchWallet.ts:101 ~ fetchMasterKey ~ masterKey:", masterKey.toString("hex"));
+      const masterKeyFormatted = formatPrivateKey(new BN(masterKey, "hex"));
+      if (masterKeyFormatted.pubKey?.toLowerCase() !== infoMasterKey.masterPublicKey.toLowerCase()) {
+        return { error: "Something went wrong, master public key not match with default" };
+      }
+      setMasterKey(masterKeyFormatted);
+
+      // Add device key share
+      const deviceKey = formatPrivateKey(generateRandomPrivateKey());
+      const deviceShare = await encryptedMessage(decryptedShares[1], new BN(deviceKey.priKey, "hex"));
+
+      createShare({
+        masterPublicKey: infoMasterKey.masterPublicKey,
+        publicKey: deviceShare.publicKey,
+        encryptedData: deviceShare.encryptedToString,
+        signature: deviceShare.signature,
+        type: "device",
+        deviceInfo: await deviceInfo(),
+      });
+      setDeviceKey(deviceKey);
+
       return { error: "" };
     }
 

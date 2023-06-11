@@ -2,11 +2,8 @@ import FetchNodeDetails from "@allaccessone/fetch-node-details";
 import TorusUtils from "@allaccessone/allaccessone.js";
 import { BN } from "bn.js";
 import { generatePublicKeyFromPrivateKey } from "./algorithm";
-export type KeyPair = {
-  priKey: string;
-  pubKey?: string;
-  ethAddress: string;
-};
+
+import { KeyPair } from "./types";
 
 export const getNodeKey = async (verifier: string, verifierId: string, idToken: string): Promise<KeyPair> => {
   const fetchNodes = new FetchNodeDetails({ network: "local", proxyAddress: "0xD44F7724b0a0800e41283E97BE5eC9E875f59811" });

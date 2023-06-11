@@ -1,4 +1,4 @@
-import { KeyPair } from "../wallet/node-service";
+import { KeyPair } from "../wallet/types";
 function getWindow(): Window | undefined {
   try {
     if (typeof window !== "undefined") return window;

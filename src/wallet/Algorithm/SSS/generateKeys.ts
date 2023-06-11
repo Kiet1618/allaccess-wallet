@@ -1,14 +1,28 @@
 import BN from "bn.js";
 import * as EC from "elliptic";
 import * as crypto from "crypto";
-import { Ecies, getPublic, encrypt, sign, decrypt } from "@allaccessone/eccrypto";
+import { Ecies, encrypt, sign, decrypt, getPublic } from "@allaccessone/eccrypto";
 import { keccak256 } from "@allaccessone/allaccessone.js";
 import { AdditionalTypes } from "@app/wallet/metadata";
+import { KeyPair } from "@app/wallet/types";
 
 const ecInstance = new EC.ec("secp256k1");
 
 export const generateRandomPrivateKey = (): BN => {
   return new BN(crypto.randomBytes(64).toString("hex"), "hex").umod(ecInstance.n as BN);
+};
+
+export const formatPrivateKey = (privateKey: BN): KeyPair => {
+  const key = ecInstance.keyFromPrivate(privateKey.toString("hex", 64), "hex");
+  const pubKey = key.getPublic().encode("hex", false);
+  const hash = keccak256(Buffer.from(pubKey.slice(2), "hex"));
+
+  const ethAddress = `0x${hash.slice(-40)}`;
+  return {
+    pubKey: pubKey.padStart(130, "0"),
+    priKey: key.getPrivate("hex").toString(),
+    ethAddress,
+  };
 };
 
 export const generatePublicKeyFromPrivateKey = (privateKey: BN): BN => {

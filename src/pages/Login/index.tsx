@@ -9,7 +9,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { FirstSlider, SecondarySlider, ThirdSlider } from "@app/assets/img";
 import Button from "@app/components/Button";
 import { Google, LogoText } from "@app/assets/icon";
-import { KeyPair } from "@app/wallet/node-service";
+import { KeyPair } from "@app/wallet/types";
 import { UserGoogle } from "@app/types/oauth.type";
 import { useFetchWallet } from "@app/hooks";
 import { InfoMasterKey } from "@app/wallet/metadata";
@@ -35,7 +35,6 @@ const Login = () => {
     onSuccess: async credentialResponse => {
       const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: credentialResponse.credential } });
       const { error, info } = await getInfoWallet("google", profile.email, credentialResponse.credential || "");
-      console.log("🚀 ~ file: index.tsx:38 ~ Login ~ info:", info);
       if (error) {
         alert(error);
         return;
