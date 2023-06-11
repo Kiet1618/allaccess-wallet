@@ -1,5 +1,4 @@
 import Web3 from "web3";
-import { FormData } from "../pages/Transaction/Transfer/type";
 import abi from "../common/ERC20_ABI.json";
 
 export const getGasPrice = async (web3: Web3) => {

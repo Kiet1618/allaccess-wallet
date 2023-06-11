@@ -6,11 +6,10 @@ import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey, creat
 import { decryptedMessage, encryptedMessage, formatPrivateKey, generateRandomPrivateKey, sharmirCombinePrivateKey, sharmirSplitPrivateKey } from "@app/wallet/algorithm";
 import BN from "bn.js";
 import { deviceInfo } from "@app/utils";
-import { useState } from "react";
 
 export const useFetchWallet = () => {
-  const [infoMasterKey, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
-  const [masterKey, setMasterKey] = useSessionStorage<KeyPair | null>("master-key", null);
+  const [_, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
+  const [_, setMasterKey] = useSessionStorage<KeyPair | null>("master-key", null);
   const [networkKey, setNetworkKey] = useSessionStorage<KeyPair | null>("network-key", null);
   const [deviceKey, setDeviceKey] = useSessionStorage<KeyPair | null>("device-key", null);
 
@@ -78,7 +77,7 @@ export const useFetchWallet = () => {
    * @param infoMasterKey
    * @returns
    */
-  const fetchMasterKey = async (infoMasterKey: InfoMasterKey, networkKey: KeyPair): Promise<{ error?: string }> => {
+  const fetchMasterKey = async (infoMasterKey: InfoMasterKey, networkKey: KeyPair): Promise<{ error?: string; success?: boolean; mfa?: boolean }> => {
     try {
       if (isEmpty(networkKey)) {
         throw new Error("Please initial network key before");
@@ -158,7 +157,9 @@ export const useFetchWallet = () => {
         });
         setDeviceKey(deviceKey);
       }
-      return { error: "" };
+
+      // Case if user enable MFA
+      return { error: "", mfa: true };
     } catch (error) {
       setMasterKey(null);
       setDeviceKey(null);
@@ -167,5 +168,9 @@ export const useFetchWallet = () => {
     }
   };
 
-  return { getInfoWallet, fetchMasterKey };
+  const fetchMasterKeyWithPhrase = () => {};
+
+  const enableMFA = () => {};
+
+  return { getInfoWallet, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase };
 };
