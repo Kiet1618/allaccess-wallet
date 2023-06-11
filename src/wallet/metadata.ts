@@ -26,6 +26,7 @@ export type InfoMasterKey = {
 
 export type ShareInfo = {
   masterPublicKey: string;
+  priKey?: string; // public key of key A,B,C
   publicKey: string; // public key of key A,B,C
   deviceInfo?: DeviceInfo;
   email: string; // check if type is recovery

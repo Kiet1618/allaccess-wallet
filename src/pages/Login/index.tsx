@@ -34,12 +34,14 @@ const Login = () => {
   const callbacksGoogle: GoogleLoginProps = {
     onSuccess: async credentialResponse => {
       const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: credentialResponse.credential } });
-      const { error, info } = await getInfoWallet("google", profile.email, credentialResponse.credential || "");
+      const { error, info, networkKey } = await getInfoWallet("google", profile.email, credentialResponse.credential || "");
+      console.log("🚀 ~ file: index.tsx:38 ~ Login ~ info:", info);
       if (error) {
         alert(error);
         return;
       }
-      const da = await fetchMasterKey();
+      console.log("fetchMasterKey");
+      const da = await fetchMasterKey(info!, networkKey!);
       console.log("🚀 ~ file: index.tsx:43 ~ Login ~ da:", da);
     },
     onError: () => {
