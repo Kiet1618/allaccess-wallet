@@ -86,6 +86,26 @@ export const setInfoMasterKey = async (payload: SetMasterKeyRequest): Promise<{ 
   }
 };
 
+export const getInfoMasterKey = async (networkKey: KeyPair): Promise<{ error: string; data: InfoMasterKey | null }> => {
+  try {
+    const { data: existed } = await axios.get<GetInfoMasterKeyResponse>(`${METADATA_HOST}/info-keys`, {
+      params: {
+        publicKey: networkKey.pubKey,
+      },
+    });
+
+    return {
+      error: "",
+      data: existed,
+    };
+  } catch (error) {
+    return {
+      error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
+      data: null,
+    };
+  }
+};
+
 export const getOrSetInfoMasterKey = async (verifier: string, verifierId: string, networkKey: KeyPair): Promise<{ error: string; data: InfoMasterKey | null }> => {
   try {
     const { pubKey } = networkKey;

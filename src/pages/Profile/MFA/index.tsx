@@ -1,39 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { Grid } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import { Devices } from "../../../configs/data/test";
-import { Computer, Trash } from "../../../assets/icon";
-import CustomButton from "../../../components/Button";
-import CustomInput from "../../../components/TextField";
-import { TitlePageBlack, TitlePage } from "../../../styles";
+import { Computer, Trash } from "@app/assets/icon";
+import { Button as CustomButton, TextField as CustomInput } from "@app/components";
+import { TitlePageBlack, TitlePage } from "@app/styles";
+
 import { BackgroundPage, TitlePageContainer } from "../profile.css";
 import { SubTitlePage, ContainerTextField, SpanRed } from "../../Transaction/transaction.css";
 import { TextHeaderCard, ContainerDevice, GroupLeftItemDevice, ContainerText, NameText, IpText } from "../../MultipleFactors/multipleFactors.css";
 import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerNumberFactors, ContainerHeaderFactors, style } from "./mfa.css";
+import { useSessionStorage } from "usehooks-ts";
+import { InfoMasterKey, ShareInfo } from "@app/wallet/metadata";
+import { DeviceInfo } from "@app/utils";
+import { useFetchWallet } from "@app/hooks";
+import { KeyPair } from "@app/wallet/types";
 
-type Device = {
-  name: string;
-  ip: string;
-};
 const MFA = () => {
-  const [open, setOpen] = React.useState(false);
+  const { getInfoWalletByMasterKey } = useFetchWallet();
+  const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
+  const [networkKey, __] = useSessionStorage<KeyPair | null>("network-key", null);
+  const [open, setOpen] = useState(false);
+  const [device, setDevice] = useState<DeviceInfo | null>();
+  const [deviceShares, setDeviceShares] = useState<ShareInfo[]>([]);
+  useEffect(() => {
+    if (networkKey) {
+      getInfoWalletByMasterKey(networkKey!);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (infoMasterKey) {
+      const devices = infoMasterKey.shares?.filter(elm => elm.type === "device");
+      setDeviceShares(devices || []);
+    }
+  }, [infoMasterKey]);
   const handleOpen = () => setOpen(true);
 
-  const handleDelete = (name: string, ip: string) => {
-    setDevice({
-      name: name,
-      ip: ip,
-    });
+  const handleDelete = (publicKey?: string) => {
     handleOpen();
   };
   const handleClose = () => setOpen(false);
-  const [device, setDevice] = React.useState<Device>({
-    name: "",
-    ip: "",
-  });
+
   return (
     <>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -66,19 +76,19 @@ const MFA = () => {
           <ListDevicesContainer>
             <BackgroundPage>
               <TextHeaderCard>List devices</TextHeaderCard>
-              {Devices.map(device => (
-                <ContainerDevice key={device.id}>
+              {deviceShares.map(device => (
+                <ContainerDevice key={device.publicKey}>
                   <GroupLeftItemDevice>
                     <Computer />
                     <ContainerText>
-                      <NameText> {device.name}</NameText>
-                      <IpText>IP: {device.ip}</IpText>
+                      <NameText> {`${device.deviceInfo?.name} ${device.deviceInfo?.version}`}</NameText>
+                      <IpText>IP: {device.deviceInfo?.ipv4}</IpText>
                     </ContainerText>
                   </GroupLeftItemDevice>
                   <Tooltip title='Delete' placement='top-start'>
                     <IconButton
                       onClick={() => {
-                        handleDelete(device.name, device.ip);
+                        handleDelete(device.publicKey);
                       }}
                     >
                       <Trash />
@@ -99,8 +109,8 @@ const MFA = () => {
               <GroupLeftItemDevice>
                 <Computer />
                 <ContainerText>
-                  <NameText>{device.name}</NameText>
-                  <IpText>IP: {device.ip}</IpText>
+                  <NameText>{`${device?.os} ${device?.version}`}</NameText>
+                  <IpText>IP: {device?.ipv4}</IpText>
                 </ContainerText>
               </GroupLeftItemDevice>
             </ContainerDevice>

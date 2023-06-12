@@ -2,7 +2,7 @@ import { get, isEmpty, map } from "lodash";
 import { useSessionStorage } from "usehooks-ts";
 import { getNodeKey } from "@app/wallet/node-service";
 import { KeyPair } from "@app/wallet/types";
-import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey, createShare } from "@app/wallet/metadata";
+import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey, createShare, getInfoMasterKey } from "@app/wallet/metadata";
 import { decryptedMessage, encryptedMessage, formatPrivateKey, generateRandomPrivateKey, sharmirCombinePrivateKey, sharmirSplitPrivateKey } from "@app/wallet/algorithm";
 import BN from "bn.js";
 import { deviceInfo } from "@app/utils";
@@ -67,6 +67,20 @@ export const useFetchWallet = () => {
         success: true,
         info,
         networkKey,
+      };
+    } catch (error) {
+      return { error: get(error, "message", "Unknown"), info: null };
+    }
+  };
+
+  const getInfoWalletByMasterKey = async (networkKey: KeyPair): Promise<{ error: string; info?: InfoMasterKey | null }> => {
+    try {
+      let { error, data: info } = await getInfoMasterKey(networkKey!);
+      if (error) throw new Error(error);
+      setInfoMasterKey(info);
+      return {
+        error: "",
+        info,
       };
     } catch (error) {
       return { error: get(error, "message", "Unknown"), info: null };
@@ -175,5 +189,5 @@ export const useFetchWallet = () => {
 
   const enableMFA = () => {};
 
-  return { getInfoWallet, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase };
+  return { getInfoWallet, getInfoWalletByMasterKey, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase };
 };
