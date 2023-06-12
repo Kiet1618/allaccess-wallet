@@ -5,7 +5,7 @@ import { KeyPair } from "@app/wallet/types";
 import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey, createShare, getInfoMasterKey, enabledMasterKeyMFA, sendMailPhrase } from "@app/wallet/metadata";
 import { decryptedMessage, encryptedMessage, formatPrivateKey, generateRandomPrivateKey, sharmirCombinePrivateKey, sharmirSplitPrivateKey } from "@app/wallet/algorithm";
 import BN from "bn.js";
-import { deviceInfo, hexToWords } from "@app/utils";
+import { deviceInfo, hexToWords, wordsToHex } from "@app/utils";
 
 export const useFetchWallet = () => {
   const [infoMasterKey, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
@@ -185,7 +185,66 @@ export const useFetchWallet = () => {
     }
   };
 
-  const fetchMasterKeyWithPhrase = () => {};
+  const fetchMasterKeyWithPhrase = async (phrase: string) => {
+    try {
+      if (isEmpty(infoMasterKey)) {
+        throw new Error("Please initial master key before");
+      }
+      if (!infoMasterKey.mfa) {
+        throw new Error("Please enable mfa");
+      }
+      if (isEmpty(networkKey)) {
+        throw new Error("Please initial network key before");
+      }
+      const { shares } = infoMasterKey;
+      const networkShare = shares?.find(share => {
+        return share.publicKey.toLowerCase().padStart(130, "0") === networkKey.pubKey?.padStart(130, "0") && share.type === "network-key";
+      });
+      if (isEmpty(networkShare)) {
+        throw new Error("Network share not existed");
+      }
+      const recoveryKey = formatPrivateKey(new BN(wordsToHex(phrase), "hex"));
+      const recoveryShare = shares?.find(share => {
+        return share.publicKey.toLowerCase().padStart(130, "0") === recoveryKey.pubKey?.padStart(130, "0") && share.type === "recovery-phrase";
+      });
+      if (isEmpty(recoveryShare)) {
+        throw new Error("Recovery share not existed");
+      }
+      // Set private keys
+      networkShare.priKey = networkKey.priKey;
+      recoveryShare.priKey = recoveryKey.priKey;
+
+      const decryptedShares = await Promise.all(
+        [networkShare, recoveryShare].map(async elm => {
+          const data = await decryptedMessage(new BN(elm.priKey || "", "hex"), elm?.shareData ?? ({} as any));
+          return data as Buffer;
+        })
+      );
+      const masterKey = sharmirCombinePrivateKey(decryptedShares);
+      const masterKeyFormatted = formatPrivateKey(new BN(masterKey, "hex"));
+      if (masterKeyFormatted.pubKey?.toLowerCase() !== infoMasterKey.masterPublicKey.toLowerCase()) {
+        throw new Error("Something went wrong, master public key not match with default");
+      }
+      setMasterKey(masterKeyFormatted);
+      // set device
+      // Add device key share
+      const deviceKey = formatPrivateKey(generateRandomPrivateKey());
+      const deviceShare = await encryptedMessage(decryptedShares[1], new BN(deviceKey.priKey, "hex"));
+
+      createShare({
+        masterPublicKey: infoMasterKey.masterPublicKey,
+        publicKey: deviceShare.publicKey,
+        encryptedData: deviceShare.encryptedToString,
+        signature: deviceShare.signature,
+        type: "device",
+        deviceInfo: await deviceInfo(),
+      });
+      setDeviceKey(deviceKey);
+      return { error: "", success: true, mfa: false };
+    } catch (error) {
+      return { error: get(error, "message", "") };
+    }
+  };
 
   const enableMFA = async (email: string): Promise<{ error: string; success?: boolean }> => {
     try {
@@ -213,7 +272,6 @@ export const useFetchWallet = () => {
       // Generate 24 words
       const recoveryKey = formatPrivateKey(generateRandomPrivateKey());
       const phrase = hexToWords(recoveryKey.priKey);
-      console.log("🚀 ~ file: useFetchWallet.ts:213 ~ enableMFA ~ phrase:", phrase);
       const recoveryShare = await encryptedMessage(splits[1], new BN(recoveryKey.priKey, "hex"));
 
       const shares = [
@@ -258,7 +316,6 @@ export const useFetchWallet = () => {
 
       return { error: "" };
     } catch (error) {
-      console.log("🚀 ~ file: useFetchWallet.ts:256 ~ enableMFA ~ error:", error);
       return { error: get(error, "message", "") };
     }
   };

@@ -19,7 +19,9 @@ import {
   ContainerText,
   GroupLeftItemDevice,
 } from "./multipleFactors.css";
+import { useFetchWallet } from "@app/hooks";
 const MultipleFactors = () => {
+  const { fetchMasterKeyWithPhrase } = useFetchWallet();
   const [typeButton, setTypeButton] = useState(false);
   const [seed, setSeed] = useState("");
   const [checkSeed, setCheckSeed] = useState(true);
@@ -30,6 +32,16 @@ const MultipleFactors = () => {
     }
     return "";
   };
+  const handleLogin = async () => {
+    if (!seed) {
+      return;
+    }
+    const { error } = await fetchMasterKeyWithPhrase(seed.trim());
+    if (error) {
+      return;
+    }
+  };
+
   return (
     <ContainerMultipleFactors>
       <HeaderText>Verify your login</HeaderText>
@@ -70,7 +82,7 @@ const MultipleFactors = () => {
           helperText={!checkSeed ? handleValidatorAmount() : ""}
         ></CustomTextInput>
         <ContainerButton>
-          <CustomButton width='30%' padding='10px' text='Confirm' styleButton={typeButton ? "primary" : "inactive"}></CustomButton>
+          <CustomButton width='30%' padding='10px' text='Confirm' styleButton={typeButton ? "primary" : "inactive"} onClick={handleLogin}></CustomButton>
         </ContainerButton>
       </ContainerBackgroundCard>
     </ContainerMultipleFactors>
