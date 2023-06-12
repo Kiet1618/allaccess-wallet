@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
-import { Grid } from "@mui/material";
+import { Alert, ClickAwayListener, Grid, Snackbar } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import Tooltip from "@mui/material/Tooltip";
+import useSnackbar from "@mui/base/useSnackbar";
 import IconButton from "@mui/material/IconButton";
 import { Computer, Trash } from "@app/assets/icon";
+
 import { Button as CustomButton, TextField as CustomInput } from "@app/components";
 import { TitlePageBlack, TitlePage } from "@app/styles";
 
@@ -19,12 +21,23 @@ import { useFetchWallet } from "@app/hooks";
 import { KeyPair } from "@app/wallet/types";
 
 const MFA = () => {
-  const { getInfoWalletByMasterKey } = useFetchWallet();
+  const { getInfoWalletByMasterKey, enableMFA } = useFetchWallet();
   const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [networkKey, __] = useSessionStorage<KeyPair | null>("network-key", null);
+  const [messageSnackbar, setMessageSnackbar] = useState("");
   const [open, setOpen] = useState(false);
   const [device, setDevice] = useState<DeviceInfo | null>();
   const [deviceShares, setDeviceShares] = useState<ShareInfo[]>([]);
+  const [recoveryEmail, setRecoveryEmail] = useState<string>("");
+
+  const { onClickAway, getRootProps } = useSnackbar({
+    autoHideDuration: 3000,
+    open: messageSnackbar ? true : false,
+    onClose: () => {
+      setMessageSnackbar("");
+    },
+  });
+
   useEffect(() => {
     if (networkKey) {
       getInfoWalletByMasterKey(networkKey!);
@@ -38,14 +51,44 @@ const MFA = () => {
     }
   }, [infoMasterKey]);
   const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const changeRecoveryPhrase = async () => {
+    if (!recoveryEmail) {
+      setMessageSnackbar("Please input email valid");
+      return;
+    }
+    if (!infoMasterKey) {
+      setMessageSnackbar("Please initial master key before");
+      return;
+    }
+    const { mfa } = infoMasterKey;
+    if (!mfa) {
+      const { error } = await enableMFA(recoveryEmail);
+      if (error) {
+        setMessageSnackbar(error);
+      }
+      return;
+    }
+    // pss shares
+    return;
+  };
 
   const handleDelete = (publicKey?: string) => {
     handleOpen();
   };
-  const handleClose = () => setOpen(false);
 
   return (
     <>
+      {messageSnackbar ? (
+        <ClickAwayListener onClickAway={onClickAway}>
+          <Snackbar {...getRootProps()} anchorOrigin={{ vertical: "top", horizontal: "right" }} open={messageSnackbar ? true : false}>
+            <Alert severity='error' sx={{ width: "100%" }} variant='filled'>
+              {messageSnackbar}
+            </Alert>
+          </Snackbar>
+        </ClickAwayListener>
+      ) : null}
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
         <Grid item xs={100}>
           <TitlePageContainer>
@@ -64,11 +107,20 @@ const MFA = () => {
               <label>
                 Recovery email <SpanRed>*</SpanRed>
               </label>
-              <CustomInput size='small' fullWidth value={"kiettran@lecle.co.kr"} styleTextField='default' disabled></CustomInput>
+              <CustomInput
+                size='small'
+                type='email'
+                fullWidth
+                value={recoveryEmail}
+                styleTextField='default'
+                onChange={e => {
+                  setRecoveryEmail(e.target.value);
+                }}
+              ></CustomInput>
             </ContainerTextField>
             <ContainerButtonFactors>
               <CustomButton height='48px' width='100px' mTop='50px' mBottom='20px' mRight='20px' text='Cancel' styleButton='inactive'></CustomButton>
-              <CustomButton height='48px' width='100px' mTop='50px' mBottom='20px' text='Confirm' styleButton='primary'></CustomButton>
+              <CustomButton height='48px' width='100px' mTop='50px' mBottom='20px' text='Confirm' styleButton='primary' onClick={changeRecoveryPhrase}></CustomButton>
             </ContainerButtonFactors>
           </BackgroundPage>
         </Grid>

@@ -74,6 +74,18 @@ export type CreateShareRequest = {
 
 export type CreateShareResponse = ShareInfo;
 
+export type EnableMasterKeyMFARequest = {
+  masterPublicKey: string;
+  networkPublicKey: string;
+  signature: string;
+  networkShare: Partial<ShareInfo>;
+  deviceShare: Partial<ShareInfo>;
+  recoveryShare: Partial<ShareInfo>;
+  encryptedData: AdditionalTypes<Ecies, string>;
+};
+
+export type EnableMasterKeyMFAResponse = ShareInfo[];
+
 export const setInfoMasterKey = async (payload: SetMasterKeyRequest): Promise<{ error: string; data: SetMasterKeyRequest | null }> => {
   try {
     const { data } = await axios.post<SetMasterKeyRequest>(`${METADATA_HOST}/info-keys`, payload);
@@ -177,6 +189,20 @@ export const createShare = async (payload: CreateShareRequest): Promise<{ error:
   } catch (error) {
     return {
       error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
+    };
+  }
+};
+
+export const enabledMasterKeyMFA = async (payload: EnableMasterKeyMFARequest): Promise<{ error: string; data: EnableMasterKeyMFAResponse }> => {
+  try {
+    const { data } = await axios.post<EnableMasterKeyMFAResponse>(`${METADATA_HOST}/info-keys/enable/mfa`, {
+      ...payload,
+    });
+    return { error: "", data };
+  } catch (error) {
+    return {
+      error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
+      data: [],
     };
   }
 };

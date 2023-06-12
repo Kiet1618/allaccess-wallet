@@ -2,7 +2,7 @@ import { get, isEmpty, map } from "lodash";
 import { useSessionStorage } from "usehooks-ts";
 import { getNodeKey } from "@app/wallet/node-service";
 import { KeyPair } from "@app/wallet/types";
-import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey, createShare, getInfoMasterKey } from "@app/wallet/metadata";
+import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey, createShare, getInfoMasterKey, enabledMasterKeyMFA } from "@app/wallet/metadata";
 import { decryptedMessage, encryptedMessage, formatPrivateKey, generateRandomPrivateKey, sharmirCombinePrivateKey, sharmirSplitPrivateKey } from "@app/wallet/algorithm";
 import BN from "bn.js";
 import { deviceInfo } from "@app/utils";
@@ -187,7 +187,70 @@ export const useFetchWallet = () => {
 
   const fetchMasterKeyWithPhrase = () => {};
 
-  const enableMFA = () => {};
+  const enableMFA = async (email: string): Promise<{ error: string; success?: boolean }> => {
+    try {
+      if (isEmpty(masterKey)) {
+        throw new Error("Master key not found");
+      }
+      if (isEmpty(infoMasterKey)) {
+        throw new Error("Please initial master key before");
+      }
+      if (isEmpty(networkKey)) {
+        throw new Error("Please initial network key before");
+      }
+      const { priKey: masterPrivateKey, pubKey: masterPublicKey } = masterKey;
+      // Split shares
+      const splits = sharmirSplitPrivateKey(Buffer.from(masterPrivateKey, "hex"));
+      // Encrypted by network key
+      const networkShare = await encryptedMessage(splits[0], new BN(networkKey.priKey, "hex"));
+      // Encrypted by device key
+      const deviceKey = formatPrivateKey(generateRandomPrivateKey());
+      const deviceShare = await encryptedMessage(splits[1], new BN(deviceKey.priKey, "hex"));
+      // Encrypted by recovery key
+      // Generate 24 words
+      const recoveryKey = formatPrivateKey(generateRandomPrivateKey());
+      const recoveryShare = await encryptedMessage(splits[1], new BN(recoveryKey.priKey, "hex"));
+
+      const shares = [
+        {
+          masterPublicKey: masterPublicKey,
+          publicKey: networkShare.publicKey,
+          encryptedData: networkShare.encryptedToString,
+          type: "network-key" as ShareInfo["type"],
+        },
+        {
+          masterPublicKey: masterPublicKey,
+          publicKey: deviceShare.publicKey,
+          encryptedData: deviceShare.encryptedToString,
+          deviceInfo: await deviceInfo(),
+          type: "device" as ShareInfo["type"],
+        },
+        {
+          masterPublicKey: masterPublicKey,
+          publicKey: recoveryShare.publicKey,
+          encryptedData: recoveryShare.encryptedToString,
+          email,
+          type: "recovery-phrase" as ShareInfo["type"],
+        },
+      ];
+      const encrypted = await encryptedMessage(Buffer.from(Date.now().toString()), new BN(networkKey.priKey, "hex"));
+      const enabledMFA = await enabledMasterKeyMFA({
+        masterPublicKey: masterPublicKey!,
+        networkPublicKey: encrypted.publicKey,
+        encryptedData: encrypted.encryptedToString,
+        signature: encrypted.signature,
+        networkShare: shares[0],
+        deviceShare: shares[1],
+        recoveryShare: shares[2],
+      });
+      // Send mail
+
+      setDeviceKey(deviceKey);
+      return { error: "" };
+    } catch (error) {
+      return { error: get(error, "message", "") };
+    }
+  };
 
   return { getInfoWallet, getInfoWalletByMasterKey, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase };
 };

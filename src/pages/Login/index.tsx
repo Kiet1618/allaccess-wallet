@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
@@ -17,7 +17,7 @@ import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, Te
 import { Alert, ClickAwayListener, Snackbar } from "@mui/material";
 
 const Login = () => {
-  const [messageSnackbar, setMessageSnackbar] = React.useState("");
+  const [messageSnackbar, setMessageSnackbar] = useState("");
   const { getInfoWallet, fetchMasterKey } = useFetchWallet();
 
   const { onClickAway, getRootProps } = useSnackbar({
