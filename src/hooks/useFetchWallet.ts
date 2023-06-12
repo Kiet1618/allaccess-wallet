@@ -8,13 +8,13 @@ import BN from "bn.js";
 import { deviceInfo } from "@app/utils";
 
 export const useFetchWallet = () => {
-  const [_, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
-  const [_, setMasterKey] = useSessionStorage<KeyPair | null>("master-key", null);
+  const [infoMasterKey, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
+  const [masterKey, setMasterKey] = useSessionStorage<KeyPair | null>("master-key", null);
   const [networkKey, setNetworkKey] = useSessionStorage<KeyPair | null>("network-key", null);
   const [deviceKey, setDeviceKey] = useSessionStorage<KeyPair | null>("device-key", null);
 
   // Get info master key
-  const getInfoWallet = async (verifier: string, verifierId: string, idToken: string): Promise<{ error: string; info?: InfoMasterKey | null; networkKey?: KeyPair | null }> => {
+  const getInfoWallet = async (verifier: string, verifierId: string, idToken: string): Promise<{ error: string; info?: InfoMasterKey | null; networkKey?: KeyPair | null; success?: boolean }> => {
     try {
       const networkKey = await getNodeKey(verifier, verifierId, idToken);
       let { error, data: info } = await getOrSetInfoMasterKey(verifier, verifierId, networkKey);
@@ -64,6 +64,7 @@ export const useFetchWallet = () => {
 
       return {
         error: "",
+        success: true,
         info,
         networkKey,
       };
@@ -122,6 +123,7 @@ export const useFetchWallet = () => {
           throw new Error("Something went wrong, master public key not match with default");
         }
         setMasterKey(masterKeyFormatted);
+        return { error: "", success: true, mfa: false };
       }
 
       if (!mfa) {
@@ -156,10 +158,11 @@ export const useFetchWallet = () => {
           deviceInfo: await deviceInfo(),
         });
         setDeviceKey(deviceKey);
+        return { error: "", success: true, mfa: false };
       }
 
       // Case if user enable MFA
-      return { error: "", mfa: true };
+      return { error: "", success: true, mfa: true };
     } catch (error) {
       setMasterKey(null);
       setDeviceKey(null);
