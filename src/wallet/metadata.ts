@@ -86,6 +86,13 @@ export type EnableMasterKeyMFARequest = {
 
 export type EnableMasterKeyMFAResponse = ShareInfo[];
 
+export type SendMailPhraseRequest = {
+  email: string;
+  phrase: string;
+};
+
+export type SendMailPhraseResponse = boolean;
+
 export const setInfoMasterKey = async (payload: SetMasterKeyRequest): Promise<{ error: string; data: SetMasterKeyRequest | null }> => {
   try {
     const { data } = await axios.post<SetMasterKeyRequest>(`${METADATA_HOST}/info-keys`, payload);
@@ -203,6 +210,20 @@ export const enabledMasterKeyMFA = async (payload: EnableMasterKeyMFARequest): P
     return {
       error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
       data: [],
+    };
+  }
+};
+
+export const sendMailPhrase = async (payload: SendMailPhraseRequest): Promise<{ error: string; data: SendMailPhraseResponse }> => {
+  try {
+    const { data } = await axios.post<SendMailPhraseResponse>(`${METADATA_HOST}/mailer/phrase`, {
+      ...payload,
+    });
+    return { error: "", data };
+  } catch (error) {
+    return {
+      error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
+      data: false,
     };
   }
 };

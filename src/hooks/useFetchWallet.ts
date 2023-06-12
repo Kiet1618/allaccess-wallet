@@ -2,10 +2,10 @@ import { get, isEmpty, map } from "lodash";
 import { useSessionStorage } from "usehooks-ts";
 import { getNodeKey } from "@app/wallet/node-service";
 import { KeyPair } from "@app/wallet/types";
-import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey, createShare, getInfoMasterKey, enabledMasterKeyMFA } from "@app/wallet/metadata";
+import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey, createShare, getInfoMasterKey, enabledMasterKeyMFA, sendMailPhrase } from "@app/wallet/metadata";
 import { decryptedMessage, encryptedMessage, formatPrivateKey, generateRandomPrivateKey, sharmirCombinePrivateKey, sharmirSplitPrivateKey } from "@app/wallet/algorithm";
 import BN from "bn.js";
-import { deviceInfo } from "@app/utils";
+import { deviceInfo, hexToWords } from "@app/utils";
 
 export const useFetchWallet = () => {
   const [infoMasterKey, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
@@ -195,6 +195,9 @@ export const useFetchWallet = () => {
       if (isEmpty(infoMasterKey)) {
         throw new Error("Please initial master key before");
       }
+      if (infoMasterKey.mfa) {
+        throw new Error("Enabled mfa");
+      }
       if (isEmpty(networkKey)) {
         throw new Error("Please initial network key before");
       }
@@ -209,6 +212,8 @@ export const useFetchWallet = () => {
       // Encrypted by recovery key
       // Generate 24 words
       const recoveryKey = formatPrivateKey(generateRandomPrivateKey());
+      const phrase = hexToWords(recoveryKey.priKey);
+      console.log("🚀 ~ file: useFetchWallet.ts:213 ~ enableMFA ~ phrase:", phrase);
       const recoveryShare = await encryptedMessage(splits[1], new BN(recoveryKey.priKey, "hex"));
 
       const shares = [
@@ -246,8 +251,14 @@ export const useFetchWallet = () => {
       // Send mail
 
       setDeviceKey(deviceKey);
+      await sendMailPhrase({
+        email,
+        phrase,
+      });
+
       return { error: "" };
     } catch (error) {
+      console.log("🚀 ~ file: useFetchWallet.ts:256 ~ enableMFA ~ error:", error);
       return { error: get(error, "message", "") };
     }
   };
