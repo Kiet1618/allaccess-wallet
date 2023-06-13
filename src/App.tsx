@@ -3,6 +3,7 @@ import { store } from "./store";
 import { Provider } from "react-redux";
 import React from "react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { SnackbarProvider } from "notistack";
 
 const App = () => {
   const configGoogle: string = process.env.REACT_APP_CLIENT_GOOGLE_API_KEY as string;
@@ -10,7 +11,9 @@ const App = () => {
   return (
     <GoogleOAuthProvider clientId={configGoogle}>
       <Provider store={store}>
-        <Router />
+        <SnackbarProvider maxSnack={8}>
+          <Router />
+        </SnackbarProvider>
       </Provider>
     </GoogleOAuthProvider>
   );

@@ -1,42 +1,34 @@
 import React, { useEffect, useState } from "react";
+import { isEmpty } from "lodash";
+import { useSessionStorage } from "usehooks-ts";
+
 import Box from "@mui/material/Box";
-import { Alert, ClickAwayListener, Grid, Snackbar } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import Tooltip from "@mui/material/Tooltip";
-import useSnackbar from "@mui/base/useSnackbar";
 import IconButton from "@mui/material/IconButton";
-import { Computer, Trash } from "@app/assets/icon";
+import { Grid } from "@mui/material";
 
-import { Button as CustomButton, TextField as CustomInput } from "@app/components";
+import { useCustomSnackBar, useFetchWallet } from "@app/hooks";
+import { KeyPair } from "@app/wallet/types";
+import { Computer, Trash } from "@app/assets/icon";
 import { TitlePageBlack, TitlePage } from "@app/styles";
+import { InfoMasterKey, ShareInfo } from "@app/wallet/metadata";
+import { Button as CustomButton, TextField as CustomInput } from "@app/components";
 
 import { BackgroundPage, TitlePageContainer } from "../profile.css";
 import { SubTitlePage, ContainerTextField, SpanRed } from "../../Transaction/transaction.css";
 import { TextHeaderCard, ContainerDevice, GroupLeftItemDevice, ContainerText, NameText, IpText } from "../../MultipleFactors/multipleFactors.css";
 import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerNumberFactors, ContainerHeaderFactors, style } from "./mfa.css";
-import { useSessionStorage } from "usehooks-ts";
-import { InfoMasterKey, ShareInfo } from "@app/wallet/metadata";
-import { useFetchWallet } from "@app/hooks";
-import { KeyPair } from "@app/wallet/types";
-import { isEmpty } from "lodash";
 
 const MFA = () => {
+  const { handleNotification } = useCustomSnackBar();
   const { getInfoWalletByNetworkKey, enableMFA, changeRecoveryEmail, removeDeviceShare } = useFetchWallet();
   const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [networkKey, __] = useSessionStorage<KeyPair | null>("network-key", null);
   const [deviceKey, ___] = useSessionStorage<KeyPair | null>("device-key", null);
-  const [messageSnackbar, setMessageSnackbar] = useState("");
   const [deleteDevice, setDeleteDevice] = useState<ShareInfo>();
   const [deviceShares, setDeviceShares] = useState<ShareInfo[]>([]);
   const [recoveryEmail, setRecoveryEmail] = useState<string>("");
-
-  const { onClickAway, getRootProps } = useSnackbar({
-    autoHideDuration: 3000,
-    open: messageSnackbar ? true : false,
-    onClose: () => {
-      setMessageSnackbar("");
-    },
-  });
 
   useEffect(() => {
     if (networkKey) {
@@ -62,21 +54,21 @@ const MFA = () => {
 
   const changeRecoveryPhrase = async () => {
     if (!recoveryEmail) {
-      setMessageSnackbar("Please input email valid");
+      handleNotification("Please input email valid", "error");
       return;
     }
     if (!infoMasterKey) {
-      setMessageSnackbar("Please initial master key before");
+      handleNotification("Please initial master key before", "error");
       return;
     }
     const { mfa } = infoMasterKey;
     if (!mfa) {
       const { error } = await enableMFA(recoveryEmail);
       if (error) {
-        setMessageSnackbar(error);
+        handleNotification(error, "error");
         return;
       }
-      alert("Success");
+      handleNotification("Please check your email to get new phrase", "success");
       getInfoWalletByNetworkKey(networkKey!);
       return;
     }
@@ -84,10 +76,10 @@ const MFA = () => {
     if (mfa) {
       const { error } = await changeRecoveryEmail(recoveryEmail);
       if (error) {
-        setMessageSnackbar(error);
+        handleNotification(error, "error");
         return;
       }
-      alert("Success");
+      handleNotification("Please check your email to get new phrase", "success");
       getInfoWalletByNetworkKey(networkKey!);
     }
     return;
@@ -95,34 +87,25 @@ const MFA = () => {
 
   const handleDelete = async () => {
     if (isEmpty(deleteDevice)) {
-      setMessageSnackbar("Please select device");
+      handleNotification("Please select device", "error");
       return;
     }
     if (isCurrentDevice(deleteDevice)) {
-      setMessageSnackbar("Please select other device, you can't delete current device");
+      handleNotification("Please select other device, you can't delete current device", "error");
       return;
     }
     const { error } = await removeDeviceShare(deleteDevice.publicKey);
     if (error) {
-      setMessageSnackbar(error);
+      handleNotification(error, "error");
       return;
     }
-    alert("Success");
+    handleNotification("Deleted device successfully", "success");
     setDeleteDevice(undefined);
     getInfoWalletByNetworkKey(networkKey!);
   };
 
   return (
     <>
-      {messageSnackbar ? (
-        <ClickAwayListener onClickAway={onClickAway}>
-          <Snackbar {...getRootProps()} anchorOrigin={{ vertical: "top", horizontal: "right" }} open={messageSnackbar ? true : false}>
-            <Alert severity='error' sx={{ width: "100%" }} variant='filled'>
-              {messageSnackbar}
-            </Alert>
-          </Snackbar>
-        </ClickAwayListener>
-      ) : null}
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
         <Grid item xs={100}>
           <TitlePageContainer>
@@ -134,7 +117,7 @@ const MFA = () => {
           <BackgroundPage>
             <ContainerHeaderFactors>
               <TextHeaderCard>Security factors</TextHeaderCard>
-              <ContainerNumberFactors>2/3</ContainerNumberFactors>
+              <ContainerNumberFactors>{`2/${infoMasterKey?.shares?.length}`}</ContainerNumberFactors>
             </ContainerHeaderFactors>
             <SubTitlePage>The number of factors to authenticate in order to access your account.</SubTitlePage>
             <ContainerTextField>

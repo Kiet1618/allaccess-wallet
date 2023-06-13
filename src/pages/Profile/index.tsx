@@ -1,5 +1,4 @@
 import React from "react";
-import { Grid } from "@mui/material";
 import { Page } from "../../styles";
 import { TabPanel, a11yProps } from "../../utils";
 import { OverviewHeaderTopCoin } from "../Overview/overview.css";
@@ -19,11 +18,9 @@ const Profile = () => {
           <TabTransfer label='MFA Setting' {...a11yProps(1)} />
         </TabsCustom>
       </OverviewHeaderTopCoin>
-      <Grid>
-        <TabPanel value={value} index={0}>
-          <Info />
-        </TabPanel>
-      </Grid>
+      <TabPanel value={value} index={0}>
+        <Info />
+      </TabPanel>
       <TabPanel value={value} index={1}>
         <MFA />
       </TabPanel>

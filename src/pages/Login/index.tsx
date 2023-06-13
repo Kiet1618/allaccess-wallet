@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
-import useSnackbar from "@mui/base/useSnackbar";
 import { GoogleLogin, GoogleLoginProps } from "@react-oauth/google";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -11,22 +10,14 @@ import { FirstSlider, SecondarySlider, ThirdSlider } from "@app/assets/img";
 import Button from "@app/components/Button";
 import { Google, LogoText } from "@app/assets/icon";
 import { UserGoogle } from "@app/types/oauth.type";
-import { useFetchWallet } from "@app/hooks";
+import { useCustomSnackBar, useFetchWallet } from "@app/hooks";
 
 import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
 import { Alert, ClickAwayListener, Snackbar } from "@mui/material";
 
 const Login = () => {
-  const [messageSnackbar, setMessageSnackbar] = useState("");
+  const { handleNotification } = useCustomSnackBar();
   const { getInfoWallet, fetchMasterKey } = useFetchWallet();
-
-  const { onClickAway, getRootProps } = useSnackbar({
-    autoHideDuration: 8000,
-    open: messageSnackbar ? true : false,
-    onClose: () => {
-      setMessageSnackbar("");
-    },
-  });
 
   const navigate = useNavigate();
   var settings = {
@@ -45,12 +36,12 @@ const Login = () => {
       const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: credentialResponse.credential } });
       const { error: error1, info, networkKey } = await getInfoWallet("google", profile.email, credentialResponse.credential || "");
       if (error1) {
-        setMessageSnackbar(error1);
+        handleNotification(error1, "error");
         return;
       }
       const { error: error2, success, mfa } = await fetchMasterKey(info!, networkKey!);
       if (error2) {
-        setMessageSnackbar(error2);
+        handleNotification(error2, "error");
         return;
       }
 
@@ -64,21 +55,12 @@ const Login = () => {
       }
     },
     onError: () => {
-      console.log("Login Failed");
+      handleNotification("Login Failed", "error");
     },
   };
 
   return (
     <Grid container direction='row'>
-      {messageSnackbar ? (
-        <ClickAwayListener onClickAway={onClickAway}>
-          <Snackbar {...getRootProps()} anchorOrigin={{ vertical: "top", horizontal: "right" }} open={messageSnackbar ? true : false}>
-            <Alert severity='error' sx={{ width: "100%" }} variant='filled'>
-              {messageSnackbar}
-            </Alert>
-          </Snackbar>
-        </ClickAwayListener>
-      ) : null}
       <Grid item xs={12} sm={12} md={6}>
         <TextLogo>
           <LogoText />
