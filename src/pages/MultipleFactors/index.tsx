@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useSnackbar from "@mui/base/useSnackbar";
-import { Alert, ClickAwayListener, Snackbar } from "@mui/material";
 
 import { Computer } from "@app/assets/icon";
 import { Button as CustomButton, TextField as CustomTextInput } from "@app/components";
@@ -22,10 +20,12 @@ import {
   ContainerText,
   GroupLeftItemDevice,
 } from "./multipleFactors.css";
-import { useFetchWallet } from "@app/hooks";
+import { useCustomSnackBar, useFetchWallet } from "@app/hooks";
 import { InfoMasterKey, ShareInfo } from "@app/wallet/metadata";
 import { useSessionStorage } from "usehooks-ts";
 const MultipleFactors = () => {
+  const { handleNotification } = useCustomSnackBar();
+
   const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const navigate = useNavigate();
   const { fetchMasterKeyWithPhrase } = useFetchWallet();
@@ -34,7 +34,6 @@ const MultipleFactors = () => {
   const [typeButton, setTypeButton] = useState(false);
   const [seed, setSeed] = useState("");
   const [checkSeed, setCheckSeed] = useState(true);
-  const [messageSnackbar, setMessageSnackbar] = useState("");
 
   useEffect(() => {
     if (infoMasterKey) {
@@ -42,14 +41,6 @@ const MultipleFactors = () => {
       setDeviceShares(devices || []);
     }
   }, [infoMasterKey]);
-
-  const { onClickAway, getRootProps } = useSnackbar({
-    autoHideDuration: 8000,
-    open: messageSnackbar ? true : false,
-    onClose: () => {
-      setMessageSnackbar("");
-    },
-  });
 
   const handleValidatorAmount = (value: string = seed) => {
     const words = value.split(" ");
@@ -64,7 +55,7 @@ const MultipleFactors = () => {
     }
     const { error } = await fetchMasterKeyWithPhrase(seed.trim());
     if (error) {
-      setMessageSnackbar(error);
+      handleNotification(error, "error");
       return;
     }
     navigate("/overview");
@@ -72,15 +63,6 @@ const MultipleFactors = () => {
 
   return (
     <ContainerMultipleFactors>
-      {messageSnackbar ? (
-        <ClickAwayListener onClickAway={onClickAway}>
-          <Snackbar {...getRootProps()} anchorOrigin={{ vertical: "top", horizontal: "right" }} open={messageSnackbar ? true : false}>
-            <Alert severity='error' sx={{ width: "100%" }} variant='filled'>
-              {messageSnackbar}
-            </Alert>
-          </Snackbar>
-        </ClickAwayListener>
-      ) : null}
       <HeaderText>Verify your login</HeaderText>
       <SubHeaderText>Verify with one of the following to access your account</SubHeaderText>
       <ContainerBackgroundCard>

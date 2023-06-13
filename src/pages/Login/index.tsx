@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
@@ -13,7 +13,6 @@ import { UserGoogle } from "@app/types/oauth.type";
 import { useCustomSnackBar, useFetchWallet } from "@app/hooks";
 
 import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
-import { Alert, ClickAwayListener, Snackbar } from "@mui/material";
 
 const Login = () => {
   const { handleNotification } = useCustomSnackBar();
