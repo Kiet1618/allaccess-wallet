@@ -112,6 +112,9 @@ export const useFetchWallet = () => {
         });
         if (isEmpty(deviceShare)) {
           setDeviceKey(null);
+          if (mfa) {
+            return { error: "", mfa: true, success: false };
+          }
           throw new Error("Device share not existed");
         }
         const networkShare = shares?.find(share => {
