@@ -69,7 +69,8 @@ export const encryptedMessageWithoutSign = async (
   encryptedToString: AdditionalTypes<Ecies, string>;
   publicKey: string;
 }> => {
-  const encrypted = await encrypt(Buffer.from(publicKey.toString("hex"), "hex"), message);
+  const publicKeyString = publicKey.toString("hex").padStart(130, "0");
+  const encrypted = await encrypt(Buffer.from(publicKeyString, "hex"), message);
   const encryptedToString = {
     ciphertext: encrypted.ciphertext.toString("hex"),
     ephemPublicKey: encrypted.ephemPublicKey.toString("hex"),

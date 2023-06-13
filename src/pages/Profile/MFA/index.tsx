@@ -21,7 +21,7 @@ import { useFetchWallet } from "@app/hooks";
 import { KeyPair } from "@app/wallet/types";
 
 const MFA = () => {
-  const { getInfoWalletByNetworkKey, enableMFA, pssShares } = useFetchWallet();
+  const { getInfoWalletByNetworkKey, enableMFA, changeRecoveryEmail } = useFetchWallet();
   const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [networkKey, __] = useSessionStorage<KeyPair | null>("network-key", null);
   const [messageSnackbar, setMessageSnackbar] = useState("");
@@ -69,17 +69,20 @@ const MFA = () => {
       const { error } = await enableMFA(recoveryEmail);
       if (error) {
         setMessageSnackbar(error);
+        return;
       }
       getInfoWalletByNetworkKey(networkKey!);
       return;
     }
+    // pss shares
     if (mfa) {
-      const { shares } = infoMasterKey;
-      const { error } = await pssShares(shares ?? []);
-
+      const { error } = await changeRecoveryEmail(recoveryEmail);
+      if (error) {
+        setMessageSnackbar(error);
+        return;
+      }
       getInfoWalletByNetworkKey(networkKey!);
     }
-    // pss shares
     return;
   };
 

@@ -91,7 +91,7 @@ export type PSSAllSharesRequest = {
   networkPublicKey: string;
   signature: string;
   networkShare?: Partial<ShareInfo> | null;
-  deviceShare?: Partial<ShareInfo>[];
+  deviceShares?: Partial<ShareInfo>[];
   recoveryShare?: Partial<ShareInfo> | null;
   encryptedData: AdditionalTypes<Ecies, string>;
 };
@@ -228,7 +228,7 @@ export const enabledMasterKeyMFA = async (payload: EnableMasterKeyMFARequest): P
 
 export const pssAllShares = async (payload: PSSAllSharesRequest): Promise<{ error: string; data: PSSAllSharesResponse }> => {
   try {
-    const { data } = await axios.post<PSSAllSharesResponse>(`${METADATA_HOST}/shares/pss`, {
+    const { data } = await axios.patch<PSSAllSharesResponse>(`${METADATA_HOST}/shares/pss`, {
       ...payload,
     });
     return { error: "", data };

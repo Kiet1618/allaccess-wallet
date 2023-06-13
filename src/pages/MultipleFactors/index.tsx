@@ -1,10 +1,13 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useSnackbar from "@mui/base/useSnackbar";
+import { Alert, ClickAwayListener, Snackbar } from "@mui/material";
+
+import { Computer } from "@app/assets/icon";
+import { Button as CustomButton, TextField as CustomTextInput } from "@app/components";
 import { Devices } from "../../configs/data/test";
-import { Computer } from "../../assets/icon";
 import { TextBlue } from "../Overview/overview.css";
-import CustomTextInput from "../../components/TextField";
-import CustomButton from "../../components/Button";
-import { useState } from "react";
-import React from "react";
+
 import {
   ContainerButton,
   ContainerMultipleFactors,
@@ -20,11 +23,34 @@ import {
   GroupLeftItemDevice,
 } from "./multipleFactors.css";
 import { useFetchWallet } from "@app/hooks";
+import { InfoMasterKey, ShareInfo } from "@app/wallet/metadata";
+import { useSessionStorage } from "usehooks-ts";
 const MultipleFactors = () => {
+  const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
+  const navigate = useNavigate();
   const { fetchMasterKeyWithPhrase } = useFetchWallet();
+
+  const [deviceShares, setDeviceShares] = useState<ShareInfo[]>([]);
   const [typeButton, setTypeButton] = useState(false);
   const [seed, setSeed] = useState("");
   const [checkSeed, setCheckSeed] = useState(true);
+  const [messageSnackbar, setMessageSnackbar] = useState("");
+
+  useEffect(() => {
+    if (infoMasterKey) {
+      const devices = infoMasterKey.shares?.filter(elm => elm.type === "device");
+      setDeviceShares(devices || []);
+    }
+  }, [infoMasterKey]);
+
+  const { onClickAway, getRootProps } = useSnackbar({
+    autoHideDuration: 8000,
+    open: messageSnackbar ? true : false,
+    onClose: () => {
+      setMessageSnackbar("");
+    },
+  });
+
   const handleValidatorAmount = (value: string = seed) => {
     const words = value.split(" ");
     if (words.length !== 24) {
@@ -38,12 +64,23 @@ const MultipleFactors = () => {
     }
     const { error } = await fetchMasterKeyWithPhrase(seed.trim());
     if (error) {
+      setMessageSnackbar(error);
       return;
     }
+    navigate("/overview");
   };
 
   return (
     <ContainerMultipleFactors>
+      {messageSnackbar ? (
+        <ClickAwayListener onClickAway={onClickAway}>
+          <Snackbar {...getRootProps()} anchorOrigin={{ vertical: "top", horizontal: "right" }} open={messageSnackbar ? true : false}>
+            <Alert severity='error' sx={{ width: "100%" }} variant='filled'>
+              {messageSnackbar}
+            </Alert>
+          </Snackbar>
+        </ClickAwayListener>
+      ) : null}
       <HeaderText>Verify your login</HeaderText>
       <SubHeaderText>Verify with one of the following to access your account</SubHeaderText>
       <ContainerBackgroundCard>
@@ -51,16 +88,16 @@ const MultipleFactors = () => {
         <SubHeaderText>
           Login to <strong>allaccess.one</strong> from any of the following devices to complete the security verification.
         </SubHeaderText>
-        {Devices.map(device => (
-          <ContainerDevice key={device.id}>
+        {deviceShares.map(device => (
+          <ContainerDevice key={device.publicKey}>
             <GroupLeftItemDevice>
               <Computer />
               <ContainerText>
-                <NameText> {device.name}</NameText>
-                <IpText>IP: {device.ip}</IpText>
+                <NameText> {`${device.deviceInfo?.name} ${device.deviceInfo?.version}`}</NameText>
+                <IpText>IP: {device.deviceInfo?.ipv4}</IpText>
               </ContainerText>
             </GroupLeftItemDevice>
-            <IdText>Reference ID: {device.id}</IdText>
+            {/* <IdText>Reference ID: {device.id}</IdText> */}
           </ContainerDevice>
         ))}
       </ContainerBackgroundCard>

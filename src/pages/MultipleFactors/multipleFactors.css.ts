@@ -27,6 +27,7 @@ export const SubHeaderText = styled.div`
   color: ${props => props.theme.colors.neutrals.gray600};
 `;
 export const NameText = styled.div`
+  text-transform: capitalize;
   ${breakpoint("xs")`
         font-weight: 400;
         font-size: 13px;
