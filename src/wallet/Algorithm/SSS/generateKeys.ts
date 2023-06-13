@@ -61,6 +61,28 @@ export const encryptedMessage = async (
   };
 };
 
+export const encryptedMessageWithoutSign = async (
+  message: any,
+  publicKey: BN
+): Promise<{
+  encryptedData: Ecies;
+  encryptedToString: AdditionalTypes<Ecies, string>;
+  publicKey: string;
+}> => {
+  const encrypted = await encrypt(Buffer.from(publicKey.toString("hex"), "hex"), message);
+  const encryptedToString = {
+    ciphertext: encrypted.ciphertext.toString("hex"),
+    ephemPublicKey: encrypted.ephemPublicKey.toString("hex"),
+    iv: encrypted.iv.toString("hex"),
+    mac: encrypted.mac.toString("hex"),
+  };
+  return {
+    encryptedData: encrypted,
+    encryptedToString,
+    publicKey: publicKey.toString("hex"),
+  };
+};
+
 export const decryptedMessage = async (privateKey: BN, opts: AdditionalTypes<Ecies, string>): Promise<any> => {
   const encryptedToBuffer = {
     ciphertext: Buffer.from(opts.ciphertext as string, "hex"),

@@ -1,9 +1,9 @@
-import { get, isEmpty, map } from "lodash";
+import { find, get, isEmpty, map } from "lodash";
 import { useSessionStorage } from "usehooks-ts";
 import { getNodeKey } from "@app/wallet/node-service";
 import { KeyPair } from "@app/wallet/types";
-import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey, createShare, getInfoMasterKey, enabledMasterKeyMFA, sendMailPhrase } from "@app/wallet/metadata";
-import { decryptedMessage, encryptedMessage, formatPrivateKey, generateRandomPrivateKey, sharmirCombinePrivateKey, sharmirSplitPrivateKey } from "@app/wallet/algorithm";
+import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey, createShare, getInfoMasterKey, enabledMasterKeyMFA, sendMailPhrase, pssAllShares } from "@app/wallet/metadata";
+import { decryptedMessage, encryptedMessage, encryptedMessageWithoutSign, formatPrivateKey, generateRandomPrivateKey, sharmirCombinePrivateKey, sharmirSplitPrivateKey } from "@app/wallet/algorithm";
 import BN from "bn.js";
 import { deviceInfo, hexToWords, wordsToHex } from "@app/utils";
 
@@ -73,7 +73,7 @@ export const useFetchWallet = () => {
     }
   };
 
-  const getInfoWalletByMasterKey = async (networkKey: KeyPair): Promise<{ error: string; info?: InfoMasterKey | null }> => {
+  const getInfoWalletByNetworkKey = async (networkKey: KeyPair): Promise<{ error: string; info?: InfoMasterKey | null }> => {
     try {
       let { error, data: info } = await getInfoMasterKey(networkKey!);
       if (error) throw new Error(error);
@@ -306,13 +306,84 @@ export const useFetchWallet = () => {
         deviceShare: shares[1],
         recoveryShare: shares[2],
       });
+      if (enabledMFA.error) {
+        throw new Error(enabledMFA.error);
+      }
       // Send mail
-
       setDeviceKey(deviceKey);
       await sendMailPhrase({
         email,
         phrase,
       });
+
+      return { error: "", success: enabledMFA.data };
+    } catch (error) {
+      return { error: get(error, "message", "") };
+    }
+  };
+
+  const pssShares = async (newShares: ShareInfo[]): Promise<{ error?: string; success?: boolean }> => {
+    try {
+      if (isEmpty(masterKey)) {
+        throw new Error("Master key not found");
+      }
+      if (isEmpty(infoMasterKey)) {
+        throw new Error("Please initial master key before");
+      }
+      if (isEmpty(networkKey)) {
+        throw new Error("Please initial network key before");
+      }
+      const { priKey: masterPrivateKey, pubKey: masterPublicKey } = masterKey;
+      // Split shares
+      const shares: {
+        device?: Partial<ShareInfo>[];
+        "network-key"?: Partial<ShareInfo>;
+        "recovery-phrase"?: Partial<ShareInfo>;
+      } = {};
+      const splits = sharmirSplitPrivateKey(Buffer.from(masterPrivateKey, "hex"));
+      await Promise.all(
+        newShares.map(async share => {
+          const { type } = share;
+
+          if (type === "network-key") {
+            const shareEncrypted = await encryptedMessageWithoutSign(splits[0], new BN(share.publicKey, "hex"));
+            shares["network-key"] = {
+              ...share,
+              encryptedData: shareEncrypted.encryptedToString,
+            };
+          }
+          if (type === "recovery-phrase") {
+            const shareEncrypted = await encryptedMessageWithoutSign(splits[1], new BN(share.publicKey, "hex"));
+            shares["recovery-phrase"] = {
+              ...share,
+              encryptedData: shareEncrypted.encryptedToString,
+            };
+          }
+          if (type === "device") {
+            const shareEncrypted = await encryptedMessageWithoutSign(splits[1], new BN(share.publicKey, "hex"));
+            (shares.device || []).push({
+              ...share,
+              encryptedData: shareEncrypted.encryptedToString,
+            });
+          }
+        })
+      );
+
+      const encrypted = await encryptedMessage(Buffer.from(Date.now().toString()), new BN(networkKey.priKey, "hex"));
+
+      const pss = await pssAllShares({
+        masterPublicKey: masterPublicKey!,
+        networkPublicKey: encrypted.publicKey,
+        encryptedData: encrypted.encryptedToString,
+        signature: encrypted.signature,
+        networkShare: shares["network-key"] || null,
+        deviceShare: shares.device || [],
+        recoveryShare: shares["recovery-phrase"] || {},
+      });
+
+      if (pss.error) {
+        throw new Error(pss.error);
+      }
 
       return { error: "" };
     } catch (error) {
@@ -320,5 +391,5 @@ export const useFetchWallet = () => {
     }
   };
 
-  return { getInfoWallet, getInfoWalletByMasterKey, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase };
+  return { getInfoWallet, getInfoWalletByNetworkKey, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase, pssShares };
 };

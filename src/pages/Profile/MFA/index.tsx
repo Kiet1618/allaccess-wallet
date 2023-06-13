@@ -21,7 +21,7 @@ import { useFetchWallet } from "@app/hooks";
 import { KeyPair } from "@app/wallet/types";
 
 const MFA = () => {
-  const { getInfoWalletByMasterKey, enableMFA } = useFetchWallet();
+  const { getInfoWalletByNetworkKey, enableMFA, pssShares } = useFetchWallet();
   const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [networkKey, __] = useSessionStorage<KeyPair | null>("network-key", null);
   const [messageSnackbar, setMessageSnackbar] = useState("");
@@ -40,7 +40,7 @@ const MFA = () => {
 
   useEffect(() => {
     if (networkKey) {
-      getInfoWalletByMasterKey(networkKey!);
+      getInfoWalletByNetworkKey(networkKey!);
     }
   }, []);
 
@@ -48,6 +48,8 @@ const MFA = () => {
     if (infoMasterKey) {
       const devices = infoMasterKey.shares?.filter(elm => elm.type === "device");
       setDeviceShares(devices || []);
+      const recoveryShare = infoMasterKey.shares?.find(elm => elm.type === "recovery-phrase");
+      setRecoveryEmail(recoveryShare?.email || "");
     }
   }, [infoMasterKey]);
   const handleOpen = () => setOpen(true);
@@ -68,7 +70,14 @@ const MFA = () => {
       if (error) {
         setMessageSnackbar(error);
       }
+      getInfoWalletByNetworkKey(networkKey!);
       return;
+    }
+    if (mfa) {
+      const { shares } = infoMasterKey;
+      const { error } = await pssShares(shares ?? []);
+
+      getInfoWalletByNetworkKey(networkKey!);
     }
     // pss shares
     return;

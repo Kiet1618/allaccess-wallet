@@ -84,7 +84,19 @@ export type EnableMasterKeyMFARequest = {
   encryptedData: AdditionalTypes<Ecies, string>;
 };
 
-export type EnableMasterKeyMFAResponse = ShareInfo[];
+export type EnableMasterKeyMFAResponse = boolean;
+
+export type PSSAllSharesRequest = {
+  masterPublicKey: string;
+  networkPublicKey: string;
+  signature: string;
+  networkShare?: Partial<ShareInfo> | null;
+  deviceShare?: Partial<ShareInfo>[];
+  recoveryShare?: Partial<ShareInfo> | null;
+  encryptedData: AdditionalTypes<Ecies, string>;
+};
+
+export type PSSAllSharesResponse = boolean;
 
 export type SendMailPhraseRequest = {
   email: string;
@@ -209,7 +221,21 @@ export const enabledMasterKeyMFA = async (payload: EnableMasterKeyMFARequest): P
   } catch (error) {
     return {
       error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
-      data: [],
+      data: false,
+    };
+  }
+};
+
+export const pssAllShares = async (payload: PSSAllSharesRequest): Promise<{ error: string; data: PSSAllSharesResponse }> => {
+  try {
+    const { data } = await axios.post<PSSAllSharesResponse>(`${METADATA_HOST}/shares/pss`, {
+      ...payload,
+    });
+    return { error: "", data };
+  } catch (error) {
+    return {
+      error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
+      data: false,
     };
   }
 };
