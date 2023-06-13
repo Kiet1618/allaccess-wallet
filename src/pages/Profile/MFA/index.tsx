@@ -16,17 +16,17 @@ import { TextHeaderCard, ContainerDevice, GroupLeftItemDevice, ContainerText, Na
 import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerNumberFactors, ContainerHeaderFactors, style } from "./mfa.css";
 import { useSessionStorage } from "usehooks-ts";
 import { InfoMasterKey, ShareInfo } from "@app/wallet/metadata";
-import { DeviceInfo } from "@app/utils";
 import { useFetchWallet } from "@app/hooks";
 import { KeyPair } from "@app/wallet/types";
+import { isEmpty } from "lodash";
 
 const MFA = () => {
-  const { getInfoWalletByNetworkKey, enableMFA, changeRecoveryEmail } = useFetchWallet();
+  const { getInfoWalletByNetworkKey, enableMFA, changeRecoveryEmail, removeDeviceShare } = useFetchWallet();
   const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [networkKey, __] = useSessionStorage<KeyPair | null>("network-key", null);
+  const [deviceKey, ___] = useSessionStorage<KeyPair | null>("device-key", null);
   const [messageSnackbar, setMessageSnackbar] = useState("");
-  const [open, setOpen] = useState(false);
-  const [device, setDevice] = useState<DeviceInfo | null>();
+  const [deleteDevice, setDeleteDevice] = useState<ShareInfo>();
   const [deviceShares, setDeviceShares] = useState<ShareInfo[]>([]);
   const [recoveryEmail, setRecoveryEmail] = useState<string>("");
 
@@ -52,8 +52,13 @@ const MFA = () => {
       setRecoveryEmail(recoveryShare?.email || "");
     }
   }, [infoMasterKey]);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleOpen = (device: ShareInfo) => setDeleteDevice(device);
+  const handleClose = () => setDeleteDevice(undefined);
+
+  const isCurrentDevice = (deviceShare: ShareInfo) => {
+    if (isEmpty(deviceKey)) return false;
+    return deviceShare?.publicKey === deviceKey?.pubKey;
+  };
 
   const changeRecoveryPhrase = async () => {
     if (!recoveryEmail) {
@@ -88,8 +93,23 @@ const MFA = () => {
     return;
   };
 
-  const handleDelete = (publicKey?: string) => {
-    handleOpen();
+  const handleDelete = async () => {
+    if (isEmpty(deleteDevice)) {
+      setMessageSnackbar("Please select device");
+      return;
+    }
+    if (isCurrentDevice(deleteDevice)) {
+      setMessageSnackbar("Please select other device, you can't delete current device");
+      return;
+    }
+    const { error } = await removeDeviceShare(deleteDevice.publicKey);
+    if (error) {
+      setMessageSnackbar(error);
+      return;
+    }
+    alert("Success");
+    setDeleteDevice(undefined);
+    getInfoWalletByNetworkKey(networkKey!);
   };
 
   return (
@@ -147,16 +167,12 @@ const MFA = () => {
                   <GroupLeftItemDevice>
                     <Computer />
                     <ContainerText>
-                      <NameText> {`${device.deviceInfo?.name} ${device.deviceInfo?.version}`}</NameText>
+                      <NameText> {`${device.deviceInfo?.name} ${device.deviceInfo?.version} ${isCurrentDevice(device!) ? "(Current)" : ""}`}</NameText>
                       <IpText>IP: {device.deviceInfo?.ipv4}</IpText>
                     </ContainerText>
                   </GroupLeftItemDevice>
                   <Tooltip title='Delete' placement='top-start'>
-                    <IconButton
-                      onClick={() => {
-                        handleDelete(device.publicKey);
-                      }}
-                    >
+                    <IconButton onClick={() => handleOpen(device)}>
                       <Trash />
                     </IconButton>
                   </Tooltip>
@@ -166,7 +182,7 @@ const MFA = () => {
           </ListDevicesContainer>
         </Grid>
       </Grid>
-      <Modal open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
+      <Modal open={!isEmpty(deleteDevice)} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style}>
           <TitlePage>Delete devices</TitlePage>
           <SubTitlePage>This device will be erased and automatically logged out, are you sure?</SubTitlePage>
@@ -175,15 +191,15 @@ const MFA = () => {
               <GroupLeftItemDevice>
                 <Computer />
                 <ContainerText>
-                  <NameText>{`${device?.os} ${device?.version}`}</NameText>
-                  <IpText>IP: {device?.ipv4}</IpText>
+                  <NameText>{`${deleteDevice?.deviceInfo?.os} ${deleteDevice?.deviceInfo?.version} ${isCurrentDevice(deleteDevice!) ? "(Current)" : ""}`}</NameText>
+                  <IpText>IP: {deleteDevice?.deviceInfo?.ipv4}</IpText>
                 </ContainerText>
               </GroupLeftItemDevice>
             </ContainerDevice>
           </ContainerDeviceModal>
           <ContainerButtonFactors>
             <CustomButton onClick={handleClose} height='48px' width='150px' mTop='50px' mBottom='20px' mRight='20px' text='Back' styleButton='inactive'></CustomButton>
-            <CustomButton height='48px' width='150px' mTop='50px' mBottom='20px' text="Yes, I'm sure" styleButton='primary'></CustomButton>
+            <CustomButton onClick={handleDelete} height='48px' width='150px' mTop='50px' mBottom='20px' text="Yes, I'm sure" styleButton='primary'></CustomButton>
           </ContainerButtonFactors>
         </Box>
       </Modal>

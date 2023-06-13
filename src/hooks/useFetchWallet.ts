@@ -402,5 +402,79 @@ export const useFetchWallet = () => {
     }
   };
 
-  return { getInfoWallet, getInfoWalletByNetworkKey, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase, changeRecoveryEmail };
+  const removeDeviceShare = async (devicePubicKey: string): Promise<{ error?: string; success?: boolean }> => {
+    try {
+      if (isEmpty(masterKey)) {
+        throw new Error("Master key not found");
+      }
+      if (isEmpty(infoMasterKey)) {
+        throw new Error("Please initial master key before");
+      }
+      if (isEmpty(networkKey)) {
+        throw new Error("Please initial network key before");
+      }
+      const { priKey: masterPrivateKey, pubKey: masterPublicKey } = masterKey;
+      // Split shares
+      const shares: {
+        device?: Partial<ShareInfo>[];
+        "network-key"?: Partial<ShareInfo>;
+        "recovery-phrase"?: Partial<ShareInfo>;
+      } = {};
+      const splits = sharmirSplitPrivateKey(Buffer.from(masterPrivateKey, "hex"));
+
+      await Promise.all(
+        (infoMasterKey?.shares || []).map(async share => {
+          const { type } = share;
+          if (type === "network-key") {
+            const shareEncrypted = await encryptedMessageWithoutSign(splits[0], new BN(share.publicKey, "hex"));
+            shares["network-key"] = {
+              ...share,
+              encryptedData: shareEncrypted.encryptedToString,
+            };
+          }
+          if (type === "recovery-phrase") {
+            const shareEncrypted = await encryptedMessageWithoutSign(splits[1], new BN(share.publicKey, "hex"));
+            shares["recovery-phrase"] = {
+              ...share,
+              encryptedData: shareEncrypted.encryptedToString,
+            };
+          }
+          if (type === "device") {
+            // Not add devicePubicKey to array
+            if (devicePubicKey === share.publicKey) {
+              return;
+            }
+
+            const shareEncrypted = await encryptedMessageWithoutSign(splits[1], new BN(share.publicKey, "hex"));
+            shares.device = (shares.device || []).concat({
+              ...share,
+              encryptedData: shareEncrypted.encryptedToString,
+            });
+          }
+        })
+      );
+
+      const encrypted = await encryptedMessage(Buffer.from(Date.now().toString()), new BN(masterPrivateKey, "hex"));
+
+      const pss = await pssAllShares({
+        masterPublicKey: masterPublicKey!,
+        networkPublicKey: encrypted.publicKey,
+        encryptedData: encrypted.encryptedToString,
+        signature: encrypted.signature,
+        networkShare: shares["network-key"] || null,
+        deviceShares: shares.device || [],
+        recoveryShare: shares["recovery-phrase"] || {},
+      });
+
+      if (pss.error) {
+        throw new Error(pss.error);
+      }
+
+      return { error: "" };
+    } catch (error) {
+      return { error: get(error, "message", "") };
+    }
+  };
+
+  return { getInfoWallet, getInfoWalletByNetworkKey, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase, changeRecoveryEmail, removeDeviceShare };
 };
