@@ -71,6 +71,7 @@ const MFA = () => {
         setMessageSnackbar(error);
         return;
       }
+      alert("Success");
       getInfoWalletByNetworkKey(networkKey!);
       return;
     }
@@ -81,6 +82,7 @@ const MFA = () => {
         setMessageSnackbar(error);
         return;
       }
+      alert("Success");
       getInfoWalletByNetworkKey(networkKey!);
     }
     return;

@@ -359,6 +359,8 @@ export const useFetchWallet = () => {
             const shareEncrypted = await encryptedMessageWithoutSign(splits[1], new BN(recoveryKey.pubKey!, "hex"));
             shares["recovery-phrase"] = {
               ...share,
+              email,
+              publicKey: recoveryKey.pubKey!,
               encryptedData: shareEncrypted.encryptedToString,
             };
           }
