@@ -1,4 +1,4 @@
-import { find, get, isEmpty, map } from "lodash";
+import { get, isEmpty, map } from "lodash";
 import { useSessionStorage } from "usehooks-ts";
 import { getNodeKey } from "@app/wallet/node-service";
 import { KeyPair } from "@app/wallet/types";
@@ -22,12 +22,10 @@ export const useFetchWallet = () => {
       const { masterPrivateKey, masterPublicKey, networkPublicKey } = info as InfoMasterKey;
       // set session storage
       setNetworkKey(networkKey);
-      setInfoMasterKey(
-        () =>
-          ({
-            ...info,
-          } as InfoMasterKey)
-      );
+
+      setInfoMasterKey({
+        ...info,
+      } as InfoMasterKey);
 
       // First, generate master-key, and initial 2 shares by network key
       if (!info?.initialed) {
@@ -52,13 +50,12 @@ export const useFetchWallet = () => {
           signature: encrypted.signature,
         });
 
-        setInfoMasterKey(
-          () =>
-            ({
-              ...info,
-              shares: createdShares.data,
-            } as InfoMasterKey)
-        );
+        setInfoMasterKey({
+          ...info,
+          initialed: true,
+          shares: createdShares.data,
+        } as InfoMasterKey);
+        info!.initialed = true;
         info!.shares = createdShares.data as ShareInfo[];
       }
 
