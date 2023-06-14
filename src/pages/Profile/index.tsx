@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Page } from "../../styles";
 import { TabPanel, a11yProps } from "../../utils";
 import { OverviewHeaderTopCoin } from "../Overview/overview.css";

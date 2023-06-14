@@ -29,6 +29,8 @@ const MFA = () => {
   const [deleteDevice, setDeleteDevice] = useState<ShareInfo>();
   const [deviceShares, setDeviceShares] = useState<ShareInfo[]>([]);
   const [recoveryEmail, setRecoveryEmail] = useState<string>("");
+  const [loadingRecovery, setLoadingRecovery] = useState(false);
+  const [loadingDeleteDevice, setLoadingDeleteDevice] = useState(false);
 
   useEffect(() => {
     if (networkKey) {
@@ -61,13 +63,16 @@ const MFA = () => {
       handleNotification("Please initial master key before", "error");
       return;
     }
+    setLoadingDeleteDevice(true);
     const { mfa } = infoMasterKey;
     if (!mfa) {
       const { error } = await enableMFA(recoveryEmail);
       if (error) {
+        setLoadingDeleteDevice(false);
         handleNotification(error, "error");
         return;
       }
+      setLoadingDeleteDevice(false);
       handleNotification("Please check your email to get new phrase", "success");
       getInfoWalletByNetworkKey(networkKey!);
       return;
@@ -76,9 +81,11 @@ const MFA = () => {
     if (mfa) {
       const { error } = await changeRecoveryEmail(recoveryEmail);
       if (error) {
+        setLoadingDeleteDevice(false);
         handleNotification(error, "error");
         return;
       }
+      setLoadingDeleteDevice(false);
       handleNotification("Please check your email to get new phrase", "success");
       getInfoWalletByNetworkKey(networkKey!);
     }
@@ -94,11 +101,14 @@ const MFA = () => {
       handleNotification("Please select other device, you can't delete current device", "error");
       return;
     }
+    setLoadingDeleteDevice(true);
     const { error } = await removeDeviceShare(deleteDevice.publicKey);
     if (error) {
+      setLoadingDeleteDevice(false);
       handleNotification(error, "error");
       return;
     }
+    setLoadingDeleteDevice(false);
     handleNotification("Deleted device successfully", "success");
     setDeleteDevice(undefined);
     getInfoWalletByNetworkKey(networkKey!);
@@ -137,7 +147,7 @@ const MFA = () => {
             </ContainerTextField>
             <ContainerButtonFactors>
               <CustomButton height='48px' width='100px' mTop='50px' mBottom='20px' mRight='20px' text='Cancel' styleButton='inactive'></CustomButton>
-              <CustomButton height='48px' width='100px' mTop='50px' mBottom='20px' text='Confirm' styleButton='primary' onClick={changeRecoveryPhrase}></CustomButton>
+              <CustomButton height='48px' width='100px' mTop='50px' mBottom='20px' text='Confirm' styleButton='primary' loading={loadingRecovery} onClick={changeRecoveryPhrase}></CustomButton>
             </ContainerButtonFactors>
           </BackgroundPage>
         </Grid>
@@ -182,7 +192,7 @@ const MFA = () => {
           </ContainerDeviceModal>
           <ContainerButtonFactors>
             <CustomButton onClick={handleClose} height='48px' width='150px' mTop='50px' mBottom='20px' mRight='20px' text='Back' styleButton='inactive'></CustomButton>
-            <CustomButton onClick={handleDelete} height='48px' width='150px' mTop='50px' mBottom='20px' text="Yes, I'm sure" styleButton='primary'></CustomButton>
+            <CustomButton loading={loadingDeleteDevice} onClick={handleDelete} height='48px' width='150px' mTop='50px' mBottom='20px' text="Yes, I'm sure" styleButton='primary'></CustomButton>
           </ContainerButtonFactors>
         </Box>
       </Modal>
