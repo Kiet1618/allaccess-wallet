@@ -19,7 +19,6 @@ export const getGasLimit = async (web3: Web3, addressTo: string, amount: string,
         data: "0x",
       });
 
-      console.log(gasLimit);
       const ethValue = (gasLimit / 10 ** 18).toFixed(15);
 
       return ethValue;
@@ -31,7 +30,6 @@ export const getGasLimit = async (web3: Web3, addressTo: string, amount: string,
         value: hexValue,
         data: "0x",
       });
-      console.log(gasLimit);
 
       const ethValue = (parseInt(gasLimit, 16) / 10 ** 18).toFixed(15);
 
