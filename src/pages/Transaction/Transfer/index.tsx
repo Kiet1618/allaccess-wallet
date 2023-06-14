@@ -13,13 +13,13 @@ import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress } from "../../../utils";
 import { setCurrentListTokens } from "../../../store/redux/token/actions";
 import Web3 from "web3";
-import { sendTransaction, getBalanceToken, useBlockchain, getBalance, getToken, getGasPrice, getGasLimit } from "../../../blockchain";
+import { sendTransaction, getBalanceToken, useBlockchain, getBalance, getToken, getGasLimit } from "../../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../../components/Table/table.css";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Box from "@mui/material/Box";
-import { sendTransactionToken } from "../../../blockchain";
+import { sendTransactionToken, getGasPrice } from "../../../blockchain";
 import { Token } from "../../../types/blockchain.type";
 import { listNetWorks } from "../../../configs/data";
 import { FormData } from "./type";
@@ -42,20 +42,16 @@ import {
   ContainerIconSuccess,
   ContainerTwoButtonModal,
 } from "./transfer.css";
-import { useTokens } from "../../../hooks";
-import { getTorusKey } from "../../../storage/storage-service";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
 
 const Transfer = () => {
-  const myAddress = getTorusKey().ethAddress;
-
   const networkState = useAppSelector(state => state.network);
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
-  const { web3 } = useBlockchain(networkState.currentListTokens.data);
+  const { web3, account: myAddress } = useBlockchain();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [open, setOpen] = useState(false);
@@ -64,7 +60,7 @@ const Transfer = () => {
   const [balance, setBalance] = useState("");
   const [isDesktop, setIsDesktop] = useState(true);
   const [searchText, setSearchText] = useState("");
-  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data));
+  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentNetwork.data));
   const [openSelect, setOpenSelect] = useState(false);
   const [gasPrice, setGasPrice] = useState<string | 0>("0");
   const [gasLimit, setGasLimit] = useState<string | 0>("0");
@@ -105,14 +101,14 @@ const Transfer = () => {
     };
 
     updateGasLimit();
-  }, [reRenderGas, token?.symbol, networkState.currentListTokens.data]);
+  }, [reRenderGas, token?.symbol, networkState.currentNetwork.data, web3]);
   useEffect(() => {
     const updateGasPrice = async () => {
       const gasPriceValue = await getGasPrice(web3 as Web3);
       setGasPrice(gasPriceValue);
     };
     updateGasPrice();
-  }, [networkState.currentListTokens.data]);
+  }, [networkState.currentNetwork.data, web3]);
 
   const onSubmit = async (values: FormData) => {
     setIsSubmitting(true);
@@ -151,7 +147,7 @@ const Transfer = () => {
   }, []);
   const handleGetInfoToken = async () => {
     try {
-      const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentListTokens.data);
+      const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentNetwork.data);
       //const currentToken = useTokens(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
       //const addToken = await currentToken.importToken();
       const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
@@ -174,18 +170,18 @@ const Transfer = () => {
   }, [searchText]);
   useEffect(() => {
     try {
-      setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data));
+      setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentNetwork.data));
     } catch (e) {
       console.log(e);
     }
-  }, [networkState.currentListTokens.data]);
+  }, [networkState.currentNetwork.data]);
   useEffect(() => {
     try {
       token?.tokenContract ? getBalanceToken(web3 as Web3, token.tokenContract).then(res => setBalance(res)) : getBalance(web3 as Web3).then(res => setBalance(res));
     } catch {
       setBalance("Error");
     }
-  }, [networkState.currentListTokens.data, token]);
+  }, [networkState.currentNetwork.data, token, web3]);
   const handleChangeSearch = (e: string) => {
     setSearchText(e);
     setTokenAddress(e);
@@ -276,19 +272,19 @@ const Transfer = () => {
               <ContainerFlexSpace>
                 <div>Gas price</div>
                 <div>
-                  {gasPrice} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentListTokens.data)?.symbol}
+                  {gasPrice} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentNetwork.data)?.symbol}
                 </div>
               </ContainerFlexSpace>
               <ContainerFlexSpace>
                 <div>Gas limit</div>
                 <div>
-                  {gasLimit} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentListTokens.data)?.symbol}
+                  {gasLimit} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentNetwork.data)?.symbol}
                 </div>
               </ContainerFlexSpace>
               <ContainerFlexSpace>
                 <TextHeaderOverview>Total cost</TextHeaderOverview>
                 <TextHeaderOverview>
-                  {(Number(gasLimit) + Number(gasPrice)).toFixed(15)} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentListTokens.data)?.symbol}
+                  {(Number(gasLimit) + Number(gasPrice)).toFixed(15)} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentNetwork.data)?.symbol}
                 </TextHeaderOverview>
               </ContainerFlexSpace>
               <ContainerRight>
@@ -358,14 +354,14 @@ const Transfer = () => {
             margin='dense'
           />
           {listTokenState.currentListTokens.data
-            .filter(coin => coin.rpcUrls === networkState.currentListTokens.data)
+            .filter(coin => coin.rpcUrls === networkState.currentNetwork.data)
             .filter(
               searchText
                 ? coin => coin.symbol.toLowerCase().includes(searchText.toLowerCase()) || coin.name.toLowerCase().includes(searchText.toLowerCase()) || coin.tokenContract?.includes(searchText)
                 : coin => coin
             ).length ? (
             listTokenState.currentListTokens.data
-              .filter(coin => coin.rpcUrls === networkState.currentListTokens.data)
+              .filter(coin => coin.rpcUrls === networkState.currentNetwork.data)
               .filter(
                 searchText
                   ? coin => coin.symbol.toLowerCase().includes(searchText.toLowerCase()) || coin.name.toLowerCase().includes(searchText.toLowerCase()) || coin.tokenContract?.includes(searchText)

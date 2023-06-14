@@ -31,7 +31,7 @@ const TableWithPagination: React.FC = () => {
   const networkState = useAppSelector(state => state.network);
   const historyState = useAppSelector(state => state.history);
   const dispatch = useAppDispatch();
-  const { web3 } = useBlockchain(networkState.currentListTokens.data);
+  const { web3 } = useBlockchain();
   const [page, setPage] = useState(1);
   const [isDesktop, setIsDesktop] = useState(true);
   const [open, setOpen] = React.useState(false);
@@ -80,10 +80,10 @@ const TableWithPagination: React.FC = () => {
   }, []);
   useEffect(() => {
     if (!historyState.getHistoriesAddress.data.length) fetchData();
-  }, [networkState.currentListTokens.data]);
+  }, [networkState.currentNetwork.data]);
   const fetchData = async () => {
-    const currentNetwork = listNetWorks.find(networkTemp => networkTemp.rpcUrls === networkState.currentListTokens.data);
-    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === networkState.currentListTokens.data && tokens.tokenContract !== undefined);
+    const currentNetwork = listNetWorks.find(networkTemp => networkTemp.rpcUrls === networkState.currentNetwork.data);
+    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === networkState.currentNetwork.data && tokens.tokenContract !== undefined);
     const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
     dispatch(setHistoriesAddress(historyTransaction));
   };

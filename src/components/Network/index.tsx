@@ -2,22 +2,25 @@ import React, { useState, useLayoutEffect, useEffect } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import TagChangeNetwork from "./changeNetwork";
-import ButtonCustom from "../Button";
-import { Dropdown } from "../../assets/icon";
-import { listNetWorks } from "../../configs/data";
-import { Token } from "../../types/blockchain.type";
-import { useAppDispatch, useAppSelector } from "../../store";
-import { setNetworkState } from "../../store/redux/network/actions";
-import { setHistoriesAddress } from "../../store/redux/history/actions";
-import { sliceAddress, copyAddress, preProcessHistoryResponse } from "../../utils";
+
+import { Dropdown } from "@app/assets/icon";
+import { listNetWorks } from "@app/configs/data";
+import { Token } from "@app/types/blockchain.type";
+import { useAppDispatch, useAppSelector } from "@app/store";
+import { setNetworkState } from "@app/store/redux/network/actions";
+import { setHistoriesAddress } from "@app/store/redux/history/actions";
+import { useBlockchain } from "@app/blockchain";
+import { sliceAddress, copyAddress, preProcessHistoryResponse } from "@app/utils";
+
 import { ModalCustom, HeaderModalInfoTransaction, HeaderModalGroupLeft, TitleModal } from "../Table/table.css";
 import { ChangeNetworkTag, ChangeNetworkTagSub, FormControlCustom, SelectCustom, Container, MenuItemCustom, style, TagNetwork } from "./network.css";
-import { getTorusKey } from "../../storage/storage-service";
+
+import TagChangeNetwork from "./changeNetwork";
+import ButtonCustom from "../Button";
 export const NetworkContainer = () => {
-  const myAddress = getTorusKey()?.ethAddress;
+  const { account: myAddress } = useBlockchain();
   const networkState = useAppSelector(state => state.network);
-  const [network, setNetwork] = useState(networkState.currentListTokens.data);
+  const [network, setNetwork] = useState(networkState.currentNetwork.data);
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);

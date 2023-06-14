@@ -3,7 +3,7 @@ import * as actions from "./actions";
 import { NetworkState } from "./types";
 
 const initialState = {
-  currentListTokens: {
+  currentNetwork: {
     data: "https://goerli.blockpi.network/v1/rpc/public",
     loading: false,
     error: {},
@@ -16,15 +16,15 @@ export const listNetwork = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(actions.setNetworkState.pending, state => {
-      state.currentListTokens.loading = true;
+      state.currentNetwork.loading = true;
     });
     builder.addCase(actions.setNetworkState.fulfilled, (state, action) => {
-      state.currentListTokens.data = action.payload;
-      state.currentListTokens.loading = false;
+      state.currentNetwork.data = action.payload;
+      state.currentNetwork.loading = false;
     });
     builder.addCase(actions.setNetworkState.rejected, (state, action) => {
-      // state.currentListTokens.error = action.payload;
-      state.currentListTokens.loading = false;
+      // state.currentNetwork.error = action.payload;
+      state.currentNetwork.loading = false;
     });
   },
 });

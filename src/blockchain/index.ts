@@ -1,20 +1,37 @@
 import Web3 from "web3";
+import { isEmpty } from "lodash";
+import { useSessionStorage } from "usehooks-ts";
+
+import { KeyPair } from "@app/wallet/types";
+import { useAppSelector } from "@app/store";
+
 import { getToken } from "./token";
 import { formatValue } from "./format";
 import { getGasPrice, getGasLimit } from "./blockchain";
 import { getBalanceToken, getBalance } from "./balance";
 import { sendTransaction, sendTransactionToken } from "./transfer";
-import { getTorusKey } from "../storage/storage-service";
-export const useBlockchain = (rpcUrl: string) => {
-  try {
-    const privateKey = getTorusKey().priKey;
-    const web3 = new Web3(rpcUrl);
-    const account = web3.eth.accounts.wallet.add(privateKey.padStart(64, "0"));
-    web3.defaultAccount = account.address;
-    return { web3, account, getGasPrice, getBalanceToken, getBalance, sendTransaction, sendTransactionToken, formatValue, getToken };
-  } catch (error) {
-    console.log(error);
-    return { error };
-  }
+import { useEffect, useState } from "react";
+
+export const useBlockchain = () => {
+  const [masterKey] = useSessionStorage<KeyPair | null>("master-key", null);
+  const [web3Instance, setWeb3Instance] = useState<Web3 | null>(new Web3());
+  const [account, setAccount] = useState("");
+
+  const networkState = useAppSelector(state => state.network);
+
+  useEffect(() => {
+    if (masterKey && !isEmpty(masterKey)) {
+      const web3 = new Web3(networkState.currentNetwork.data);
+      const account = web3.eth.accounts.wallet.add(masterKey?.priKey.padStart(64, "0"));
+      web3.defaultAccount = account.address;
+      setWeb3Instance(web3);
+      setAccount(account.address);
+    } else {
+      throw new Error("Invalid master key");
+    }
+  }, [masterKey, networkState.currentNetwork.data]);
+
+  return { web3: web3Instance, account, getGasPrice, getBalanceToken, getBalance, sendTransaction, sendTransactionToken, formatValue, getToken };
 };
+
 export { getGasPrice, getGasLimit, getBalanceToken, getBalance, sendTransaction, sendTransactionToken, formatValue, getToken };
