@@ -1,4 +1,4 @@
-import { CircularProgress, Grid } from "@mui/material";
+import { CircularProgress, Grid, Step, StepButton, Stepper } from "@mui/material";
 import { TitlePage } from "../../../styles";
 import CustomButton from "../../../components/Button";
 import IconButton from "@mui/material/IconButton";
@@ -42,6 +42,7 @@ import {
   ContainerIconSuccess,
   ContainerTwoButtonModal,
 } from "./transfer.css";
+const steps = ["Start", "Pending", "Success"];
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
