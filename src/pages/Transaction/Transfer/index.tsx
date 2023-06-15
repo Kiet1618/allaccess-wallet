@@ -76,7 +76,7 @@ const Transfer = () => {
   const [isDesktop, setIsDesktop] = useState(true);
   const [searchText, setSearchText] = useState("");
   const [token, setToken] = useState(
-    transactionParams.tokenContract
+    transactionParams?.tokenContract
       ? listTokenState.currentListTokens.data.find(token => token.tokenContract === transactionParams.tokenContract)
       : listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)
   );
