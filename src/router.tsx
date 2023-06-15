@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom";
 import { Overview, Login, History, Profile, Error, Transaction, MultipleFactors } from "./pages";
 import { ProtectProp } from "./types/protectProp.type";
 import { LayoutApp } from "./components";
@@ -8,25 +8,33 @@ import { PreProcessHistoryResponse } from "./utils/history";
 import { useAppDispatch, useAppSelector } from "./store";
 import { preProcessHistoryResponse } from "./utils";
 import { listNetWorks } from "./configs/data";
-
+import { getTorusKey } from "./storage/storage-service";
 // import { login, logout } from './store/features/login/reducer'
 // import type { RootState } from './store/store'
 const RouterApp = () => {
   const ProtectedRoute = ({ user, children }: ProtectProp): JSX.Element => {
-    if (!user) {
+    if (!getTorusKey().ethAddress) {
       return <Navigate to='/' replace />;
     }
     return children;
   };
 
-  const user = true;
+  const user = getTorusKey().ethAddress ? true : false;
   return (
     <Router>
       <LayoutApp>
         <Routes>
           <Route path='/' element={<Login />} />
+
           <Route path='/multiple-factors' element={<MultipleFactors />} />
-          <Route path='/sign-transaction/:transactionId' element={<Transaction />} />
+          <Route
+            path='/sign-transaction/:transactionId'
+            element={
+              <ProtectedRoute user={user}>
+                <Transaction />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path='/overview'
             element={
