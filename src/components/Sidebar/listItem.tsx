@@ -25,6 +25,17 @@ const Slider: React.FC<Props> = (props: Props) => {
     setOpen(temp ? true : false);
   };
   useEffect(handleClickTrue, []);
+
+  const renderSubMenu = () => {
+    return props.subMenu.map(e => {
+      return (
+        <ListItemButton key={e.name} component={MenuLink} to={e.route}>
+          {e.name}
+        </ListItemButton>
+      );
+    });
+  };
+
   return (
     <List component='nav'>
       <ListItemButton component='div' onClick={handleClickOpen}>
@@ -33,13 +44,7 @@ const Slider: React.FC<Props> = (props: Props) => {
         <IconArrowMenu>{open ? <ArrowDown /> : <ArrowRight />}</IconArrowMenu>
       </ListItemButton>
       <Collapse in={open}>
-        <NavLinkCustom>
-          {props.subMenu.map(e => (
-            <ListItemButton key={e.name} component={MenuLink} to={e.route}>
-              {e.name}
-            </ListItemButton>
-          ))}
-        </NavLinkCustom>
+        <NavLinkCustom>{renderSubMenu()}</NavLinkCustom>
       </Collapse>
     </List>
   );
