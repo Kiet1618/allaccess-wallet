@@ -98,6 +98,15 @@ export type PSSAllSharesRequest = {
 
 export type PSSAllSharesResponse = boolean;
 
+export type GetGoogleTokenRequest = {
+  code: string;
+};
+
+export type GetGoogleTokenResponse = {
+  id_token: string;
+  [key: string]: string;
+};
+
 export type SendMailPhraseRequest = {
   email: string;
   phrase: string;
@@ -250,6 +259,19 @@ export const sendMailPhrase = async (payload: SendMailPhraseRequest): Promise<{ 
     return {
       error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
       data: false,
+    };
+  }
+};
+
+export const getGoogleToken = async (payload: GetGoogleTokenRequest): Promise<{ error: string; data?: GetGoogleTokenResponse }> => {
+  try {
+    const { data } = await axios.post<GetGoogleTokenResponse>(`${METADATA_HOST}/oauth/google`, {
+      ...payload,
+    });
+    return { error: "", data };
+  } catch (error) {
+    return {
+      error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
     };
   }
 };

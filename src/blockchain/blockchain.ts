@@ -1,10 +1,14 @@
 import Web3 from "web3";
 import abi from "../common/ERC20_ABI.json";
 
-export const getGasPrice = async (web3: Web3) => {
-  const price = await web3.eth.getGasPrice();
-  const ethValue = (parseInt(price, 16) / 10 ** 18).toFixed(15);
-  return ethValue;
+export const getGasPrice = async (web3: Web3): Promise<string> => {
+  try {
+    const price = await web3.eth.getGasPrice();
+    const ethValue = (parseInt(price, 16) / 10 ** 18).toFixed(15);
+    return ethValue;
+  } catch (error) {
+    return "0";
+  }
 };
 export const getGasLimit = async (web3: Web3, addressTo: string, amount: string, tokenContract: string | undefined = undefined) => {
   const weiValue = Math.round(parseFloat(amount) * 10 ** 18);

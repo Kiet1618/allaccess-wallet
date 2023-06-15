@@ -1,5 +1,5 @@
 export type NetworkState = {
-  currentListTokens: {
+  currentNetwork: {
     data: string;
     loading: boolean;
     error: unknown;

@@ -1,14 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Grid } from "@mui/material";
 import { TitlePage } from "../../../styles";
 import CustomInput from "../../../components/TextField";
 import { Copy } from "../../../assets/icon";
 import QRCode from "react-qr-code";
 import { TitlePageContainer, SubTitlePage, ReceiveTagHeader, BackgroundPage, ContainerFlexSpace, CopyAddressContainer, AddressContainer, ContainerQRCode, BackgroundPageQR } from "./receive.css";
-import { getTorusKey } from "../../../storage/storage-service";
+import { useBlockchain } from "@app/blockchain";
 
 const Receive = () => {
-  const myAddress = getTorusKey().ethAddress;
+  const { account: myAddress } = useBlockchain();
   return (
     <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid item xs={100}>
@@ -26,14 +26,14 @@ const Receive = () => {
             </CopyAddressContainer>
           </ContainerFlexSpace>
           <AddressContainer>
-            <CustomInput size='small' disabled defaultValue={myAddress} variant='outlined' fullWidth margin='normal' styleTextField='disable' />
+            <CustomInput size='small' disabled value={myAddress} variant='outlined' fullWidth margin='normal' styleTextField='disable' />
           </AddressContainer>
         </BackgroundPage>
       </Grid>
       <Grid item xs={100} sm={100} md={100} lg={50} xl={45}>
         <ContainerQRCode>
           <BackgroundPageQR>
-            <QRCode value={myAddress}></QRCode>
+            <QRCode value={myAddress || ""}></QRCode>
           </BackgroundPageQR>
         </ContainerQRCode>
       </Grid>

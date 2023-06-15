@@ -1,17 +1,16 @@
 import React from "react";
 import { Grid } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
-import CustomInput from "../../../components/TextField";
-import CustomButton from "../../../components/Button";
-import { Copy } from "../../../assets/icon";
-import { sliceAddress, copyAddress } from "../../../utils";
-import { TitlePageBlack } from "../../../styles";
+import { TextField as CustomInput, Button as CustomButton } from "@app/components";
+import { Copy } from "@app/assets/icon";
+import { sliceAddress, copyAddress } from "@app/utils";
+import { TitlePageBlack } from "@app/styles";
+import { useBlockchain } from "@app/blockchain";
 import { BackgroundPage, TitlePageContainer } from "../profile.css";
 import { SubTitlePage, CopyAddressContainer, ContainerTextField } from "../../Transaction/transaction.css";
-import { getTorusKey } from "../../../storage/storage-service";
 import { ContainerAvatar, ContainerInfo } from "./info.css";
 const Info = () => {
-  const myAddress = getTorusKey().ethAddress;
+  const { account: myAddress } = useBlockchain();
   return (
     <>
       <TitlePageContainer>

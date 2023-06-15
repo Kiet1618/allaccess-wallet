@@ -32,6 +32,7 @@ const MultipleFactors = () => {
   const [typeButton, setTypeButton] = useState(false);
   const [seed, setSeed] = useState("");
   const [checkSeed, setCheckSeed] = useState(true);
+  const [loadingLogin, setLoadingLogin] = useState(false);
 
   useEffect(() => {
     if (infoMasterKey) {
@@ -51,11 +52,14 @@ const MultipleFactors = () => {
     if (!seed) {
       return;
     }
+    setLoadingLogin(true);
     const { error } = await fetchMasterKeyWithPhrase(seed.trim());
     if (error) {
+      setLoadingLogin(false);
       handleNotification(error, "error");
       return;
     }
+    setLoadingLogin(false);
     navigate("/overview");
   };
 
@@ -99,7 +103,7 @@ const MultipleFactors = () => {
           helperText={!checkSeed ? handleValidatorAmount() : ""}
         ></CustomTextInput>
         <ContainerButton>
-          <CustomButton width='30%' padding='10px' text='Confirm' styleButton={typeButton ? "primary" : "inactive"} onClick={handleLogin}></CustomButton>
+          <CustomButton width='30%' padding='10px' text='Confirm' styleButton={typeButton ? "primary" : "inactive"} onClick={handleLogin} loading={loadingLogin} disabled={loadingLogin}></CustomButton>
         </ContainerButton>
       </ContainerBackgroundCard>
     </ContainerMultipleFactors>

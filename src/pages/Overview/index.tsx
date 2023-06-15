@@ -35,12 +35,10 @@ import {
   TilePageContainer,
   EmptyContainer,
 } from "./overview.css";
-import { getTorusKey } from "../../storage/storage-service";
 type ListTokenBalance = Token & {
   balance?: string;
 };
 const Overview = () => {
-  const myAddress = getTorusKey()?.ethAddress;
   const historyState = useAppSelector(state => state.history);
   //const [number, setNumber] = useState(6);
   const number = 6;
@@ -48,14 +46,14 @@ const Overview = () => {
 
   const [listTokensBalance, setListTokensBalance] = useState<ListTokenBalance[]>(listTokenState.currentListTokens.data);
   const networkState = useAppSelector(state => state.network);
-  const [currenToken, setCurrenToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
-  const { web3 } = useBlockchain(networkState.currentListTokens.data);
+  const [currenToken, setCurrenToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentNetwork.data)?.symbol as string);
+  const { web3, account: myAddress } = useBlockchain();
   const [balance, setBalance] = useState("");
   const [searchText, setSearchText] = useState("");
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setCurrenToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data)?.symbol as string);
+        setCurrenToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentNetwork.data)?.symbol as string);
       } catch (e) {
         console.log(e);
       }
@@ -88,7 +86,7 @@ const Overview = () => {
     };
 
     fetchData();
-  }, [networkState.currentListTokens.data]);
+  }, [networkState.currentNetwork.data, web3]);
 
   const handleGetBalance = async (item: Token) => {
     let result: string;
@@ -149,7 +147,7 @@ const Overview = () => {
             <ListItemMyAssets>
               {listTokensBalance ? (
                 listTokensBalance
-                  .filter(token => token.rpcUrls === networkState.currentListTokens.data)
+                  .filter(token => token.rpcUrls === networkState.currentNetwork.data)
                   .filter(
                     searchText
                       ? token =>

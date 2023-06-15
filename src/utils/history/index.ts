@@ -57,6 +57,9 @@ export const getHistoryTransaction = async (currentNetwork: ChainNetwork | undef
     const urlNormalTransaction = urlRawNormalTransaction.replace("{address}", myAddress);
     const normalTransaction = await axios.get(urlNormalTransaction);
     const { data } = normalTransaction;
+    if (get(data, "message") || get(data, "message") === "NOTOK") {
+      throw new Error(get(data, "message"));
+    }
     const result: HistoryResponseNormal[] = get(data, "result", []);
     return result;
   } catch (err) {

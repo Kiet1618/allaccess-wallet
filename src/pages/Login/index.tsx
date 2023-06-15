@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
-import { GoogleLogin, GoogleLoginProps } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -13,6 +13,7 @@ import { UserGoogle } from "@app/types/oauth.type";
 import { useCustomSnackBar, useFetchWallet } from "@app/hooks";
 
 import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
+import { getGoogleToken } from "@app/wallet/metadata";
 
 const Login = () => {
   const { handleNotification } = useCustomSnackBar();
@@ -30,10 +31,15 @@ const Login = () => {
     arrows: false,
   };
 
-  const callbacksGoogle: GoogleLoginProps = {
-    onSuccess: async credentialResponse => {
-      const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: credentialResponse.credential } });
-      const { error: error1, info, networkKey } = await getInfoWallet("google", profile.email, credentialResponse.credential || "");
+  const login = useGoogleLogin({
+    onSuccess: async tokenResponse => {
+      const { data: tokens, error } = await getGoogleToken({ code: tokenResponse.code });
+      if (error) {
+        handleNotification(error, "error");
+        return;
+      }
+      const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: tokens?.id_token } });
+      const { error: error1, info, networkKey } = await getInfoWallet("google", profile.email, tokens?.id_token || "");
       if (error1) {
         handleNotification(error1, "error");
         return;
@@ -53,10 +59,11 @@ const Login = () => {
         return;
       }
     },
-    onError: () => {
-      handleNotification("Login Failed", "error");
+    onError: error => {
+      handleNotification(error?.error_description || "", "error");
     },
-  };
+    flow: "auth-code",
+  });
 
   return (
     <Grid container direction='row'>
@@ -67,8 +74,7 @@ const Login = () => {
         <LoginH1>Log in or sign up</LoginH1>
         <Subtitle>Select how you would like to continue</Subtitle>
         <ContainerLoginButton>
-          <GoogleLogin {...callbacksGoogle} />
-          <Button width='80%' height='48px' styleButton='default' fontSize='18px' iconLeft={Google} text='Continue with Google' />
+          <Button width='80%' height='48px' styleButton='default' fontSize='18px' iconLeft={Google} text='Continue with Google' onClick={() => login()} />
           <OrLineContainer>
             <hr></hr>
             <p>or</p>
