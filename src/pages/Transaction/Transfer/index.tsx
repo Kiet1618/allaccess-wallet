@@ -50,14 +50,20 @@ import StepButton from "@mui/material/StepButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { useParams } from "react-router-dom";
 const steps = ["Start", "Pending", "Success"];
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
-
+type Params = {
+  to: string;
+  value: string;
+  tokenContract?: string;
+};
 const Transfer = () => {
   const myAddress = getTorusKey().ethAddress;
-
+  const { transactionId } = useParams();
+  const transactionParams: Params = transactionId ? JSON.parse(transactionId as string) : null;
   const networkState = useAppSelector(state => state.network);
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
@@ -69,7 +75,11 @@ const Transfer = () => {
   const [balance, setBalance] = useState("");
   const [isDesktop, setIsDesktop] = useState(true);
   const [searchText, setSearchText] = useState("");
-  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data));
+  const [token, setToken] = useState(
+    transactionParams.tokenContract
+      ? listTokenState.currentListTokens.data.find(token => token.tokenContract === transactionParams.tokenContract)
+      : listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentListTokens.data)
+  );
   const [openSelect, setOpenSelect] = useState(false);
   const [gasPrice, setGasPrice] = useState<string | 0>("0");
   const [gasLimit, setGasLimit] = useState<string | 0>("0");
@@ -88,6 +98,7 @@ const Transfer = () => {
     control,
     formState: { errors },
     getValues,
+    setValue,
   } = useForm<FormData>({
     defaultValues: {
       addressTo: "",
@@ -145,6 +156,13 @@ const Transfer = () => {
     };
   }, []);
 
+  useEffect(() => {
+    try {
+      transactionParams.to ? setValue("addressTo", transactionParams.to) : null;
+      transactionParams.value ? setValue("amount", transactionParams.value) : null;
+    } catch {}
+  }, []);
+
   const handleGetInfoToken = async () => {
     try {
       const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentListTokens.data);
@@ -170,7 +188,7 @@ const Transfer = () => {
   }, [searchText]);
   useEffect(() => {
     try {
-      setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data));
+      transactionParams ? null : setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentListTokens.data));
     } catch (e) {
       console.log(e);
     }
