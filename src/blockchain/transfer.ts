@@ -3,7 +3,12 @@ import { FormData } from "../pages/Transaction/Transfer/type";
 import { privateKey } from "../configs/data/test";
 import abi from "../common/ERC20_ABI.json";
 import { useState } from "react";
-export const sendTransaction = async (web3: Web3, data: FormData) => {
+export const sendTransaction = async (
+  web3: Web3,
+  data: FormData,
+  setTransactionHash: React.Dispatch<React.SetStateAction<string>>,
+  setInfoTransaction: React.Dispatch<React.SetStateAction<string>>
+) => {
   const { addressTo, amount } = data;
   try {
     const weiValue = Math.round(parseFloat(amount) * 10 ** 18);
@@ -27,19 +32,24 @@ export const sendTransaction = async (web3: Web3, data: FormData) => {
     };
     const signedTransaction: any = await web3.eth.accounts.signTransaction(tx, privateKey);
     const sendSignedTransaction = web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
-    return sendSignedTransaction
-      .on("transactionHash", () => {
-        console.log("transactionHash");
-      })
-      .on("receipt", () => {
-        console.log("success");
-      });
+    sendSignedTransaction.on("transactionHash", transactionHash => {
+      setTransactionHash(transactionHash);
+      setInfoTransaction("pending");
+    });
+    await sendSignedTransaction;
+    setInfoTransaction("success");
+    setTransactionHash("");
   } catch (error) {
-    console.log(error);
-    return "Error";
+    setInfoTransaction("Error");
   }
 };
-export const sendTransactionToken = async (web3: Web3, data: FormData, tokenContract: string) => {
+export const sendTransactionToken = async (
+  web3: Web3,
+  data: FormData,
+  tokenContract: string,
+  setTransactionHash: React.Dispatch<React.SetStateAction<string>>,
+  setInfoTransaction: React.Dispatch<React.SetStateAction<string>>
+) => {
   const { addressTo, amount } = data;
   try {
     const tokenAddress = new web3.eth.Contract(abi as any, tokenContract);
@@ -56,15 +66,14 @@ export const sendTransactionToken = async (web3: Web3, data: FormData, tokenCont
     };
     const signedTransaction: any = await web3.eth.accounts.signTransaction(transactionObject, privateKey);
     const transactionReceipt = web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
-    return transactionReceipt
-      .on("transactionHash", () => {
-        console.log("transactionHash");
-      })
-      .on("receipt", () => {
-        console.log("success");
-      });
+    transactionReceipt.on("transactionHash", transactionHash => {
+      setTransactionHash(transactionHash);
+      setInfoTransaction("pending");
+    });
+    await transactionReceipt;
+    setInfoTransaction("success");
+    setTransactionHash("");
   } catch (error) {
-    console.log(error);
-    return "Error";
+    setInfoTransaction("Error");
   }
 };

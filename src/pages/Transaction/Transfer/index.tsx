@@ -44,7 +44,13 @@ import {
 } from "./transfer.css";
 import { useTokens } from "../../../hooks";
 import { getTorusKey } from "../../../storage/storage-service";
-
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepButton from "@mui/material/StepButton";
+import CircularProgress from "@mui/material/CircularProgress";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+const steps = ["Start", "Pending", "Success"];
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
@@ -56,7 +62,6 @@ const Transfer = () => {
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
   const { web3 } = useBlockchain(networkState.currentListTokens.data);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [open, setOpen] = useState(false);
   const [tokenAddress, setTokenAddress] = useState("");
@@ -69,7 +74,9 @@ const Transfer = () => {
   const [gasPrice, setGasPrice] = useState<string | 0>("0");
   const [gasLimit, setGasLimit] = useState<string | 0>("0");
   const [reRenderGas, setRenderGasLimit] = useState<string>("0");
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false), handleReset();
+  };
   const handleCloseSelect = () => {
     setOpenSelect(false);
     setSearchText("");
@@ -99,8 +106,6 @@ const Transfer = () => {
       const addressTo = getValues("addressTo");
       const amount = getValues("amount");
       const gasLimitValue = await getGasLimit(web3 as Web3, addressTo, amount, token?.tokenContract);
-      console.log("run");
-
       setGasLimit(gasLimitValue);
     };
 
@@ -115,23 +120,13 @@ const Transfer = () => {
   }, [networkState.currentListTokens.data]);
 
   const onSubmit = async (values: FormData) => {
-    setIsSubmitting(true);
+    handleReset();
+    setOpen(true);
     token?.tokenContract
-      ? await sendTransactionToken(web3 as Web3, values, token.tokenContract).then(res => {
-          if (res === "Error") {
-            setOpenAlert(true);
-          } else {
-            setOpen(true);
-          }
-        })
-      : await sendTransaction(web3 as Web3, values).then(res => {
-          if (res === "Error") {
-            setOpenAlert(true);
-          } else {
-            setOpen(true);
-          }
-        });
-    setIsSubmitting(false);
+      ? await sendTransactionToken(web3 as Web3, values, token.tokenContract, setTransactionHash, setInfoTransaction)
+      : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction);
+    setActiveStep(2);
+    setCompleted({ 0: true, 1: true });
     reset();
   };
 
@@ -149,6 +144,7 @@ const Transfer = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
   const handleGetInfoToken = async () => {
     try {
       const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentListTokens.data);
@@ -190,6 +186,67 @@ const Transfer = () => {
     setSearchText(e);
     setTokenAddress(e);
   };
+  //Modal transfer
+  const [infoTransaction, setInfoTransaction] = useState("");
+  const [transactionHash, setTransactionHash] = useState("");
+
+  const [activeStep, setActiveStep] = React.useState(0);
+  const [completed, setCompleted] = React.useState<{
+    [k: number]: boolean;
+  }>({});
+
+  const totalSteps = () => {
+    return steps.length;
+  };
+
+  const completedSteps = () => {
+    return Object.keys(completed).length;
+  };
+
+  const isLastStep = () => {
+    return activeStep === totalSteps() - 1;
+  };
+
+  const allStepsCompleted = () => {
+    return completedSteps() === totalSteps();
+  };
+
+  const handleNext = () => {
+    const newActiveStep =
+      isLastStep() && !allStepsCompleted()
+        ? // It's the last step, but not all steps have been completed,
+          // find the first step that has been completed
+          steps.findIndex((step, i) => !(i in completed))
+        : activeStep + 1;
+    setActiveStep(newActiveStep);
+  };
+
+  const handleStep = (step: number) => () => {
+    setActiveStep(step);
+  };
+
+  const handleComplete = () => {
+    const newCompleted = completed;
+    newCompleted[activeStep] = true;
+    setCompleted(newCompleted);
+    handleNext();
+  };
+
+  const handleReset = () => {
+    setActiveStep(1);
+    setCompleted({ 0: true });
+  };
+  // //test
+  // useEffect(() => {
+  //   console.log(infoTransaction);
+  //   console.log(transactionHash);
+  // }, [infoTransaction])
+  useEffect(() => {
+    if (infoTransaction === "Error") {
+      handleClose();
+      setOpenAlert(true);
+    }
+  }, [infoTransaction]);
   return (
     <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid>
@@ -292,7 +349,7 @@ const Transfer = () => {
                 </TextHeaderOverview>
               </ContainerFlexSpace>
               <ContainerRight>
-                <CustomButton variant='contained' loadingPosition='end' loading={isSubmitting} type='submit' text='Transfer' styleButton='primary' width='150px' height='50px'></CustomButton>
+                <CustomButton variant='contained' loadingPosition='end' type='submit' text='Transfer' styleButton='primary' width='150px' height='50px'></CustomButton>
               </ContainerRight>
             </FormGroup>
           </form>
@@ -313,18 +370,48 @@ const Transfer = () => {
       </Grid>
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style} width={isDesktop ? 700 : 300}>
-          <HeaderModalInfoTransaction>
-            <ContainerIconSuccess>
-              <Success />
-            </ContainerIconSuccess>
-          </HeaderModalInfoTransaction>
-          <TransferSuccessTitle>Transfer successfully</TransferSuccessTitle>
-          <TransferSuccessSub>You are done the transaction successfully. You can now review your transaction in your history</TransferSuccessSub>
+          <Stepper style={{ width: "100%" }} nonLinear activeStep={activeStep}>
+            {steps.map((label, index) => (
+              <Step key={label} completed={completed[index]}>
+                <StepButton color='inherit' onClick={handleStep(index)}>
+                  {label}
+                </StepButton>
+              </Step>
+            ))}
+          </Stepper>
 
-          <ContainerTwoButtonModal>
-            <CustomButton onClick={() => handleClose()} width='230px' height='44px' styleButton='inactive' text='View transfer history'></CustomButton>
-            <CustomButton onClick={() => handleClose()} width='135px' height='44px' styleButton='primary' text='Ok, I got it'></CustomButton>
-          </ContainerTwoButtonModal>
+          {infoTransaction === "success" ? (
+            <>
+              <HeaderModalInfoTransaction style={{ marginTop: "20px" }}>
+                <ContainerIconSuccess>
+                  <Success />
+                </ContainerIconSuccess>
+              </HeaderModalInfoTransaction>
+              <TransferSuccessTitle>Transfer successfully</TransferSuccessTitle>
+              <TransferSuccessSub>You are done the transaction successfully. You can now review your transaction in your history</TransferSuccessSub>
+
+              <ContainerTwoButtonModal>
+                <CustomButton onClick={() => handleClose()} width='230px' height='44px' styleButton='inactive' text='View transfer history'></CustomButton>
+                <CustomButton onClick={() => handleClose()} width='135px' height='44px' styleButton='primary' text='Ok, I got it'></CustomButton>
+              </ContainerTwoButtonModal>
+            </>
+          ) : infoTransaction === "pending" ? (
+            <>
+              <HeaderModalInfoTransaction>
+                <ContainerIconSuccess>
+                  <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <CircularProgress style={{ margin: "40px 0" }} />
+                  </Box>
+                </ContainerIconSuccess>
+              </HeaderModalInfoTransaction>
+              <TransferSuccessTitle style={{ marginBottom: "40px" }}>Transfer pending</TransferSuccessTitle>
+              {transactionHash ? (
+                <CopyAddressContainer onClick={() => copyAddress(transactionHash)}>
+                  {"Transaction hash: " + sliceAddress(transactionHash)} <Copy />
+                </CopyAddressContainer>
+              ) : null}
+            </>
+          ) : null}
         </Box>
       </ModalCustom>
       <Snackbar anchorOrigin={{ vertical: "top", horizontal: "right" }} open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
