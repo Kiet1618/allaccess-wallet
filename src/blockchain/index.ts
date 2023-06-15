@@ -27,7 +27,7 @@ export const useBlockchain = () => {
       setWeb3Instance(web3);
       setAccount(account.address);
     } else {
-      throw new Error("Invalid master key");
+      // throw new Error("Invalid master key");
     }
   }, [masterKey, networkState.currentNetwork.data]);
 

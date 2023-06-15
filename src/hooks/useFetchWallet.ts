@@ -2,7 +2,18 @@ import { get, isEmpty, map } from "lodash";
 import { useSessionStorage } from "usehooks-ts";
 import { getNodeKey } from "@app/wallet/node-service";
 import { KeyPair } from "@app/wallet/types";
-import { InfoMasterKey, ShareInfo, initialedShares, getOrSetInfoMasterKey, createShare, getInfoMasterKey, enabledMasterKeyMFA, sendMailPhrase, pssAllShares } from "@app/wallet/metadata";
+import {
+  InfoMasterKey,
+  ShareInfo,
+  initialedShares,
+  getOrSetInfoMasterKey,
+  createShare,
+  getInfoMasterKey,
+  enabledMasterKeyMFA,
+  sendMailPhrase,
+  pssAllShares,
+  insertTokenByMasterPublicKey,
+} from "@app/wallet/metadata";
 import { decryptedMessage, encryptedMessage, encryptedMessageWithoutSign, formatPrivateKey, generateRandomPrivateKey, sharmirCombinePrivateKey, sharmirSplitPrivateKey } from "@app/wallet/algorithm";
 import BN from "bn.js";
 import { deviceInfo, hexToWords, wordsToHex } from "@app/utils";
@@ -174,8 +185,18 @@ export const useFetchWallet = () => {
         setDeviceKey(deviceKey);
         return { error: "", success: true, mfa: false };
       }
-
       // Case if user enable MFA
+      const newDeviceKey = formatPrivateKey(generateRandomPrivateKey());
+      createShare({
+        masterPublicKey: infoMasterKey.masterPublicKey,
+        publicKey: newDeviceKey.pubKey!,
+        type: "device",
+        deviceInfo: await deviceInfo(),
+      });
+
+      setDeviceKey(deviceKey);
+      // Create new device and sent to server push notification
+
       return { error: "", success: true, mfa: true };
     } catch (error) {
       setMasterKey(null);
@@ -476,5 +497,20 @@ export const useFetchWallet = () => {
     }
   };
 
-  return { getInfoWallet, getInfoWalletByNetworkKey, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase, changeRecoveryEmail, removeDeviceShare };
+  const insertTokenFCM = async (token: string): Promise<{ error?: string; success?: boolean }> => {
+    try {
+      if (isEmpty(infoMasterKey)) {
+        throw new Error("Please initial master key before");
+      }
+      const { error, data } = await insertTokenByMasterPublicKey({ token, masterPublicKey: infoMasterKey.masterPublicKey });
+      if (error) {
+        throw new Error(error);
+      }
+      return { success: data };
+    } catch (error) {
+      return { error: get(error, "message", "") };
+    }
+  };
+
+  return { getInfoWallet, getInfoWalletByNetworkKey, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase, changeRecoveryEmail, removeDeviceShare, insertTokenFCM };
 };

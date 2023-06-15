@@ -18,15 +18,16 @@ import {
   ContainerText,
   GroupLeftItemDevice,
 } from "./multipleFactors.css";
-import { useCustomSnackBar, useFetchWallet } from "@app/hooks";
+import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
 import { InfoMasterKey, ShareInfo } from "@app/wallet/metadata";
 import { useSessionStorage } from "usehooks-ts";
 const MultipleFactors = () => {
   const { handleNotification } = useCustomSnackBar();
+  const { token } = usePushNotifications();
 
   const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const navigate = useNavigate();
-  const { fetchMasterKeyWithPhrase } = useFetchWallet();
+  const { fetchMasterKeyWithPhrase, insertTokenFCM } = useFetchWallet();
 
   const [deviceShares, setDeviceShares] = useState<ShareInfo[]>([]);
   const [typeButton, setTypeButton] = useState(false);
@@ -59,6 +60,8 @@ const MultipleFactors = () => {
       handleNotification(error, "error");
       return;
     }
+    // Handle insert token FCM to database by master public key
+    insertTokenFCM(token);
     setLoadingLogin(false);
     navigate("/overview");
   };
@@ -103,6 +106,16 @@ const MultipleFactors = () => {
           helperText={!checkSeed ? handleValidatorAmount() : ""}
         ></CustomTextInput>
         <ContainerButton>
+          <CustomButton
+            width='30%'
+            padding='10px'
+            mRight='10px'
+            text='Cancel'
+            styleButton='inactive'
+            onClick={() => {
+              navigate("/");
+            }}
+          ></CustomButton>
           <CustomButton width='30%' padding='10px' text='Confirm' styleButton={typeButton ? "primary" : "inactive"} onClick={handleLogin} loading={loadingLogin} disabled={loadingLogin}></CustomButton>
         </ContainerButton>
       </ContainerBackgroundCard>

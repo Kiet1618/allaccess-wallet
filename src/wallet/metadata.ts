@@ -65,11 +65,11 @@ export type InitialSharesResponse = ShareInfo[];
 export type CreateShareRequest = {
   masterPublicKey: string;
   publicKey: string;
-  signature: string;
+  signature?: string;
   deviceInfo?: DeviceInfo;
   email?: string;
   type: ShareType;
-  encryptedData: AdditionalTypes<Ecies, string>;
+  encryptedData?: AdditionalTypes<Ecies, string>;
 };
 
 export type CreateShareResponse = ShareInfo;
@@ -113,6 +113,13 @@ export type SendMailPhraseRequest = {
 };
 
 export type SendMailPhraseResponse = boolean;
+
+export type InsertTokenFCMRequest = {
+  token: string;
+  masterPublicKey: string;
+};
+
+export type InsertTokenFCMResponse = boolean;
 
 export const setInfoMasterKey = async (payload: SetMasterKeyRequest): Promise<{ error: string; data: SetMasterKeyRequest | null }> => {
   try {
@@ -266,6 +273,19 @@ export const sendMailPhrase = async (payload: SendMailPhraseRequest): Promise<{ 
 export const getGoogleToken = async (payload: GetGoogleTokenRequest): Promise<{ error: string; data?: GetGoogleTokenResponse }> => {
   try {
     const { data } = await axios.post<GetGoogleTokenResponse>(`${METADATA_HOST}/oauth/google`, {
+      ...payload,
+    });
+    return { error: "", data };
+  } catch (error) {
+    return {
+      error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
+    };
+  }
+};
+
+export const insertTokenByMasterPublicKey = async (payload: InsertTokenFCMRequest): Promise<{ error: string; data?: InsertTokenFCMResponse }> => {
+  try {
+    const { data } = await axios.post<InsertTokenFCMResponse>(`${METADATA_HOST}/info-keys/add/token-fcm`, {
       ...payload,
     });
     return { error: "", data };
