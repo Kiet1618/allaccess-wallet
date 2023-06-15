@@ -6,6 +6,9 @@ import ListItemButton from "@mui/material/ListItemButton";
 import { subMenuItem } from "../../types/subMenuItem.type";
 import { ArrowRight, ArrowDown } from "../../assets/icon";
 import { MenuLink, IconArrowMenu, ListItemDiv, NavLinkCustom } from "./sidebar.css";
+import { useSessionStorage } from "usehooks-ts";
+import { KeyPair } from "@app/wallet/types";
+import { InfoMasterKey } from "@app/wallet/metadata";
 
 type Props = {
   name: string;
@@ -14,6 +17,8 @@ type Props = {
 };
 
 const Slider: React.FC<Props> = (props: Props) => {
+  const [_, setMasterKey] = useSessionStorage<KeyPair | null>("master-key", null);
+  const [__, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const location = useLocation();
   const [open, setOpen] = React.useState(false);
 
@@ -29,7 +34,23 @@ const Slider: React.FC<Props> = (props: Props) => {
   const renderSubMenu = () => {
     return props.subMenu.map(e => {
       return (
-        <ListItemButton key={e.name} component={MenuLink} to={e.route}>
+        <ListItemButton
+          key={e.name}
+          component={(props: any) => {
+            return (
+              <MenuLink
+                {...props}
+                onClick={() => {
+                  if (e.key === "logout") {
+                    setMasterKey(null);
+                    setInfoMasterKey(null);
+                  }
+                }}
+              />
+            );
+          }}
+          to={e.route}
+        >
           {e.name}
         </ListItemButton>
       );
