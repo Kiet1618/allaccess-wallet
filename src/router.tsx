@@ -26,6 +26,7 @@ const RouterApp = () => {
         <Routes>
           <Route path='/' element={<Login />} />
           <Route path='/multiple-factors' element={<MultipleFactors />} />
+          <Route path='/sign-transaction/:transactionId' element={<Transaction />} />
           <Route
             path='/overview'
             element={
