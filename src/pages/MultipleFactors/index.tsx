@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 import { Computer } from "@app/assets/icon";
 import { Button as CustomButton, TextField as CustomTextInput } from "@app/components";
-import { Devices } from "../../configs/data/test";
 import { TextBlue } from "../Overview/overview.css";
 
 import {
@@ -12,7 +11,6 @@ import {
   HeaderText,
   SubHeaderText,
   NameText,
-  IdText,
   IpText,
   TextHeaderCard,
   ContainerBackgroundCard,

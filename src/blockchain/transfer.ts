@@ -2,7 +2,6 @@ import Web3 from "web3";
 import { FormData } from "../pages/Transaction/Transfer/type";
 import { privateKey } from "../configs/data/test";
 import abi from "../common/ERC20_ABI.json";
-import { useState } from "react";
 export const sendTransaction = async (
   web3: Web3,
   data: FormData,
