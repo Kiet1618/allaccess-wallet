@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { messaging, getTokenFCM, onMessageListener } from "@app/configs/firebase"; // import from your firebase file
+import { getTokenFCM, onMessageListener } from "@app/configs/firebase"; // import from your firebase file
+import { MessagePayload } from "firebase/messaging"; // import from your firebase file
 
-export function usePushNotifications() {
+export function usePushNotifications(callback?: (message: MessagePayload) => void) {
   const [token, setToken] = useState("");
 
   useEffect(() => {
@@ -13,18 +14,10 @@ export function usePushNotifications() {
   }, []);
 
   // Handle insert token by master public key
-  useEffect(() => {
-    onMessageListener().then(data => {
-      console.log("Receive foreground: ", data);
-    });
+  onMessageListener().then(data => {
+    console.log("Receive foreground: ", JSON.parse(data.notification?.body || "{}"));
+    if (typeof callback === "function") callback(data);
   });
 
-  // Handle detect new device, and verify it
-  useEffect(() => {
-    onMessageListener().then(data => {
-      console.log("Receive foreground: ", data);
-    });
-  });
-
-  return { token };
+  return { token, onMessageListener };
 }

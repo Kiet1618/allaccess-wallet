@@ -1,4 +1,4 @@
-import { get, isEmpty, map } from "lodash";
+import { find, get, isEmpty, map } from "lodash";
 import { useSessionStorage } from "usehooks-ts";
 import { getNodeKey } from "@app/wallet/node-service";
 import { KeyPair } from "@app/wallet/types";
@@ -13,6 +13,7 @@ import {
   sendMailPhrase,
   pssAllShares,
   insertTokenByMasterPublicKey,
+  updateShareByPublicKey,
 } from "@app/wallet/metadata";
 import { decryptedMessage, encryptedMessage, encryptedMessageWithoutSign, formatPrivateKey, generateRandomPrivateKey, sharmirCombinePrivateKey, sharmirSplitPrivateKey } from "@app/wallet/algorithm";
 import BN from "bn.js";
@@ -187,6 +188,7 @@ export const useFetchWallet = () => {
       }
       // Case if user enable MFA
       const newDeviceKey = formatPrivateKey(generateRandomPrivateKey());
+      // Create new device and sent to server push notification
       createShare({
         masterPublicKey: infoMasterKey.masterPublicKey,
         publicKey: newDeviceKey.pubKey!,
@@ -194,8 +196,7 @@ export const useFetchWallet = () => {
         deviceInfo: await deviceInfo(),
       });
 
-      setDeviceKey(deviceKey);
-      // Create new device and sent to server push notification
+      setDeviceKey(newDeviceKey);
 
       return { error: "", success: true, mfa: true };
     } catch (error) {
@@ -261,6 +262,7 @@ export const useFetchWallet = () => {
         deviceInfo: await deviceInfo(),
       });
       setDeviceKey(deviceKey);
+
       return { error: "", success: true };
     } catch (error) {
       return { error: get(error, "message", "") };
@@ -512,5 +514,36 @@ export const useFetchWallet = () => {
     }
   };
 
-  return { getInfoWallet, getInfoWalletByNetworkKey, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase, changeRecoveryEmail, removeDeviceShare, insertTokenFCM };
+  /**
+   *
+   * @param publicKey device
+   * @returns
+   */
+  const updateShareForPublicKey = async (shareInfo: ShareInfo): Promise<{ error?: string; success?: boolean }> => {
+    try {
+      if (isEmpty(infoMasterKey)) {
+        throw new Error("Please initial master key before");
+      }
+      if (isEmpty(deviceKey)) {
+        throw new Error("Device key not found");
+      }
+      const findShare = find(infoMasterKey.shares, share => {
+        return share.publicKey.toLowerCase().padStart(130, "0") === deviceKey.pubKey?.padStart(130, "0") && share.type === "device";
+      });
+      if (!findShare) {
+        throw new Error("Share device key not found");
+      }
+      const shareDecrypted = (await decryptedMessage(new BN(deviceKey.priKey, "hex"), findShare?.shareData ?? ({} as any))) as Buffer;
+      const shareEncrypted = await encryptedMessageWithoutSign(shareDecrypted, new BN(shareInfo.publicKey, "hex"));
+      const { error, data } = await updateShareByPublicKey({ type: shareInfo.type, publicKey: shareEncrypted.publicKey, encryptedData: shareEncrypted.encryptedToString });
+      if (error) {
+        throw new Error(error);
+      }
+      return { success: data };
+    } catch (error) {
+      return { error: get(error, "message", "") };
+    }
+  };
+
+  return { getInfoWallet, getInfoWalletByNetworkKey, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase, changeRecoveryEmail, removeDeviceShare, insertTokenFCM, updateShareForPublicKey };
 };

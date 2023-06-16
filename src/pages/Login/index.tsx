@@ -10,14 +10,15 @@ import { FirstSlider, SecondarySlider, ThirdSlider } from "@app/assets/img";
 import Button from "@app/components/Button";
 import { Google, LogoText } from "@app/assets/icon";
 import { UserGoogle } from "@app/types/oauth.type";
-import { useCustomSnackBar, useFetchWallet } from "@app/hooks";
+import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
 
 import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
 import { getGoogleToken } from "@app/wallet/metadata";
 
 const Login = () => {
+  const { token } = usePushNotifications();
   const { handleNotification } = useCustomSnackBar();
-  const { getInfoWallet, fetchMasterKey } = useFetchWallet();
+  const { getInfoWallet, fetchMasterKey, insertTokenFCM } = useFetchWallet();
 
   const navigate = useNavigate();
   var settings = {
@@ -55,6 +56,7 @@ const Login = () => {
         return;
       }
       if (success) {
+        insertTokenFCM(token);
         navigate("overview");
         return;
       }

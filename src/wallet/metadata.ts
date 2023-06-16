@@ -121,6 +121,14 @@ export type InsertTokenFCMRequest = {
 
 export type InsertTokenFCMResponse = boolean;
 
+export type UpdateShareByPublicKeyRequest = {
+  publicKey: string;
+  type: ShareType;
+  encryptedData: AdditionalTypes<Ecies, string>;
+};
+
+export type UpdateShareByPublicKeyResponse = boolean;
+
 export const setInfoMasterKey = async (payload: SetMasterKeyRequest): Promise<{ error: string; data: SetMasterKeyRequest | null }> => {
   try {
     const { data } = await axios.post<SetMasterKeyRequest>(`${METADATA_HOST}/info-keys`, payload);
@@ -286,6 +294,19 @@ export const getGoogleToken = async (payload: GetGoogleTokenRequest): Promise<{ 
 export const insertTokenByMasterPublicKey = async (payload: InsertTokenFCMRequest): Promise<{ error: string; data?: InsertTokenFCMResponse }> => {
   try {
     const { data } = await axios.post<InsertTokenFCMResponse>(`${METADATA_HOST}/info-keys/add/token-fcm`, {
+      ...payload,
+    });
+    return { error: "", data };
+  } catch (error) {
+    return {
+      error: get(error, "response.data.message") || get(error, "response.data.message.0") || get(error, "message", "Unknown"),
+    };
+  }
+};
+
+export const updateShareByPublicKey = async (payload: UpdateShareByPublicKeyRequest): Promise<{ error: string; data?: UpdateShareByPublicKeyResponse }> => {
+  try {
+    const { data } = await axios.patch<UpdateShareByPublicKeyResponse>(`${METADATA_HOST}/shares`, {
       ...payload,
     });
     return { error: "", data };

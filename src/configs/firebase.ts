@@ -9,7 +9,7 @@ export const firebaseConfig = {
 };
 
 import { initializeApp } from "@firebase/app";
-import { getMessaging, getToken, onMessage } from "@firebase/messaging";
+import { getMessaging, getToken, onMessage, MessagePayload } from "@firebase/messaging";
 const firebaseApp = initializeApp(firebaseConfig);
 export const messaging = getMessaging(firebaseApp);
 
@@ -18,7 +18,7 @@ export const getTokenFCM = async () => {
   return token;
 };
 
-export const onMessageListener = () =>
+export const onMessageListener = (): Promise<MessagePayload> =>
   new Promise(resolve => {
     onMessage(messaging, payload => {
       resolve(payload);

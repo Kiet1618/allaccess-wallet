@@ -1,7 +1,7 @@
 import BN from "bn.js";
 import * as EC from "elliptic";
 import * as crypto from "crypto";
-import { Ecies, encrypt, sign, decrypt, getPublic } from "@allaccessone/eccrypto";
+import { Ecies, encrypt, sign, decrypt } from "@allaccessone/eccrypto";
 import { keccak256 } from "@allaccessone/allaccessone.js";
 import { AdditionalTypes } from "@app/wallet/metadata";
 import { KeyPair } from "@app/wallet/types";
@@ -80,7 +80,7 @@ export const encryptedMessageWithoutSign = async (
   return {
     encryptedData: encrypted,
     encryptedToString,
-    publicKey: publicKey.toString("hex"),
+    publicKey: publicKeyString,
   };
 };
 

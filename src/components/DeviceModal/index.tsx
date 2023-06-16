@@ -12,20 +12,22 @@ import { Button as CustomButton } from "@app/components";
 import { SubTitlePage, GroupLeftItemDevice, ContainerDeviceModal, ContainerButtonFactors, ContainerDevice, ContainerText, NameText, IpText, style } from "./css";
 
 type Props = {
-  device: ShareInfo;
+  title?: string;
+  subTitle?: string;
+  device: ShareInfo | null;
   loading: boolean;
   handleClose: () => void;
   handleConfirm: () => void;
   isCurrent?: boolean;
 };
 const DeviceModal: React.FC<Props> = props => {
-  const { loading, device, handleClose, handleConfirm, isCurrent } = props;
+  const { loading, device, handleClose, handleConfirm, isCurrent, title, subTitle } = props;
 
   return (
     <Modal open={!isEmpty(device)} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
       <Box sx={style}>
-        <TitlePage>Delete devices</TitlePage>
-        <SubTitlePage>This device will be erased and automatically logged out, are you sure?</SubTitlePage>
+        <TitlePage>{title}</TitlePage>
+        <SubTitlePage>{subTitle}</SubTitlePage>
         <ContainerDeviceModal>
           <ContainerDevice>
             <GroupLeftItemDevice>
