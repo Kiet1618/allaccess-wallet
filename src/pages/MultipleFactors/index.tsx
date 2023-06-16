@@ -21,13 +21,16 @@ import {
 import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
 import { InfoMasterKey, ShareInfo } from "@app/wallet/metadata";
 import { useSessionStorage } from "usehooks-ts";
+import { KeyPair } from "@app/wallet/types";
 const MultipleFactors = () => {
   const { handleNotification } = useCustomSnackBar();
   const { token } = usePushNotifications();
 
-  const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
+  const [infoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
+  const [deviceKey] = useSessionStorage<KeyPair | null>("device-key", null);
+  const [networkKey] = useSessionStorage<KeyPair | null>("network-key", null);
   const navigate = useNavigate();
-  const { fetchMasterKeyWithPhrase, insertTokenFCM } = useFetchWallet();
+  const { getInfoWalletByNetworkKey, fetchMasterKeyWithPhrase, insertTokenFCM, fetchMasterKeyWithDevice } = useFetchWallet();
 
   const [deviceShares, setDeviceShares] = useState<ShareInfo[]>([]);
   const [typeButton, setTypeButton] = useState(false);
@@ -41,6 +44,23 @@ const MultipleFactors = () => {
       setDeviceShares(devices || []);
     }
   }, [infoMasterKey]);
+
+  const intervalGetByDevice = async () => {
+    if (deviceKey) {
+      const data = await getInfoWalletByNetworkKey(networkKey as KeyPair);
+      if (data.error) return;
+      const { error } = await fetchMasterKeyWithDevice(data.info!);
+      if (error) return;
+      navigate("/overview");
+    }
+  };
+  useEffect(() => {
+    // Interval each 5s for check public confirmed
+    const intervalId = setInterval(() => {
+      intervalGetByDevice();
+    }, 1000 * 5); // in milliseconds
+    return () => clearInterval(intervalId);
+  }, [deviceKey]);
 
   const handleValidatorAmount = (value: string = seed) => {
     const words = value.split(" ");
@@ -62,6 +82,7 @@ const MultipleFactors = () => {
     }
     // Handle insert token FCM to database by master public key
     insertTokenFCM(token);
+    getInfoWalletByNetworkKey(networkKey as KeyPair);
     setLoadingLogin(false);
     navigate("/overview");
   };

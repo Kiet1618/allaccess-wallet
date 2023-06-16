@@ -101,7 +101,7 @@ export const useFetchWallet = () => {
    * @param infoMasterKey
    * @returns
    */
-  const fetchMasterKey = async (infoMasterKey: InfoMasterKey, networkKey: KeyPair): Promise<{ error?: string; success?: boolean; mfa?: boolean }> => {
+  const fetchMasterKey = async (infoMasterKey: InfoMasterKey, networkKey: KeyPair): Promise<{ error?: string; success?: boolean; mfa?: boolean; newDeviceKey?: KeyPair }> => {
     try {
       if (isEmpty(networkKey)) {
         throw new Error("Please initial network key before");
@@ -186,6 +186,7 @@ export const useFetchWallet = () => {
         setDeviceKey(deviceKey);
         return { error: "", success: true, mfa: false };
       }
+
       // Case if user enable MFA
       const newDeviceKey = formatPrivateKey(generateRandomPrivateKey());
       // Create new device and sent to server push notification
@@ -195,10 +196,9 @@ export const useFetchWallet = () => {
         type: "device",
         deviceInfo: await deviceInfo(),
       });
-
       setDeviceKey(newDeviceKey);
 
-      return { error: "", success: true, mfa: true };
+      return { error: "", success: true, mfa: true, newDeviceKey: newDeviceKey };
     } catch (error) {
       setMasterKey(null);
       setDeviceKey(null);
@@ -264,6 +264,60 @@ export const useFetchWallet = () => {
       setDeviceKey(deviceKey);
 
       return { error: "", success: true };
+    } catch (error) {
+      return { error: get(error, "message", "") };
+    }
+  };
+
+  const fetchMasterKeyWithDevice = async (infoMasterKey: InfoMasterKey): Promise<{ error?: string; success?: boolean }> => {
+    try {
+      if (isEmpty(networkKey)) {
+        throw new Error("Please initial network key before");
+      }
+      if (isEmpty(infoMasterKey)) {
+        throw new Error("Please initial master key before");
+      }
+      const { mfa, initialed, shares } = infoMasterKey as InfoMasterKey;
+      if (!initialed) {
+        throw new Error("Please initial shares of master key before");
+      }
+      if (!mfa) {
+        throw new Error("Please enable mfa");
+      }
+
+      if (!isEmpty(deviceKey)) {
+        const deviceShare = shares?.find(share => {
+          return share.publicKey.toLowerCase().padStart(130, "0") === deviceKey.pubKey?.padStart(130, "0") && share.type === "device";
+        });
+        if (isEmpty(deviceShare)) {
+          throw new Error("Device share not existed");
+        }
+        const networkShare = shares?.find(share => {
+          return share.publicKey.toLowerCase().padStart(130, "0") === networkKey.pubKey?.padStart(130, "0") && share.type === "network-key";
+        });
+        if (isEmpty(networkShare)) {
+          throw new Error("Network share not existed");
+        }
+
+        // Set private keys
+        deviceShare.priKey = deviceKey.priKey;
+        networkShare.priKey = networkKey.priKey;
+
+        const decryptedShares = await Promise.all(
+          [networkShare, deviceShare].map(async elm => {
+            const data = await decryptedMessage(new BN(elm.priKey || "", "hex"), elm?.shareData ?? ({} as any));
+            return data as Buffer;
+          })
+        );
+        const masterKey = sharmirCombinePrivateKey(decryptedShares);
+        const masterKeyFormatted = formatPrivateKey(new BN(masterKey, "hex"));
+        if (masterKeyFormatted.pubKey?.toLowerCase() !== infoMasterKey.masterPublicKey.toLowerCase()) {
+          throw new Error("Something went wrong, master public key not match with default");
+        }
+        setMasterKey(masterKeyFormatted);
+        return { error: "", success: true };
+      }
+      return { error: "Not found" };
     } catch (error) {
       return { error: get(error, "message", "") };
     }
@@ -545,5 +599,16 @@ export const useFetchWallet = () => {
     }
   };
 
-  return { getInfoWallet, getInfoWalletByNetworkKey, fetchMasterKey, enableMFA, fetchMasterKeyWithPhrase, changeRecoveryEmail, removeDeviceShare, insertTokenFCM, updateShareForPublicKey };
+  return {
+    getInfoWallet,
+    getInfoWalletByNetworkKey,
+    fetchMasterKey,
+    fetchMasterKeyWithDevice,
+    enableMFA,
+    fetchMasterKeyWithPhrase,
+    changeRecoveryEmail,
+    removeDeviceShare,
+    insertTokenFCM,
+    updateShareForPublicKey,
+  };
 };

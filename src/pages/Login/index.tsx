@@ -45,7 +45,7 @@ const Login = () => {
         handleNotification(error1, "error");
         return;
       }
-      const { error: error2, success, mfa } = await fetchMasterKey(info!, networkKey!);
+      const { error: error2, success, mfa, newDeviceKey } = await fetchMasterKey(info!, networkKey!);
       if (error2) {
         handleNotification(error2, "error");
         return;
