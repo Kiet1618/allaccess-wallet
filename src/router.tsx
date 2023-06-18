@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom";
-import { Overview, Login, History, Profile, Error, Transaction, MultipleFactors } from "./pages";
+import { Overview, Login, History, Profile, Error, Transaction, MultipleFactors, LoginDapp } from "./pages";
 import { ProtectProp } from "./types/protectProp.type";
 import { LayoutApp } from "./components";
 import React, { useEffect } from "react";
@@ -25,7 +25,7 @@ const RouterApp = () => {
       <LayoutApp>
         <Routes>
           <Route path='/' element={<Login />} />
-          <Route path='/login' element={<Login />} />
+          <Route path='/login' element={<LoginDapp />} />
           <Route path='/multiple-factors' element={<MultipleFactors />} />
           <Route
             path='/sign-transaction/:transactionId'

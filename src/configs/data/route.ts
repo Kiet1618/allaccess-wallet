@@ -30,4 +30,9 @@ export const routes: Array<Route> = [
     breadcrumbName: "User profile",
     layout: true,
   },
+  {
+    path: "/login",
+    breadcrumbName: "",
+    layout: false,
+  },
 ];
