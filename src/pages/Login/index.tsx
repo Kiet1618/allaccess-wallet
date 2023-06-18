@@ -30,7 +30,7 @@ const Login = () => {
       console.log(tokenResponse);
       const torusKey = await getShareBSuccess("", "", "");
       setMasterKey(torusKey);
-      sessionStorage.setItem("torusKey", JSON.stringify(torusKey));
+      localStorage.setItem("torusKey", JSON.stringify(torusKey));
       navigate("/overview");
     },
     flow: "auth-code",
