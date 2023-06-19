@@ -5,5 +5,5 @@ import Transaction from "./Transaction";
 import Error from "./Error";
 import History from "./History";
 import MultipleFactors from "./MultipleFactors";
-import LoginDapp from "./Login/login";
-export { Overview, Login, Profile, Transaction, History, Error, MultipleFactors, LoginDapp };
+import SignTransaction from "./SignTransaction";
+export { Overview, Login, Profile, Transaction, History, Error, MultipleFactors, SignTransaction };

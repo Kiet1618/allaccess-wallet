@@ -8,12 +8,14 @@ import { Google, LogoText } from "../../assets/icon";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import React from "react";
-import axios from "axios";
-import { useSessionStorage } from "usehooks-ts";
-import { KeyPair, getShareBSuccess } from "../../wallet/node-service";
+import Cookies from "universal-cookie";
+// import axios from "axios";
+// import { useSessionStorage } from "usehooks-ts";
+import { getShareBSuccess } from "../../wallet/node-service";
 const Login = () => {
+  const cookies = new Cookies();
   const navigate = useNavigate();
-  const [_, setMasterKey] = useSessionStorage<KeyPair>("master-key", { ethAddress: "", priKey: "" });
+  // const [_, setMasterKey] = useSessionStorage<KeyPair>("master-key", { ethAddress: "", priKey: "" });
   var settings = {
     dots: true,
     infinite: true,
@@ -29,9 +31,11 @@ const Login = () => {
     onSuccess: async tokenResponse => {
       console.log(tokenResponse);
       const torusKey = await getShareBSuccess("", "", "");
-      setMasterKey(torusKey);
+      // setMasterKey(torusKey);
       localStorage.setItem("torusKey", JSON.stringify(torusKey));
+      cookies.set("torusKey", torusKey.ethAddress, { path: "/" });
       navigate("/overview");
+      window.close();
     },
     flow: "auth-code",
   });

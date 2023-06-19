@@ -35,7 +35,7 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
   return (
     <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
       <GlobalStyles></GlobalStyles>
-      {checkLayout?.layout || checkLayout === undefined ? (
+      {checkLayout?.layout ? (
         <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100 }}>
           <Grid item xs={100} sm={26} md={20} lg={16}>
             <Slider display={isDesktop} />
