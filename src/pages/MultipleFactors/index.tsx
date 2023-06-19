@@ -80,8 +80,12 @@ const MultipleFactors = () => {
       handleNotification(error, "error");
       return;
     }
+    if (!infoMasterKey) {
+      handleNotification("Please initial master key before", "error");
+      return;
+    }
     // Handle insert token FCM to database by master public key
-    insertTokenFCM(token);
+    insertTokenFCM(token, infoMasterKey);
     getInfoWalletByNetworkKey(networkKey as KeyPair);
     setLoadingLogin(false);
     navigate("/overview");

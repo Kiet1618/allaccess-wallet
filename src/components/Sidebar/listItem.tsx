@@ -19,6 +19,7 @@ type Props = {
 const Slider: React.FC<Props> = (props: Props) => {
   const [_, setMasterKey] = useSessionStorage<KeyPair | null>("master-key", null);
   const [__, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
+  const [___, setNetworkKey] = useSessionStorage<KeyPair | null>("network-key", null);
   const location = useLocation();
   const [open, setOpen] = React.useState(false);
 
@@ -43,6 +44,7 @@ const Slider: React.FC<Props> = (props: Props) => {
                 onClick={() => {
                   if (e.key === "logout") {
                     setMasterKey(null);
+                    setNetworkKey(null);
                     setInfoMasterKey(null);
                   }
                 }}

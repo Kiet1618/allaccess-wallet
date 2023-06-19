@@ -8,7 +8,7 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import { Grid } from "@mui/material";
 
-import { useCustomSnackBar, useFetchWallet } from "@app/hooks";
+import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
 import { KeyPair } from "@app/wallet/types";
 import { Computer, Trash } from "@app/assets/icon";
 import { TitlePageBlack, TitlePage } from "@app/styles";
@@ -21,8 +21,9 @@ import { TextHeaderCard, ContainerDevice, GroupLeftItemDevice, ContainerText, Na
 import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerNumberFactors, ContainerHeaderFactors, style } from "./mfa.css";
 
 const MFA = () => {
+  const { token } = usePushNotifications();
   const { handleNotification } = useCustomSnackBar();
-  const { getInfoWalletByNetworkKey, enableMFA, changeRecoveryEmail, removeDeviceShare } = useFetchWallet();
+  const { getInfoWalletByNetworkKey, enableMFA, changeRecoveryEmail, removeDeviceShare, insertTokenFCM } = useFetchWallet();
   const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [networkKey, __] = useSessionStorage<KeyPair | null>("network-key", null);
   const [deviceKey, ___] = useSessionStorage<KeyPair | null>("device-key", null);
@@ -75,6 +76,7 @@ const MFA = () => {
       setLoadingDeleteDevice(false);
       handleNotification("Please check your email to get new phrase", "success");
       getInfoWalletByNetworkKey(networkKey!);
+      insertTokenFCM(token, infoMasterKey);
       return;
     }
     // pss shares

@@ -553,7 +553,7 @@ export const useFetchWallet = () => {
     }
   };
 
-  const insertTokenFCM = async (token: string): Promise<{ error?: string; success?: boolean }> => {
+  const insertTokenFCM = async (token: string, infoMasterKey: InfoMasterKey): Promise<{ error?: string; success?: boolean }> => {
     try {
       if (isEmpty(infoMasterKey)) {
         throw new Error("Please initial master key before");
