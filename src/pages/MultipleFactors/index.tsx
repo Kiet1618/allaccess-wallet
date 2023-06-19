@@ -27,8 +27,8 @@ const MultipleFactors = () => {
   const { token } = usePushNotifications();
 
   const [infoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
-  const [deviceKey] = useSessionStorage<KeyPair | null>("device-key", null);
-  const [networkKey] = useSessionStorage<KeyPair | null>("network-key", null);
+  const [deviceKey, setDeviceKey] = useSessionStorage<KeyPair | null>("device-key", null);
+  const [networkKey, setNetworkKey] = useSessionStorage<KeyPair | null>("network-key", null);
   const navigate = useNavigate();
   const { getInfoWalletByNetworkKey, fetchMasterKeyWithPhrase, insertTokenFCM, fetchMasterKeyWithDevice } = useFetchWallet();
 
@@ -138,6 +138,8 @@ const MultipleFactors = () => {
             text='Cancel'
             styleButton='inactive'
             onClick={() => {
+              setDeviceKey(null);
+              setNetworkKey(null);
               navigate("/");
             }}
           ></CustomButton>
