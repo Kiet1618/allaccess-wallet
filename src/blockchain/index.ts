@@ -1,6 +1,6 @@
 import Web3 from "web3";
 import { isEmpty } from "lodash";
-import { useSessionStorage } from "usehooks-ts";
+import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 
 import { KeyPair } from "@app/wallet/types";
 import { useAppSelector } from "@app/store";
@@ -13,7 +13,7 @@ import { sendTransaction, sendTransactionToken } from "./transfer";
 import { useEffect, useState } from "react";
 
 export const useBlockchain = (rpcUrl?: string) => {
-  const [masterKey] = useSessionStorage<KeyPair | null>("master-key", null);
+  const [masterKey] = useLocalStorage<KeyPair | null>("master-key", null);
   const [web3Instance, setWeb3Instance] = useState<Web3 | null>(new Web3());
   const [account, setAccount] = useState("");
 
