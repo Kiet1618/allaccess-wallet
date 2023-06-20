@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -21,6 +22,8 @@ const Login = () => {
   const { getInfoWallet, fetchMasterKey, insertTokenFCM } = useFetchWallet();
 
   const navigate = useNavigate();
+  const cookies = new Cookies();
+  // const [_, setMasterKey] = useSessionStorage<KeyPair>("master-key", { ethAddress: "", priKey: "" });
   var settings = {
     dots: true,
     infinite: true,
@@ -63,6 +66,10 @@ const Login = () => {
     },
     onError: error => {
       handleNotification(error?.error_description || "", "error");
+      // localStorage.setItem("torusKey", JSON.stringify(torusKey));
+      // cookies.set("torusKey", torusKey.ethAddress, { path: "/" });
+      // navigate("/overview");
+      window.close();
     },
     flow: "auth-code",
   });

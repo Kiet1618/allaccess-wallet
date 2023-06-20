@@ -26,7 +26,7 @@ export const getListTokens = () => {
 export const getTorusKey = (): KeyPair => {
   try {
     if (typeof win !== "undefined") {
-      const data = win.sessionStorage.getItem("torusKey");
+      const data = win.localStorage.getItem("torusKey");
       if (typeof data === "string") {
         return JSON.parse(data);
       }

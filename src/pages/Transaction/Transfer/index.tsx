@@ -52,7 +52,6 @@ const Transfer = () => {
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
   const { web3, account: myAddress } = useBlockchain();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [open, setOpen] = useState(false);
   const [tokenAddress, setTokenAddress] = useState("");
@@ -186,41 +185,8 @@ const Transfer = () => {
     [k: number]: boolean;
   }>({});
 
-  const totalSteps = () => {
-    return steps.length;
-  };
-
-  const completedSteps = () => {
-    return Object.keys(completed).length;
-  };
-
-  const isLastStep = () => {
-    return activeStep === totalSteps() - 1;
-  };
-
-  const allStepsCompleted = () => {
-    return completedSteps() === totalSteps();
-  };
-
-  const handleNext = () => {
-    const newActiveStep =
-      isLastStep() && !allStepsCompleted()
-        ? // It's the last step, but not all steps have been completed,
-          // find the first step that has been completed
-          steps.findIndex((step, i) => !(i in completed))
-        : activeStep + 1;
-    setActiveStep(newActiveStep);
-  };
-
   const handleStep = (step: number) => () => {
     setActiveStep(step);
-  };
-
-  const handleComplete = () => {
-    const newCompleted = completed;
-    newCompleted[activeStep] = true;
-    setCompleted(newCompleted);
-    handleNext();
   };
 
   const handleReset = () => {
