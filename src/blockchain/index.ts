@@ -12,7 +12,7 @@ import { getBalanceToken, getBalance } from "./balance";
 import { sendTransaction, sendTransactionToken } from "./transfer";
 import { useEffect, useState } from "react";
 
-export const useBlockchain = () => {
+export const useBlockchain = (rpcUrl?: string) => {
   const [masterKey] = useSessionStorage<KeyPair | null>("master-key", null);
   const [web3Instance, setWeb3Instance] = useState<Web3 | null>(new Web3());
   const [account, setAccount] = useState("");
@@ -21,7 +21,7 @@ export const useBlockchain = () => {
 
   useEffect(() => {
     if (masterKey && !isEmpty(masterKey)) {
-      const web3 = new Web3(networkState.currentNetwork.data);
+      const web3 = new Web3(rpcUrl || networkState.currentNetwork.data);
       const account = web3.eth.accounts.wallet.add(masterKey?.priKey.padStart(64, "0"));
       web3.defaultAccount = account.address;
       setWeb3Instance(web3);
