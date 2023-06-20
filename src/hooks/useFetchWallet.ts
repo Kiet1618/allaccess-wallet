@@ -2,6 +2,7 @@ import { find, get, isEmpty, map } from "lodash";
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { getNodeKey } from "@app/wallet/node-service";
 import { KeyPair } from "@app/wallet/types";
+import Cookies from "universal-cookie";
 import {
   InfoMasterKey,
   ShareInfo,
@@ -20,6 +21,7 @@ import BN from "bn.js";
 import { deviceInfo, hexToWords, wordsToHex } from "@app/utils";
 
 export const useFetchWallet = () => {
+  const cookies = new Cookies();
   const [infoMasterKey, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [masterKey, setMasterKey] = useLocalStorage<KeyPair | null>("master-key", null);
   const [networkKey, setNetworkKey] = useSessionStorage<KeyPair | null>("network-key", null);
@@ -184,6 +186,8 @@ export const useFetchWallet = () => {
           deviceInfo: await deviceInfo(),
         });
         setDeviceKey(deviceKey);
+        cookies.set("masterKey", masterKeyFormatted.ethAddress, { path: "/" });
+
         return { error: "", success: true, mfa: false };
       }
 
@@ -262,6 +266,7 @@ export const useFetchWallet = () => {
         deviceInfo: await deviceInfo(),
       });
       setDeviceKey(deviceKey);
+      cookies.set("masterKey", masterKeyFormatted.ethAddress, { path: "/" });
 
       return { error: "", success: true };
     } catch (error) {
@@ -315,6 +320,7 @@ export const useFetchWallet = () => {
           throw new Error("Something went wrong, master public key not match with default");
         }
         setMasterKey(masterKeyFormatted);
+        cookies.set("masterKey", masterKeyFormatted.ethAddress, { path: "/" });
         return { error: "", success: true };
       }
       return { error: "Not found" };

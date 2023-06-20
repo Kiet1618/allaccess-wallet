@@ -26,7 +26,7 @@ export const useTokens = (web3: Web3, addressToken: string, networkRpc: string, 
   };
 
   // Search token, import token if it is not exist
-  const searchToken = (keyword: string) => {
+  const searchToken = () => {
     // Filter it from tokens list
   };
 

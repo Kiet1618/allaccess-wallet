@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getTokenFCM, onMessageListener } from "@app/configs/firebase"; // import from your firebase file
 import { MessagePayload } from "firebase/messaging"; // import from your firebase file
 
-export function usePushNotifications(callback?: (message: MessagePayload) => void) {
+export function usePushNotifications(callback?: (_: MessagePayload) => void) {
   const [token, setToken] = useState("");
 
   useEffect(() => {

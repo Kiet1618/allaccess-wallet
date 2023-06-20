@@ -1,25 +1,23 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Overview, Login, History, Profile, Error, Transaction, MultipleFactors, SignTransaction } from "./pages";
 import { ProtectProp } from "./types/protectProp.type";
 import { LayoutApp } from "./components";
-import React, { useEffect } from "react";
-import { setHistoriesAddress } from "./store/redux/history/actions";
-import { PreProcessHistoryResponse } from "./utils/history";
-import { useAppDispatch, useAppSelector } from "./store";
-import { preProcessHistoryResponse } from "./utils";
-import { listNetWorks } from "./configs/data";
-import { getTorusKey } from "./storage/storage-service";
+import { useLocalStorage } from "usehooks-ts";
+import { KeyPair } from "./wallet/types";
 // import { login, logout } from './store/features/login/reducer'
 // import type { RootState } from './store/store'
 const RouterApp = () => {
-  const ProtectedRoute = ({ user, children }: ProtectProp): JSX.Element => {
-    if (!getTorusKey().ethAddress) {
+  const [masterKey] = useLocalStorage<KeyPair | null>("master-key", null);
+
+  const ProtectedRoute = ({ children }: ProtectProp): JSX.Element => {
+    if (!masterKey) {
       return <Navigate to='/' replace />;
     }
     return children;
   };
 
-  const user = getTorusKey().ethAddress ? true : false;
+  const user = masterKey ? true : false;
   return (
     <Router>
       <LayoutApp>

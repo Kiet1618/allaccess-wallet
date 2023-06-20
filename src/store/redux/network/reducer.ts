@@ -22,7 +22,7 @@ export const listNetwork = createSlice({
       state.currentNetwork.data = action.payload;
       state.currentNetwork.loading = false;
     });
-    builder.addCase(actions.setNetworkState.rejected, (state, action) => {
+    builder.addCase(actions.setNetworkState.rejected, state => {
       // state.currentNetwork.error = action.payload;
       state.currentNetwork.loading = false;
     });

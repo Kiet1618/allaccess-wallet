@@ -1,4 +1,4 @@
-import { ChainNetwork, Token } from "../../types/blockchain.type";
+import { ChainNetwork } from "../../types/blockchain.type";
 export const listNetWorks: ChainNetwork[] = [
   {
     chainID: "1",

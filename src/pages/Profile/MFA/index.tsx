@@ -64,16 +64,16 @@ const MFA = () => {
       handleNotification("Please initial master key before", "error");
       return;
     }
-    setLoadingDeleteDevice(true);
+    setLoadingRecovery(true);
     const { mfa } = infoMasterKey;
     if (!mfa) {
       const { error } = await enableMFA(recoveryEmail);
       if (error) {
-        setLoadingDeleteDevice(false);
+        setLoadingRecovery(false);
         handleNotification(error, "error");
         return;
       }
-      setLoadingDeleteDevice(false);
+      setLoadingRecovery(false);
       handleNotification("Please check your email to get new phrase", "success");
       getInfoWalletByNetworkKey(networkKey!);
       insertTokenFCM(token, infoMasterKey);
@@ -83,11 +83,11 @@ const MFA = () => {
     if (mfa) {
       const { error } = await changeRecoveryEmail(recoveryEmail);
       if (error) {
-        setLoadingDeleteDevice(false);
+        setLoadingRecovery(false);
         handleNotification(error, "error");
         return;
       }
-      setLoadingDeleteDevice(false);
+      setLoadingRecovery(false);
       handleNotification("Please check your email to get new phrase", "success");
       getInfoWalletByNetworkKey(networkKey!);
     }

@@ -52,7 +52,7 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
     return;
   };
 
-  const { token } = usePushNotifications(handleDetectDevice);
+  usePushNotifications(handleDetectDevice);
   const handleConfirmDevice = async () => {
     if (isEmpty(detectDevice)) return;
     const { error } = await updateShareForPublicKey(detectDevice);

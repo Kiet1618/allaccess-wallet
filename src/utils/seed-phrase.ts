@@ -1,6 +1,5 @@
 import Web3 from "web3";
 import * as bip39 from "bip39";
-import { generateRandomPrivateKey } from "@app/wallet/algorithm";
 
 export const generateWords = () => {
   const web3 = new Web3();
