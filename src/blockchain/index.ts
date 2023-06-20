@@ -1,6 +1,6 @@
 import Web3 from "web3";
 import { isEmpty } from "lodash";
-import { useLocalStorage, useSessionStorage } from "usehooks-ts";
+import { useLocalStorage } from "usehooks-ts";
 
 import { KeyPair } from "@app/wallet/types";
 import { useAppSelector } from "@app/store";
