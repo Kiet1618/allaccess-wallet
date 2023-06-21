@@ -58,6 +58,7 @@ const Login = () => {
       }
       if (success) {
         insertTokenFCM(token, info!);
+        window.close();
         navigate("overview");
         return;
       }
