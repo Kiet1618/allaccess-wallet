@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { getTorusKey } from "../../storage/storage-service";
-import { sendTransaction, sendTransactionToken, getBalanceToken, useBlockchain, getBalance, getToken, getGasPrice, getGasLimit } from "../../blockchain";
+import { sendTransaction, sendTransactionToken, useBlockchain, getGasPrice, getGasLimit } from "../../blockchain";
 import { listNetWorks } from "../../configs/data";
 import { TitlePage } from "../../styles";
 import Web3 from "web3";
@@ -17,7 +16,7 @@ import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../components/Table/table.css";
+import { ModalCustom, HeaderModalInfoTransaction } from "../../components/Table/table.css";
 import { Success, Copy } from "../../assets/icon";
 
 const steps = ["Start", "Pending", "Success"];
@@ -86,42 +85,42 @@ const SignTransaction = () => {
     [k: number]: boolean;
   }>({});
 
-  const totalSteps = () => {
-    return steps.length;
-  };
+  // const totalSteps = () => {
+  //   return steps.length;
+  // };
 
-  const completedSteps = () => {
-    return Object.keys(completed).length;
-  };
+  // const completedSteps = () => {
+  //   return Object.keys(completed).length;
+  // };
 
-  const isLastStep = () => {
-    return activeStep === totalSteps() - 1;
-  };
+  // const isLastStep = () => {
+  //   return activeStep === totalSteps() - 1;
+  // };
 
-  const allStepsCompleted = () => {
-    return completedSteps() === totalSteps();
-  };
+  // const allStepsCompleted = () => {
+  //   return completedSteps() === totalSteps();
+  // };
 
-  const handleNext = () => {
-    const newActiveStep =
-      isLastStep() && !allStepsCompleted()
-        ? // It's the last step, but not all steps have been completed,
-          // find the first step that has been completed
-          steps.findIndex((step, i) => !(i in completed))
-        : activeStep + 1;
-    setActiveStep(newActiveStep);
-  };
+  // const handleNext = () => {
+  //   const newActiveStep =
+  //     isLastStep() && !allStepsCompleted()
+  //       ? // It's the last step, but not all steps have been completed,
+  //         // find the first step that has been completed
+  //         steps.findIndex((step, i) => !(i in completed))
+  //       : activeStep + 1;
+  //   setActiveStep(newActiveStep);
+  // };
 
   const handleStep = (step: number) => () => {
     setActiveStep(step);
   };
 
-  const handleComplete = () => {
-    const newCompleted = completed;
-    newCompleted[activeStep] = true;
-    setCompleted(newCompleted);
-    handleNext();
-  };
+  // const handleComplete = () => {
+  //   const newCompleted = completed;
+  //   newCompleted[activeStep] = true;
+  //   setCompleted(newCompleted);
+  //   handleNext();
+  // };
 
   const handleReset = () => {
     setActiveStep(1);
