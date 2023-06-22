@@ -4,7 +4,7 @@ import Web3 from "web3";
 import { getListTokens } from "../storage/storage-service";
 import { Token } from "../types/blockchain.type";
 import { getToken } from "../blockchain/token";
-export const useTokens = (web3: Web3, addressToken: string, networkRpc: string, chainId: string) => {
+export const useTokens = (web3: Web3, addressToken: string, networkRpc: string) => {
   const [tokens, setTokens] = useState<Array<Token>>([]);
   const tokensRedux = useAppSelector(state => state.token).currentListTokens.data;
 
@@ -17,7 +17,7 @@ export const useTokens = (web3: Web3, addressToken: string, networkRpc: string, 
   // Import token to local storage and redux
   const importToken = async () => {
     // handle
-    return await getToken(web3, addressToken, networkRpc, chainId);
+    return await getToken(web3, addressToken, networkRpc);
   };
 
   const deleteToken = () => {

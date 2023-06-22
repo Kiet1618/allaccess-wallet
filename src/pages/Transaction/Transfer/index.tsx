@@ -138,9 +138,7 @@ const Transfer = () => {
   const handleGetInfoToken = async () => {
     try {
       const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentNetwork.data);
-      //const currentToken = useTokens(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
-      //const addToken = await currentToken.importToken();
-      const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
+      const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string);
       const check = listTokenState.currentListTokens.data.filter(token => token.tokenContract === tokenAddress).length;
       if (!check) {
         setTokenImport(addToken);

@@ -1,7 +1,7 @@
-import FetchNodeDetails from "@allaccessone/fetch-node-details";
-import TorusUtils from "@allaccessone/allaccessone.js";
-import { BN } from "bn.js";
-import { generatePublicKeyFromPrivateKey } from "./algorithm";
+// import FetchNodeDetails from "@allaccessone/fetch-node-details";
+// import TorusUtils from "@allaccessone/allaccessone.js";
+// import { BN } from "bn.js";
+// import { generatePublicKeyFromPrivateKey } from "./algorithm";
 
 import { KeyPair } from "./types";
 
@@ -9,6 +9,7 @@ export const getNodeKey = async (verifier: string, verifierId: string, idToken: 
   // const fetchNodes = new FetchNodeDetails({ network: "local", proxyAddress: "0xD44F7724b0a0800e41283E97BE5eC9E875f59811" });
   // const nodesList = await fetchNodes.getNodeDetails();
   // const torus = new TorusUtils({ network: "testnet" });
+  console.log(verifier, verifierId, idToken);
   // const { torusNodeEndpoints, torusIndexes } = nodesList;
   // const keyData = await torus.retrieveShares(torusNodeEndpoints, torusIndexes, verifier, { verifier_id: verifierId }, idToken, {});
   // return {

@@ -1,15 +1,12 @@
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { getTorusKey } from "../../storage/storage-service";
-import { sendTransaction, sendTransactionToken, getBalanceToken, useBlockchain, getBalance, getToken, getGasPrice, getGasLimit } from "../../blockchain";
-import { listNetWorks } from "../../configs/data";
+import { sendTransaction, sendTransactionToken, useBlockchain, getGasPrice, getGasLimit } from "../../blockchain";
 import { TitlePage } from "../../styles";
 import Web3 from "web3";
 import CustomButton from "../../components/Button";
 import { FormData } from "../Transaction/Transfer/type";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-
 import { style, TransferSuccessTitle, TransferSuccessSub, BackgroundPage, CopyAddressContainer, ContainerIconSuccess, ContainerTwoButtonModal } from "../Transaction/Transfer/transfer.css";
 import { sliceAddress, copyAddress } from "../../utils";
 import Stepper from "@mui/material/Stepper";
@@ -17,7 +14,7 @@ import Step from "@mui/material/Step";
 import StepButton from "@mui/material/StepButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../components/Table/table.css";
+import { ModalCustom, HeaderModalInfoTransaction } from "../../components/Table/table.css";
 import { Success, Copy } from "../../assets/icon";
 
 const steps = ["Start", "Pending", "Success"];
@@ -49,6 +46,7 @@ const SignTransaction = () => {
 
     updateGasLimit();
   }, []);
+
   useEffect(() => {
     const updateGasPrice = async () => {
       const gasPriceValue = await getGasPrice(web3 as Web3);
@@ -85,32 +83,6 @@ const SignTransaction = () => {
     [k: number]: boolean;
   }>({});
 
-  const totalSteps = () => {
-    return steps.length;
-  };
-
-  const completedSteps = () => {
-    return Object.keys(completed).length;
-  };
-
-  const isLastStep = () => {
-    return activeStep === totalSteps() - 1;
-  };
-
-  const allStepsCompleted = () => {
-    return completedSteps() === totalSteps();
-  };
-
-  const handleNext = () => {
-    const newActiveStep =
-      isLastStep() && !allStepsCompleted()
-        ? // It's the last step, but not all steps have been completed,
-          // find the first step that has been completed
-          steps.findIndex((step, i) => !(i in completed))
-        : activeStep + 1;
-    setActiveStep(newActiveStep);
-  };
-
   const handleStep = (step: number) => () => {
     setActiveStep(step);
   };
@@ -119,16 +91,12 @@ const SignTransaction = () => {
     setActiveStep(1);
     setCompleted({ 0: true });
   };
-  // //test
-  // useEffect(() => {
-  //   console.log(infoTransaction);
-  //   console.log(transactionHash);
-  // }, [infoTransaction])
   const handleClose = () => {
     setOpen(false), handleReset();
   };
   useEffect(() => {
     if (infoTransaction === "Error") {
+      handleReset();
       handleClose();
       setOpenAlert(true);
       setTimeout(() => {
