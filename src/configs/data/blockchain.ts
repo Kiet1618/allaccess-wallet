@@ -55,7 +55,7 @@ export const listNetWorks: ChainNetwork[] = [
     description: "Binance Smart Chain Testnet",
   },
   {
-    chainID: "6",
+    chainID: "9",
     apiScanNormalTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=txlist&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
     apiScanTokenTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=tokentx&contractaddress={contract}&address={address}&startblock=0&endblock=99999999&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
     rpcUrls: "https://geth-kotti.etc-network.info",

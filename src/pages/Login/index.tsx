@@ -65,7 +65,7 @@ const Login = () => {
       if (success) {
         insertTokenFCM(token, info!);
         ChainIdParams ? cookies.set("chainId", ChainIdParams.chainId, { path: "/" }) : null;
-        window.close();
+        ChainIdParams ? window.close() : null;
         navigate("overview");
         return;
       }
