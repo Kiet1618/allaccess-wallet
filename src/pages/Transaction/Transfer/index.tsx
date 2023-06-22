@@ -115,8 +115,6 @@ const Transfer = () => {
     token?.tokenContract
       ? await sendTransactionToken(web3 as Web3, values, token.tokenContract, setTransactionHash, setInfoTransaction)
       : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction);
-    setActiveStep(2);
-    setCompleted({ 0: true, 1: true });
     reset();
   };
 
@@ -191,11 +189,6 @@ const Transfer = () => {
     setActiveStep(1);
     setCompleted({ 0: true });
   };
-  // //test
-  // useEffect(() => {
-  //   console.log(infoTransaction);
-  //   console.log(transactionHash);
-  // }, [infoTransaction])
   useEffect(() => {
     if (infoTransaction === "Error") {
       handleClose();
