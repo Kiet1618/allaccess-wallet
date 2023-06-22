@@ -34,7 +34,6 @@ const SignTransaction = () => {
   const [gasPrice, setGasPrice] = useState<string | 0>("0");
   const [gasLimit, setGasLimit] = useState<string | 0>("0");
   const [open, setOpen] = useState(false);
-
   const { transactionId } = useParams();
   const transactionParams: Params = transactionId ? JSON.parse(transactionId as string) : null;
   const { web3 } = useBlockchain();
@@ -64,8 +63,6 @@ const SignTransaction = () => {
     transactionParams?.contract
       ? await sendTransactionToken(web3 as Web3, values, transactionParams.contract, setTransactionHash, setInfoTransaction)
       : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction);
-    setActiveStep(2);
-    setCompleted({ 0: true, 1: true });
     setTimeout(() => {
       window.close();
     }, 5000);
@@ -92,11 +89,10 @@ const SignTransaction = () => {
     setCompleted({ 0: true });
   };
   const handleClose = () => {
-    setOpen(false), handleReset();
+    setOpen(false);
   };
   useEffect(() => {
     if (infoTransaction === "Error") {
-      handleReset();
       handleClose();
       setOpenAlert(true);
       setTimeout(() => {
