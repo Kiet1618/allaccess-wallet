@@ -5,23 +5,29 @@ import Grid from "@mui/material/Grid";
 import { useGoogleLogin } from "@react-oauth/google";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
+import Cookies from "universal-cookie";
 import { FirstSlider, SecondarySlider, ThirdSlider } from "@app/assets/img";
 import Button from "@app/components/Button";
 import { Google, LogoText } from "@app/assets/icon";
 import { UserGoogle } from "@app/types/oauth.type";
 import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
+import { useParams } from "react-router-dom";
 
 import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
 import { getGoogleToken } from "@app/wallet/metadata";
 
+type ChainId = {
+  chainId: string;
+};
 const Login = () => {
   const { token } = usePushNotifications();
   const { handleNotification } = useCustomSnackBar();
   const { getInfoWallet, fetchMasterKey, insertTokenFCM } = useFetchWallet();
-
+  const cookies = new Cookies();
   const navigate = useNavigate();
   // const [_, setMasterKey] = useSessionStorage<KeyPair>("master-key", { ethAddress: "", priKey: "" });
+  const { chainId } = useParams();
+  const ChainIdParams: ChainId = chainId ? JSON.parse(chainId as string) : null;
   var settings = {
     dots: true,
     infinite: true,
@@ -58,6 +64,7 @@ const Login = () => {
       }
       if (success) {
         insertTokenFCM(token, info!);
+        ChainIdParams ? cookies.set("chainId", ChainIdParams.chainId, { path: "/" }) : null;
         window.close();
         navigate("overview");
         return;

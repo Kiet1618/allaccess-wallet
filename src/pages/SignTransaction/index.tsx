@@ -116,13 +116,6 @@ const SignTransaction = () => {
     setActiveStep(step);
   };
 
-  const handleComplete = () => {
-    const newCompleted = completed;
-    newCompleted[activeStep] = true;
-    setCompleted(newCompleted);
-    handleNext();
-  };
-
   const handleReset = () => {
     setActiveStep(1);
     setCompleted({ 0: true });
