@@ -25,7 +25,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
 type Params = {
-  chainId: string;
   to: string;
   value: string;
   data?: string;
@@ -41,7 +40,7 @@ const SignTransaction = () => {
 
   const { transactionId } = useParams();
   const transactionParams: Params = transactionId ? JSON.parse(transactionId as string) : null;
-  const { web3 } = useBlockchain(listNetWorks.find(network => network.chainID == transactionParams.chainId)?.rpcUrls || "");
+  const { web3 } = useBlockchain();
   useEffect(() => {
     const updateGasLimit = async () => {
       const gasLimitValue = await getGasLimit(web3 as Web3, transactionParams.to, transactionParams.value, transactionParams?.contract);
@@ -141,11 +140,6 @@ const SignTransaction = () => {
     <>
       <BackgroundPage>
         <TitlePage style={{ margin: "10px 0" }}>Transaction Info</TitlePage>
-        {transactionParams && (
-          <div>
-            <strong>Chain ID:</strong> {transactionParams.chainId}
-          </div>
-        )}
         {transactionParams && (
           <div>
             <strong>To:</strong> {transactionParams.to}
