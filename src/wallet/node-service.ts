@@ -1,15 +1,17 @@
 import FetchNodeDetails from "@allaccessone/fetch-node-details";
 import TorusUtils from "@allaccessone/allaccessone.js";
 import { BN } from "bn.js";
+import { NODE_NETWORK, PROXY_ADDRESS } from "@app/configs";
 import { generatePublicKeyFromPrivateKey } from "./algorithm";
 
 import { KeyPair } from "./types";
 
 export const getNodeKey = async (verifier: string, verifierId: string, idToken: string): Promise<KeyPair> => {
-  const fetchNodes = new FetchNodeDetails({ network: "local", proxyAddress: "0xD44F7724b0a0800e41283E97BE5eC9E875f59811" });
+  const fetchNodes = new FetchNodeDetails({ network: NODE_NETWORK, proxyAddress: PROXY_ADDRESS });
   const nodesList = await fetchNodes.getNodeDetails();
   const torus = new TorusUtils({ network: "testnet" });
-  const { torusNodeEndpoints, torusIndexes } = nodesList;
+  const { torusNodeEndpoints, torusIndexes, torusNodePub } = nodesList;
+  await torus.getPublicAddress(torusNodeEndpoints, torusNodePub, { verifier, verifierId });
   const keyData = await torus.retrieveShares(torusNodeEndpoints, torusIndexes, verifier, { verifier_id: verifierId }, idToken, {});
   return {
     ethAddress: keyData.ethAddress,
