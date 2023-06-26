@@ -23,6 +23,7 @@ const RouterApp = () => {
       <LayoutApp>
         <Routes>
           <Route path='/' element={<Login />} />
+          <Route path='/:chainId' element={<Login />} />
           <Route path='/multiple-factors' element={<MultipleFactors />} />
           <Route
             path='/sign-transaction/:transactionId'

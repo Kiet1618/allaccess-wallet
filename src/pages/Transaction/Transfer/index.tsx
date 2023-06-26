@@ -115,8 +115,6 @@ const Transfer = () => {
     token?.tokenContract
       ? await sendTransactionToken(web3 as Web3, values, token.tokenContract, setTransactionHash, setInfoTransaction)
       : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction);
-    setActiveStep(2);
-    setCompleted({ 0: true, 1: true });
     reset();
   };
 
@@ -138,9 +136,7 @@ const Transfer = () => {
   const handleGetInfoToken = async () => {
     try {
       const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentNetwork.data);
-      //const currentToken = useTokens(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
-      //const addToken = await currentToken.importToken();
-      const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
+      const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string);
       const check = listTokenState.currentListTokens.data.filter(token => token.tokenContract === tokenAddress).length;
       if (!check) {
         setTokenImport(addToken);
@@ -193,11 +189,6 @@ const Transfer = () => {
     setActiveStep(1);
     setCompleted({ 0: true });
   };
-  // //test
-  // useEffect(() => {
-  //   console.log(infoTransaction);
-  //   console.log(transactionHash);
-  // }, [infoTransaction])
   useEffect(() => {
     if (infoTransaction === "Error") {
       handleClose();

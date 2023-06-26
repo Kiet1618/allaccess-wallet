@@ -2,13 +2,13 @@ import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { sendTransaction, sendTransactionToken, useBlockchain, getGasPrice, getGasLimit } from "../../blockchain";
 import { listNetWorks } from "../../configs/data";
+
 import { TitlePage } from "../../styles";
 import Web3 from "web3";
 import CustomButton from "../../components/Button";
 import { FormData } from "../Transaction/Transfer/type";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-
 import { style, TransferSuccessTitle, TransferSuccessSub, BackgroundPage, CopyAddressContainer, ContainerIconSuccess, ContainerTwoButtonModal } from "../Transaction/Transfer/transfer.css";
 import { sliceAddress, copyAddress } from "../../utils";
 import Stepper from "@mui/material/Stepper";
@@ -24,7 +24,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
 type Params = {
-  chainId: string;
   to: string;
   value: string;
   data?: string;
@@ -37,10 +36,9 @@ const SignTransaction = () => {
   const [gasPrice, setGasPrice] = useState<string | 0>("0");
   const [gasLimit, setGasLimit] = useState<string | 0>("0");
   const [open, setOpen] = useState(false);
-
   const { transactionId } = useParams();
   const transactionParams: Params = transactionId ? JSON.parse(transactionId as string) : null;
-  const { web3 } = useBlockchain(listNetWorks.find(network => network.chainID == transactionParams.chainId)?.rpcUrls || "");
+  const { web3 } = useBlockchain();
   useEffect(() => {
     const updateGasLimit = async () => {
       const gasLimitValue = await getGasLimit(web3 as Web3, transactionParams.to, transactionParams.value, transactionParams?.contract);
@@ -49,6 +47,7 @@ const SignTransaction = () => {
 
     updateGasLimit();
   }, []);
+
   useEffect(() => {
     const updateGasPrice = async () => {
       const gasPriceValue = await getGasPrice(web3 as Web3);
@@ -66,8 +65,6 @@ const SignTransaction = () => {
     transactionParams?.contract
       ? await sendTransactionToken(web3 as Web3, values, transactionParams.contract, setTransactionHash, setInfoTransaction)
       : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction);
-    setActiveStep(2);
-    setCompleted({ 0: true, 1: true });
     setTimeout(() => {
       window.close();
     }, 5000);
@@ -85,54 +82,18 @@ const SignTransaction = () => {
     [k: number]: boolean;
   }>({});
 
-  // const totalSteps = () => {
-  //   return steps.length;
-  // };
-
-  // const completedSteps = () => {
-  //   return Object.keys(completed).length;
-  // };
-
-  // const isLastStep = () => {
-  //   return activeStep === totalSteps() - 1;
-  // };
-
-  // const allStepsCompleted = () => {
-  //   return completedSteps() === totalSteps();
-  // };
-
-  // const handleNext = () => {
-  //   const newActiveStep =
-  //     isLastStep() && !allStepsCompleted()
-  //       ? // It's the last step, but not all steps have been completed,
-  //         // find the first step that has been completed
-  //         steps.findIndex((step, i) => !(i in completed))
-  //       : activeStep + 1;
-  //   setActiveStep(newActiveStep);
-  // };
 
   const handleStep = (step: number) => () => {
     setActiveStep(step);
   };
 
-  // const handleComplete = () => {
-  //   const newCompleted = completed;
-  //   newCompleted[activeStep] = true;
-  //   setCompleted(newCompleted);
-  //   handleNext();
-  // };
 
   const handleReset = () => {
     setActiveStep(1);
     setCompleted({ 0: true });
   };
-  // //test
-  // useEffect(() => {
-  //   console.log(infoTransaction);
-  //   console.log(transactionHash);
-  // }, [infoTransaction])
   const handleClose = () => {
-    setOpen(false), handleReset();
+    setOpen(false);
   };
   useEffect(() => {
     if (infoTransaction === "Error") {
@@ -147,11 +108,6 @@ const SignTransaction = () => {
     <>
       <BackgroundPage>
         <TitlePage style={{ margin: "10px 0" }}>Transaction Info</TitlePage>
-        {transactionParams && (
-          <div>
-            <strong>Chain ID:</strong> {transactionParams.chainId}
-          </div>
-        )}
         {transactionParams && (
           <div>
             <strong>To:</strong> {transactionParams.to}

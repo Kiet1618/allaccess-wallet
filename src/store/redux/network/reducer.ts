@@ -1,10 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
 import * as actions from "./actions";
 import { NetworkState } from "./types";
+import { listNetWorks } from "@app/configs/data";
+import Cookies from "universal-cookie";
+const cookies = new Cookies();
+
+const getCurrentNetworkInitiated = () => {
+  const chainId = cookies.get("chainId") || "";
+  if (chainId) {
+    return listNetWorks.find(network => network.chainID === chainId)?.rpcUrls as string;
+  } else {
+    return "https://goerli.blockpi.network/v1/rpc/public";
+  }
+};
 
 const initialState = {
   currentNetwork: {
-    data: "https://goerli.blockpi.network/v1/rpc/public",
+    data: getCurrentNetworkInitiated(),
     loading: false,
     error: {},
   },
@@ -20,6 +32,8 @@ export const listNetwork = createSlice({
     });
     builder.addCase(actions.setNetworkState.fulfilled, (state, action) => {
       state.currentNetwork.data = action.payload;
+
+      cookies.set("chainId", listNetWorks.find(network => network.rpcUrls === action.payload)?.chainID, { path: "/" });
       state.currentNetwork.loading = false;
     });
     builder.addCase(actions.setNetworkState.rejected, state => {
