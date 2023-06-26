@@ -12,7 +12,8 @@ import { Google, LogoText } from "@app/assets/icon";
 import { UserGoogle } from "@app/types/oauth.type";
 import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
 import { useParams } from "react-router-dom";
-
+import { useAppDispatch, useAppSelector } from "@app/store";
+import { setProfile } from "@app/store/redux/profile/actions";
 import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
 import { getGoogleToken } from "@app/wallet/metadata";
 
@@ -20,6 +21,8 @@ type ChainId = {
   chainId: string;
 };
 const Login = () => {
+  const dispatch = useAppDispatch();
+
   const { token } = usePushNotifications();
   const { handleNotification } = useCustomSnackBar();
   const { getInfoWallet, fetchMasterKey, insertTokenFCM } = useFetchWallet();
@@ -47,6 +50,15 @@ const Login = () => {
         return;
       }
       const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: tokens?.id_token } });
+
+      dispatch(
+        setProfile({
+          userName: profile.email,
+          email: profile.email,
+          avatar: profile.picture,
+        })
+      );
+
       const { error: error1, info, networkKey } = await getInfoWallet("google", profile.email, tokens?.id_token || "");
       if (error1) {
         handleNotification(error1, "error");

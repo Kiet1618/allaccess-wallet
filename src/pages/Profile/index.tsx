@@ -3,6 +3,7 @@ import { Page } from "../../styles";
 import { TabPanel, a11yProps } from "../../utils";
 import { OverviewHeaderTopCoin } from "../Overview/overview.css";
 import { TabsCustom, TabTransfer } from "../Transaction/transaction.css";
+
 import MFA from "./MFA";
 import Info from "./Info";
 const Profile = () => {
