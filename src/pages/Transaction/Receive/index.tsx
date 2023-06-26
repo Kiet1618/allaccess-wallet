@@ -21,7 +21,11 @@ const Receive = () => {
         <BackgroundPage>
           <ContainerFlexSpace>
             <ReceiveTagHeader>Address</ReceiveTagHeader>
-            <CopyAddressContainer>
+            <CopyAddressContainer
+              onClick={() => {
+                navigator.clipboard.writeText(myAddress);
+              }}
+            >
               <Copy /> Copy
             </CopyAddressContainer>
           </ContainerFlexSpace>
