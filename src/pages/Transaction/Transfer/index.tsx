@@ -53,6 +53,7 @@ const Transfer = () => {
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
   const [status, setStatus] = useState(false);
+  const [statusTransactionHash, setStatusTransactionHash] = useState(false);
   const { web3, account: myAddress } = useBlockchain();
   const [openAlert, setOpenAlert] = useState(false);
   const [open, setOpen] = useState(false);
@@ -358,8 +359,9 @@ const Transfer = () => {
               </HeaderModalInfoTransaction>
               <TransferSuccessTitle style={{ marginBottom: "40px" }}>Transfer pending</TransferSuccessTitle>
               {transactionHash ? (
-                <CopyAddressContainer onClick={() => copyAddress(transactionHash, setStatus)}>
-                  {"Transaction hash: " + sliceAddress(transactionHash)} <Copy />
+                <CopyAddressContainer onClick={() => copyAddress(transactionHash, setStatusTransactionHash)}>
+                  {"Transaction hash: " + sliceAddress(transactionHash)}
+                  {statusTransactionHash ? <DoneIcon /> : <Copy />}
                 </CopyAddressContainer>
               ) : null}
             </>

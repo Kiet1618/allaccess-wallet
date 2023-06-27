@@ -155,7 +155,7 @@ const MFA = () => {
         </Grid>
         <Grid item xs={100} sm={100} md={100} lg={50} xl={45}>
           <ListDevicesContainer>
-            <BackgroundPage>
+            <BackgroundPage style={{ maxHeight: "500px", overflow: "auto" }}>
               <TextHeaderCard>List devices</TextHeaderCard>
               {deviceShares.map(device => (
                 <ContainerDevice key={device.publicKey}>
