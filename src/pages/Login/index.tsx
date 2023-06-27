@@ -16,13 +16,20 @@ import { useAppDispatch, useAppSelector } from "@app/store";
 import { setProfile } from "@app/store/redux/profile/actions";
 import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
 import { getGoogleToken } from "@app/wallet/metadata";
-
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 type ChainId = {
   chainId: string;
 };
 const Login = () => {
   const dispatch = useAppDispatch();
-
+  const [open, setOpen] = React.useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleOpen = () => {
+    setOpen(true);
+  };
   const { token } = usePushNotifications();
   const { handleNotification } = useCustomSnackBar();
   const { getInfoWallet, fetchMasterKey, insertTokenFCM } = useFetchWallet();
@@ -44,6 +51,8 @@ const Login = () => {
 
   const login = useGoogleLogin({
     onSuccess: async tokenResponse => {
+      handleOpen();
+
       const { data: tokens, error } = await getGoogleToken({ code: tokenResponse.code });
       if (error) {
         handleNotification(error, "error");
@@ -58,7 +67,6 @@ const Login = () => {
           avatar: profile.picture,
         })
       );
-
       const { error: error1, info, networkKey } = await getInfoWallet("google", profile.email, tokens?.id_token || "");
       if (error1) {
         handleNotification(error1, "error");
@@ -78,6 +86,7 @@ const Login = () => {
         insertTokenFCM(token, info!);
         ChainIdParams ? cookies.set("chainId", ChainIdParams.chainId, { path: "/" }) : null;
         ChainIdParams ? window.close() : null;
+        handleClose();
         navigate("overview");
         return;
       }
@@ -128,6 +137,9 @@ const Login = () => {
           </CustomSlider>
         </BackgroundImg>
       </CustomGrid>
+      <Backdrop sx={{ color: "#fff", zIndex: theme => theme.zIndex.drawer + 1 }} open={open}>
+        <CircularProgress color='inherit' />
+      </Backdrop>
     </Grid>
   );
 };
