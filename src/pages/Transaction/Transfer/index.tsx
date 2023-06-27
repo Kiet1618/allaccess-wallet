@@ -283,23 +283,12 @@ const Transfer = () => {
                 />
               </ContainerTextField>
               <ContainerFlexSpace>
-                <div>Gas price</div>
+                <div>Total gas</div>
                 <div>
-                  {gasPrice} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentNetwork.data)?.symbol}
-                </div>
-              </ContainerFlexSpace>
-              <ContainerFlexSpace>
-                <div>Gas limit</div>
-                <div>
-                  {gasLimit} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentNetwork.data)?.symbol}
-                </div>
-              </ContainerFlexSpace>
-              <ContainerFlexSpace>
-                <TextHeaderOverview>Total cost</TextHeaderOverview>
-                <TextHeaderOverview>
                   {(Number(gasLimit) + Number(gasPrice)).toFixed(15)} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentNetwork.data)?.symbol}
-                </TextHeaderOverview>
+                </div>
               </ContainerFlexSpace>
+
               <ContainerRight>
                 <CustomButton variant='contained' loadingPosition='end' type='submit' text='Transfer' styleButton='primary' width='150px' height='50px'></CustomButton>
               </ContainerRight>
