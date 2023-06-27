@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { sendTransaction, sendTransactionToken, useBlockchain, getGasPrice, getGasLimit } from "../../blockchain";
 import { listNetWorks } from "../../configs/data";
+import DoneIcon from "@mui/icons-material/Done";
 
 import { TitlePage } from "../../styles";
 import Web3 from "web3";
@@ -32,9 +33,10 @@ type Params = {
   typeGas?: string;
 };
 const SignTransaction = () => {
-  // const myAddress = getTorusKey().ethAddress;
   const [gasPrice, setGasPrice] = useState<string | 0>("0");
   const [gasLimit, setGasLimit] = useState<string | 0>("0");
+  const [transactionError, setTransactionError] = useState("Transaction Error");
+
   const [open, setOpen] = useState(false);
   const { transactionId } = useParams();
   const transactionParams: Params = transactionId ? JSON.parse(transactionId as string) : null;
@@ -44,7 +46,6 @@ const SignTransaction = () => {
       const gasLimitValue = await getGasLimit(web3 as Web3, transactionParams.to, transactionParams.value, transactionParams?.contract);
       setGasLimit(gasLimitValue);
     };
-
     updateGasLimit();
   }, []);
 
@@ -63,8 +64,8 @@ const SignTransaction = () => {
       amount: transactionParams.value,
     };
     transactionParams?.contract
-      ? await sendTransactionToken(web3 as Web3, values, transactionParams.contract, setTransactionHash, setInfoTransaction)
-      : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction);
+      ? await sendTransactionToken(web3 as Web3, values, transactionParams.contract, setTransactionHash, setInfoTransaction, setTransactionError)
+      : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction, setTransactionError);
     setTimeout(() => {
       window.close();
     }, 5000);
@@ -82,11 +83,10 @@ const SignTransaction = () => {
     [k: number]: boolean;
   }>({});
 
-
+  const [status, setStatus] = React.useState(false);
   const handleStep = (step: number) => () => {
     setActiveStep(step);
   };
-
 
   const handleReset = () => {
     setActiveStep(1);
@@ -181,8 +181,9 @@ const SignTransaction = () => {
               </HeaderModalInfoTransaction>
               <TransferSuccessTitle style={{ marginBottom: "40px" }}>Transfer pending</TransferSuccessTitle>
               {transactionHash ? (
-                <CopyAddressContainer onClick={() => copyAddress(transactionHash)}>
-                  {"Transaction hash: " + sliceAddress(transactionHash)} <Copy />
+                <CopyAddressContainer onClick={() => copyAddress(transactionHash, setStatus)}>
+                  {"Transaction hash: " + sliceAddress(transactionHash)}
+                  {status ? <DoneIcon /> : <Copy />}
                 </CopyAddressContainer>
               ) : null}
             </>
@@ -191,7 +192,7 @@ const SignTransaction = () => {
       </ModalCustom>
       <Snackbar anchorOrigin={{ vertical: "top", horizontal: "right" }} open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
         <Alert onClose={handleCloseAlert} severity='error' sx={{ width: "100%", borderRadius: "8px" }}>
-          Transaction failure!
+          {transactionError}
         </Alert>
       </Snackbar>
     </>

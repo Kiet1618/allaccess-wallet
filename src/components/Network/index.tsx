@@ -2,6 +2,7 @@ import React, { useState, useLayoutEffect, useEffect } from "react";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import DoneIcon from "@mui/icons-material/Done";
 
 import { Dropdown } from "@app/assets/icon";
 import { listNetWorks } from "@app/configs/data";
@@ -26,6 +27,7 @@ export const NetworkContainer = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const listTokenState = useAppSelector(state => state.token);
+  const [status, setStatus] = useState(false);
   const historyState = useAppSelector(state => state.history);
   const fetchData = async (e: string = "") => {
     try {
@@ -66,7 +68,7 @@ export const NetworkContainer = () => {
 
   return (
     <Container>
-      <ButtonCustom onClick={() => copyAddress(myAddress)} width='40%' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text={sliceAddress(myAddress)} />
+      <ButtonCustom onClick={() => copyAddress(myAddress, setStatus)} width='40%' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text={sliceAddress(myAddress)} />
       <FormControlCustom>
         <SelectCustom IconComponent={() => <Dropdown style={{ marginRight: "10px" }} />} value={network} onChange={handleChange}>
           {listNetWorks.map(network => (

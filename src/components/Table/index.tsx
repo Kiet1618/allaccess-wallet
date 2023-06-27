@@ -17,6 +17,8 @@ import { setHistoriesAddress } from "../../store/redux/history/actions";
 import { EmptyContainer } from "../../pages/Overview/overview.css";
 import { CopyAddressContainer } from "../../pages/Transaction/transaction.css";
 import { TitleModal, ContainerInfoTransactions, HeaderModalInfoTransaction, style, HeaderModalGroupLeft, ModalCustom, CustomMethod, TableCellCustomInOut, TableCellCustom } from "./table.css";
+import { setNetworkState } from "@app/store/redux/network/actions";
+import DoneIcon from "@mui/icons-material/Done";
 
 const sliceAddressIdTableCell = (str: string) => {
   if (str.length > 35) {
@@ -26,12 +28,15 @@ const sliceAddressIdTableCell = (str: string) => {
 };
 const TableWithPagination: React.FC = () => {
   const rowsPerPage = 5;
-  const myAddress = "0x04e407c7d7c2a6aa7f2e66b0b8c0dbcafa5e3afe";
   const listTokenState = useAppSelector(state => state.token);
   const networkState = useAppSelector(state => state.network);
   const historyState = useAppSelector(state => state.history);
   const dispatch = useAppDispatch();
-  const { web3 } = useBlockchain();
+  const { web3, account: myAddress } = useBlockchain();
+  const [statusFrom, setStatusFrom] = useState(false);
+  const [statusTo, setStatusTo] = useState(false);
+  const [statusTransactionHash, setStatusTransactionHash] = useState(false);
+
   const [page, setPage] = useState(1);
   const [isDesktop, setIsDesktop] = useState(true);
   const [open, setOpen] = React.useState(false);
@@ -79,7 +84,7 @@ const TableWithPagination: React.FC = () => {
     };
   }, []);
   useEffect(() => {
-    if (!historyState.getHistoriesAddress.data.length) fetchData();
+    fetchData();
   }, [networkState.currentNetwork.data]);
   const fetchData = async () => {
     const currentNetwork = listNetWorks.find(networkTemp => networkTemp.rpcUrls === networkState.currentNetwork.data);
@@ -119,22 +124,22 @@ const TableWithPagination: React.FC = () => {
                     {formatValue(web3 as Web3, row.value as string)} {row.tokenSymbol ? row.tokenSymbol : "ETH"}
                   </TableCellCustom>
                   <TableCellCustom>
-                    <CopyAddressContainer onClick={() => copyAddress(row.from)}>
-                      {sliceAddress(row.from ? row.from : "")} <Copy />
+                    <CopyAddressContainer onClick={() => copyAddress(row.from, setStatusFrom)}>
+                      {sliceAddress(row.from ? row.from : "")} {statusFrom ? <DoneIcon /> : <Copy />}
                     </CopyAddressContainer>
                   </TableCellCustom>
                   <TableCellCustom>
                     <TableCellCustomInOut text={row.from === myAddress ? "Out" : "In"}>{row.from === myAddress ? "Out" : "In"}</TableCellCustomInOut>
                   </TableCellCustom>
                   <TableCellCustom>
-                    <CopyAddressContainer onClick={() => copyAddress(row.to)}>
-                      {sliceAddress(row.to ? row.to : "")} <Copy />
+                    <CopyAddressContainer onClick={() => copyAddress(row.to, setStatusTo)}>
+                      {sliceAddress(row.to ? row.to : "")} {statusTo ? <DoneIcon /> : <Copy />}
                     </CopyAddressContainer>
                   </TableCellCustom>
                   <TableCellCustom>Ethereum Network</TableCellCustom>
                   <TableCell>
-                    <CopyAddressContainer onClick={() => copyAddress(row.blockHash)}>
-                      {isDesktop ? sliceAddress(row.blockHash ? row.blockHash : "") : sliceAddressIdTableCell(row.blockHash ? row.blockHash : "")} <Copy />
+                    <CopyAddressContainer onClick={() => copyAddress(row.blockHash, setStatusTransactionHash)}>
+                      {isDesktop ? sliceAddress(row.blockHash ? row.blockHash : "") : sliceAddressIdTableCell(row.blockHash ? row.blockHash : "")} {statusTransactionHash ? <DoneIcon /> : <Copy />}
                     </CopyAddressContainer>
                   </TableCell>
                   <TableCell>
@@ -204,8 +209,9 @@ const TableWithPagination: React.FC = () => {
             </HeaderModalInfoTransaction>
             <HeaderModalInfoTransaction>
               <div>TxID</div>
-              <CopyAddressContainer onClick={() => copyAddress(row.id)}>
-                {isDesktop ? row.id : sliceAddress(row.id)} <Copy />
+              <CopyAddressContainer onClick={() => copyAddress(row.id, setStatusFrom)}>
+                {isDesktop ? row.id : sliceAddress(row.id)}
+                {statusFrom ? <DoneIcon /> : <Copy />}
               </CopyAddressContainer>
             </HeaderModalInfoTransaction>
             <HeaderModalInfoTransaction>
@@ -218,14 +224,14 @@ const TableWithPagination: React.FC = () => {
             </HeaderModalInfoTransaction>
             <HeaderModalInfoTransaction>
               <div>From</div>
-              <CopyAddressContainer onClick={() => copyAddress(row.from)}>
-                {isDesktop ? row.from : sliceAddress(row.from)} <Copy />
+              <CopyAddressContainer onClick={() => copyAddress(row.from, setStatusTo)}>
+                {isDesktop ? row.from : sliceAddress(row.from)} {statusTo ? <DoneIcon /> : <Copy />}
               </CopyAddressContainer>
             </HeaderModalInfoTransaction>
             <HeaderModalInfoTransaction>
               <div>To</div>
-              <CopyAddressContainer onClick={() => copyAddress(row.to)}>
-                {isDesktop ? row.to : sliceAddress(row.to)} <Copy />
+              <CopyAddressContainer onClick={() => copyAddress(row.to, setStatusTransactionHash)}>
+                {isDesktop ? row.to : sliceAddress(row.to)} {statusTransactionHash ? <DoneIcon /> : <Copy />}
               </CopyAddressContainer>
             </HeaderModalInfoTransaction>
             <HeaderModalInfoTransaction>

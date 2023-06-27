@@ -50,10 +50,10 @@ const Login = () => {
         return;
       }
       const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: tokens?.id_token } });
-
+      console.log(profile);
       dispatch(
         setProfile({
-          userName: profile.email,
+          userName: profile.name,
           email: profile.email,
           avatar: profile.picture,
         })

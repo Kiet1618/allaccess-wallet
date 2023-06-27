@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
@@ -36,10 +36,15 @@ import {
   style,
   styleMobile,
 } from "./history.css";
+import { useAppDispatch, useAppSelector } from "@app/store";
+import { setNetworkState } from "@app/store/redux/network/actions";
+
 const History = () => {
+  const networkState = useAppSelector(state => state.network);
+  const dispatch = useAppDispatch();
   const [time, setTime] = useState("30");
   const [method, setMethod] = useState("All");
-  const [network, setNetwork] = useState("0");
+  const [network, setNetwork] = useState(networkState.currentNetwork.data);
   const [status, setStatus] = useState("All");
   const [searchId, setSearchId] = useState("");
   const [customTimeFrom, setCustomTimeFrom] = useState<Dayjs | null>(dayjs("2022-04-17"));
@@ -47,7 +52,6 @@ const History = () => {
   const [open, setOpen] = React.useState(false);
   const [openFilter, setOpenFilter] = React.useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
-
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleOpenFilter = () => setOpenFilter(true);
@@ -67,6 +71,10 @@ const History = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    dispatch(setNetworkState(network));
+  }, [network]);
   return (
     <Page>
       <TilePageContainer>
@@ -107,9 +115,8 @@ const History = () => {
           <ContainerTextFieldNetwork>
             <label style={{ marginBottom: "5px" }}>Network</label>
             <CustomInput value={network} styleTextField='default' select id='network' size='small' onChange={e => setNetwork(e.target.value)}>
-              <MenuItem value={"0"}>All mainnet</MenuItem>
               {listNetWorks.map(network => (
-                <MenuItem key={network.chainID} value={network.chainID}>
+                <MenuItem key={network.rpcUrls} value={network.rpcUrls}>
                   {network.description}
                 </MenuItem>
               ))}
@@ -244,9 +251,8 @@ const History = () => {
           </CustomInput>
           <label style={{ marginBottom: "5px", marginTop: "5px" }}>Network</label>
           <CustomInput value={network} styleTextField='default' select id='network' size='small' onChange={e => setNetwork(e.target.value)}>
-            <MenuItem value={"0"}>All mainnet</MenuItem>
             {listNetWorks.map(network => (
-              <MenuItem key={network.chainID} value={network.chainID}>
+              <MenuItem key={network.rpcUrls} value={network.rpcUrls}>
                 {network.description}
               </MenuItem>
             ))}

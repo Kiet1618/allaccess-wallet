@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Grid } from "@mui/material";
 import { TitlePage } from "../../../styles";
 import CustomInput from "../../../components/TextField";
@@ -7,9 +7,11 @@ import QRCode from "react-qr-code";
 import { TitlePageContainer, SubTitlePage, ReceiveTagHeader, BackgroundPage, ContainerFlexSpace, CopyAddressContainer, AddressContainer, ContainerQRCode, BackgroundPageQR } from "./receive.css";
 import { useBlockchain } from "@app/blockchain";
 import { copyAddress } from "@app/utils";
+import DoneIcon from "@mui/icons-material/Done";
 
 const Receive = () => {
   const { account: myAddress } = useBlockchain();
+  const [status, setStatus] = useState(false);
   return (
     <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid item xs={100}>
@@ -24,10 +26,11 @@ const Receive = () => {
             <ReceiveTagHeader>Address</ReceiveTagHeader>
             <CopyAddressContainer
               onClick={() => {
-                copyAddress(myAddress);
+                copyAddress(myAddress, setStatus);
               }}
             >
-              <Copy /> Copy
+              {status ? <DoneIcon /> : <Copy />}
+              Copy
             </CopyAddressContainer>
           </ContainerFlexSpace>
           <AddressContainer>

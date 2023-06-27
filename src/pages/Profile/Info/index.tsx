@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Grid } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import { TextField as CustomInput, Button as CustomButton } from "@app/components";
@@ -10,11 +10,12 @@ import { BackgroundPage, TitlePageContainer } from "../profile.css";
 import { SubTitlePage, CopyAddressContainer, ContainerTextField } from "../../Transaction/transaction.css";
 import { ContainerAvatar, ContainerInfo } from "./info.css";
 import { useAppSelector } from "@app/store";
-
+import DoneIcon from "@mui/icons-material/Done";
 const Info = () => {
   const { account: myAddress } = useBlockchain();
   const profileState = useAppSelector(state => state.profile);
   console.log(profileState.profileInfo.data);
+  const [status, setStatus] = useState(false);
   return (
     <>
       <TitlePageContainer>
@@ -28,8 +29,9 @@ const Info = () => {
               <Grid item xs={100} md={30}>
                 <ContainerAvatar>
                   <Avatar alt='Remy Sharp' src={profileState.profileInfo.data.avatar} sx={{ width: 200, height: 200 }} />
-                  <CopyAddressContainer style={{ margin: "20px 0" }} onClick={() => copyAddress(myAddress)}>
-                    {sliceAddress(myAddress)} <Copy />
+                  <CopyAddressContainer style={{ margin: "20px 0" }} onClick={() => copyAddress(myAddress, setStatus)}>
+                    {sliceAddress(myAddress)}
+                    {status ? <DoneIcon /> : <Copy />}
                   </CopyAddressContainer>
                 </ContainerAvatar>
               </Grid>
