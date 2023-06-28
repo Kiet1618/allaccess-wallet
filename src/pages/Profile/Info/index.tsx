@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Grid } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import { TextField as CustomInput, Button as CustomButton } from "@app/components";
@@ -9,8 +9,13 @@ import { useBlockchain } from "@app/blockchain";
 import { BackgroundPage, TitlePageContainer } from "../profile.css";
 import { SubTitlePage, CopyAddressContainer, ContainerTextField } from "../../Transaction/transaction.css";
 import { ContainerAvatar, ContainerInfo } from "./info.css";
+import { useAppSelector } from "@app/store";
+import DoneIcon from "@mui/icons-material/Done";
 const Info = () => {
   const { account: myAddress } = useBlockchain();
+  const profileState = useAppSelector(state => state.profile);
+  console.log(profileState.profileInfo.data);
+  const [status, setStatus] = useState(false);
   return (
     <>
       <TitlePageContainer>
@@ -23,10 +28,10 @@ const Info = () => {
             <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
               <Grid item xs={100} md={30}>
                 <ContainerAvatar>
-                  <Avatar alt='Remy Sharp' src='https://images.ctfassets.net/fu9did2d8yaw/2rUzSj8VDtr9YBmrU61c2G/a84a48f14f027886374cc618df4ae176/BAYC.png' sx={{ width: 200, height: 200 }} />
-                  <CustomButton mTop='20px' mBottom='20px' text='Change avatar' styleButton='primary'></CustomButton>
-                  <CopyAddressContainer onClick={() => copyAddress(myAddress)}>
-                    {sliceAddress(myAddress)} <Copy />
+                  <Avatar alt='Remy Sharp' src={profileState.profileInfo.data.avatar} sx={{ width: 200, height: 200 }} />
+                  <CopyAddressContainer style={{ margin: "20px 0" }} onClick={() => copyAddress(myAddress, setStatus)}>
+                    {sliceAddress(myAddress)}
+                    {status ? <DoneIcon /> : <Copy />}
                   </CopyAddressContainer>
                 </ContainerAvatar>
               </Grid>
@@ -34,11 +39,11 @@ const Info = () => {
                 <ContainerInfo>
                   <ContainerTextField>
                     <label>User name</label>
-                    <CustomInput size='small' fullWidth value={"Kiet Tran"} styleTextField='default' disabled></CustomInput>
+                    <CustomInput size='small' fullWidth value={profileState.profileInfo.data.userName} styleTextField='default' disabled></CustomInput>
                   </ContainerTextField>
                   <ContainerTextField>
                     <label>Gmail</label>
-                    <CustomInput size='small' fullWidth value={"kiettran@lecle.co.kr"} styleTextField='default' disabled></CustomInput>
+                    <CustomInput size='small' fullWidth value={profileState.profileInfo.data.email} styleTextField='default' disabled></CustomInput>
                   </ContainerTextField>
                   {/* <CustomButton width="40%" mLeft="60%" mTop="20px" mBottom="20px" text="Update" styleButton="primary" ></CustomButton> */}
                 </ContainerInfo>

@@ -48,4 +48,16 @@ export const listTokens: Token[] = [
     symbol: "BNB",
     name: "BNB",
   },
+  {
+    rpcUrls: "https://geth-kotti.etc-network.info",
+    img: ETHLogo,
+    symbol: "KOT",
+    name: "KOT",
+  },
+  {
+    rpcUrls: "https://bsc-testnet.publicnode.com",
+    img: BNBLogo,
+    symbol: "BNB",
+    name: "BNB",
+  },
 ];

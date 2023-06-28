@@ -35,6 +35,33 @@ export const listNetWorks: ChainNetwork[] = [
     title: "BNB",
     description: "Binance Smart Chain Mainnet",
   },
+  {
+    chainID: "97",
+    apiScanNormalTransactionsByAddress: "https://api.bscscan.com/api?module=account&action=txlist&address={address}&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW",
+    apiScanTokenTransactionsByAddress: `
+    https://api.bscscan.com/api
+   ?module=account
+   &action=tokentx
+   &contractaddress={contract}
+   &address={address}
+   &page=1
+   &offset=5
+   &startblock=0
+   &endblock=999999999
+   &sort=asc
+   &apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW`,
+    rpcUrls: "https://bsc-testnet.publicnode.com",
+    title: "BNB",
+    description: "Binance Smart Chain Testnet",
+  },
+  {
+    chainID: "9",
+    apiScanNormalTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=txlist&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
+    apiScanTokenTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=tokentx&contractaddress={contract}&address={address}&startblock=0&endblock=99999999&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
+    rpcUrls: "https://geth-kotti.etc-network.info",
+    title: "KOT",
+    description: "Ethereum Classic Testnet Kotti",
+  },
 ];
 
 // export const myToken: Token[] = [

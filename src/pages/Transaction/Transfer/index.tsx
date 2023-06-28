@@ -43,6 +43,7 @@ import {
   ContainerTwoButtonModal,
 } from "./transfer.css";
 const steps = ["Start", "Pending", "Success"];
+import DoneIcon from "@mui/icons-material/Done";
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
@@ -51,6 +52,8 @@ const Transfer = () => {
   const networkState = useAppSelector(state => state.network);
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
+  const [status, setStatus] = useState(false);
+  const [statusTransactionHash, setStatusTransactionHash] = useState(false);
   const { web3, account: myAddress } = useBlockchain();
   const [openAlert, setOpenAlert] = useState(false);
   const [open, setOpen] = useState(false);
@@ -64,8 +67,9 @@ const Transfer = () => {
   const [gasPrice, setGasPrice] = useState<string | 0>("0");
   const [gasLimit, setGasLimit] = useState<string | 0>("0");
   const [reRenderGas, setRenderGasLimit] = useState<string>("0");
+  const [transactionError, setTransactionError] = useState("");
   const handleClose = () => {
-    setOpen(false), handleReset();
+    setOpen(false);
   };
   const handleCloseSelect = () => {
     setOpenSelect(false);
@@ -113,10 +117,8 @@ const Transfer = () => {
     handleReset();
     setOpen(true);
     token?.tokenContract
-      ? await sendTransactionToken(web3 as Web3, values, token.tokenContract, setTransactionHash, setInfoTransaction)
-      : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction);
-    setActiveStep(2);
-    setCompleted({ 0: true, 1: true });
+      ? await sendTransactionToken(web3 as Web3, values, token.tokenContract, setTransactionHash, setInfoTransaction, setTransactionError)
+      : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction, setTransactionError);
     reset();
   };
 
@@ -138,9 +140,7 @@ const Transfer = () => {
   const handleGetInfoToken = async () => {
     try {
       const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentNetwork.data);
-      //const currentToken = useTokens(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
-      //const addToken = await currentToken.importToken();
-      const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string, currentNetwork?.chainID as string);
+      const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string);
       const check = listTokenState.currentListTokens.data.filter(token => token.tokenContract === tokenAddress).length;
       if (!check) {
         setTokenImport(addToken);
@@ -193,11 +193,6 @@ const Transfer = () => {
     setActiveStep(1);
     setCompleted({ 0: true });
   };
-  // //test
-  // useEffect(() => {
-  //   console.log(infoTransaction);
-  //   console.log(transactionHash);
-  // }, [infoTransaction])
   useEffect(() => {
     if (infoTransaction === "Error") {
       handleClose();
@@ -288,23 +283,12 @@ const Transfer = () => {
                 />
               </ContainerTextField>
               <ContainerFlexSpace>
-                <div>Gas price</div>
+                <div>Total gas</div>
                 <div>
-                  {gasPrice} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentNetwork.data)?.symbol}
-                </div>
-              </ContainerFlexSpace>
-              <ContainerFlexSpace>
-                <div>Gas limit</div>
-                <div>
-                  {gasLimit} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentNetwork.data)?.symbol}
-                </div>
-              </ContainerFlexSpace>
-              <ContainerFlexSpace>
-                <TextHeaderOverview>Total cost</TextHeaderOverview>
-                <TextHeaderOverview>
                   {(Number(gasLimit) + Number(gasPrice)).toFixed(15)} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentNetwork.data)?.symbol}
-                </TextHeaderOverview>
+                </div>
               </ContainerFlexSpace>
+
               <ContainerRight>
                 <CustomButton variant='contained' loadingPosition='end' type='submit' text='Transfer' styleButton='primary' width='150px' height='50px'></CustomButton>
               </ContainerRight>
@@ -316,8 +300,9 @@ const Transfer = () => {
         <ContainerBalanceCard>
           <BackgroundPage>
             <ReceiveTagHeader>Account balance</ReceiveTagHeader>
-            <CopyAddressContainer onClick={() => copyAddress(myAddress)}>
-              {sliceAddress(myAddress)} <Copy />
+            <CopyAddressContainer onClick={() => copyAddress(myAddress, setStatus)}>
+              {sliceAddress(myAddress)}
+              {status ? <DoneIcon /> : <Copy />}
             </CopyAddressContainer>
             <BalanceNumberCard>
               {balance} {token?.symbol}
@@ -363,8 +348,9 @@ const Transfer = () => {
               </HeaderModalInfoTransaction>
               <TransferSuccessTitle style={{ marginBottom: "40px" }}>Transfer pending</TransferSuccessTitle>
               {transactionHash ? (
-                <CopyAddressContainer onClick={() => copyAddress(transactionHash)}>
-                  {"Transaction hash: " + sliceAddress(transactionHash)} <Copy />
+                <CopyAddressContainer onClick={() => copyAddress(transactionHash, setStatusTransactionHash)}>
+                  {"Transaction hash: " + sliceAddress(transactionHash)}
+                  {statusTransactionHash ? <DoneIcon /> : <Copy />}
                 </CopyAddressContainer>
               ) : null}
             </>
@@ -373,7 +359,7 @@ const Transfer = () => {
       </ModalCustom>
       <Snackbar anchorOrigin={{ vertical: "top", horizontal: "right" }} open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
         <Alert onClose={handleCloseAlert} severity='error' sx={{ width: "100%", borderRadius: "8px" }}>
-          Transaction failure!
+          {transactionError}
         </Alert>
       </Snackbar>
       <ModalCustom open={openSelect} onClose={handleCloseSelect} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
