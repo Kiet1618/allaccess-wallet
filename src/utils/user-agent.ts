@@ -9,7 +9,7 @@ export type DeviceInfo = {
 };
 export const getIpv4 = async (): Promise<string> => {
   try {
-    const { data } = await axios.get<string>("https://api.ipify.org");
+    const { data } = await axios.get<string>("https://api.ipify.org", { timeout: 4000 });
     return data;
   } catch (error) {
     return "Unknown";
