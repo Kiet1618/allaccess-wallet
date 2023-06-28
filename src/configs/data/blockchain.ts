@@ -2,6 +2,7 @@ import { ChainNetwork } from "../../types/blockchain.type";
 export const listNetWorks: ChainNetwork[] = [
   {
     chainID: "1",
+    core: "evm",
     apiScanNormalTransactionsByAddress: `https://api.etherscan.io/api?module=account&action=txlist&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
     apiScanTokenTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=tokentx&contractaddress={contract}&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
     rpcUrls: "https://eth.llamarpc.com",
@@ -10,6 +11,7 @@ export const listNetWorks: ChainNetwork[] = [
   },
   {
     chainID: "5",
+    core: "evm",
     apiScanNormalTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=txlist&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
     apiScanTokenTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=tokentx&contractaddress={contract}&address={address}&startblock=0&endblock=99999999&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
     rpcUrls: "https://goerli.blockpi.network/v1/rpc/public",
@@ -18,6 +20,7 @@ export const listNetWorks: ChainNetwork[] = [
   },
   {
     chainID: "56",
+    core: "evm",
     apiScanNormalTransactionsByAddress: "https://api.bscscan.com/api?module=account&action=txlist&address={address}&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW",
     apiScanTokenTransactionsByAddress: `
     https://api.bscscan.com/api
@@ -37,6 +40,7 @@ export const listNetWorks: ChainNetwork[] = [
   },
   {
     chainID: "97",
+    core: "evm",
     apiScanNormalTransactionsByAddress: "https://api.bscscan.com/api?module=account&action=txlist&address={address}&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW",
     apiScanTokenTransactionsByAddress: `
     https://api.bscscan.com/api
@@ -56,11 +60,21 @@ export const listNetWorks: ChainNetwork[] = [
   },
   {
     chainID: "9",
+    core: "evm",
     apiScanNormalTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=txlist&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
     apiScanTokenTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=tokentx&contractaddress={contract}&address={address}&startblock=0&endblock=99999999&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
     rpcUrls: "https://geth-kotti.etc-network.info",
     title: "KOT",
     description: "Ethereum Classic Testnet Kotti",
+  },
+  {
+    chainID: "flow-testnet",
+    core: "fvm",
+    apiScanNormalTransactionsByAddress: ``,
+    apiScanTokenTransactionsByAddress: ``,
+    rpcUrls: "https://access-testnet.onflow.org",
+    title: "Flow",
+    description: "Flow blockchain Testnet",
   },
 ];
 

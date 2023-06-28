@@ -1,5 +1,7 @@
+type ChainCore = "evm" | "fvm";
 export type ChainNetwork = {
   chainID: string;
+  core: ChainCore;
   apiScanNormalTransactionsByAddress: string;
   apiScanTokenTransactionsByAddress: string;
   rpcUrls: string;
