@@ -37,6 +37,20 @@ import {
 } from "./overview.css";
 type ListTokenBalance = Token & {
   balance?: string;
+  balanceUsd?: string;
+};
+import axios from "axios";
+const convertTokenBalanceURL = `https://min-api.cryptocompare.com/data/price?fsym={symbol}&tsyms=USD`;
+const getUSDPrice = async (symbol: string) => {
+  try {
+    const url = convertTokenBalanceURL.replace("{symbol}", symbol);
+    const response = await axios.get(url);
+    const { USD } = response.data;
+    return USD;
+  } catch (error) {
+    console.error("Error fetching USD price:", error);
+    return "";
+  }
 };
 const Overview = () => {
   const historyState = useAppSelector(state => state.history);
@@ -49,6 +63,7 @@ const Overview = () => {
   const [currenToken, setCurrenToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentNetwork.data.rpcUrls)?.symbol as string);
   const { web3, account: myAddress } = useBlockchain();
   const [balance, setBalance] = useState("");
+  const [balanceUSD, setBalanceUSD] = useState("");
   const [searchText, setSearchText] = useState("");
   useEffect(() => {
     const fetchData = async () => {
@@ -61,17 +76,25 @@ const Overview = () => {
         const balance = await getBalance(web3 as Web3);
         setBalance(balance);
       } catch (error) {
-        console.log(error);
         setBalance("Error");
+      }
+      try {
+        const USD: string = await getUSDPrice(networkState.currentNetwork.data.title);
+        const balance = await getBalance(web3 as Web3);
+        const balanceUSD = parseFloat(USD) * parseFloat(balance);
+        setBalanceUSD(balanceUSD.toString());
+      } catch (error) {
+        setBalanceUSD("N/A");
       }
       try {
         const updateBalance = await Promise.all(
           listTokensBalance.map(async item => {
             try {
-              const balance = await handleGetBalance(item);
+              const result = await handleGetBalance(item);
               return {
                 ...item,
-                balance: balance,
+                balance: result.balance,
+                balanceUsd: result.balanceUsd,
               };
             } catch (error) {
               console.log(error);
@@ -86,11 +109,20 @@ const Overview = () => {
     };
 
     fetchData();
-  }, [networkState.currentNetwork.data, web3]);
+  });
 
   const handleGetBalance = async (item: Token) => {
-    let result: string;
-    item.tokenContract ? (result = await getBalanceToken(web3 as Web3, item.tokenContract)) : (result = await getBalance(web3 as Web3).then());
+    type Result = {
+      balance: string;
+      balanceUsd: string;
+    };
+    let result: Result = {
+      balance: "N/A",
+      balanceUsd: "N/A",
+    };
+    item.tokenContract ? (result.balance = await getBalanceToken(web3 as Web3, item.tokenContract)) : (result.balance = await getBalance(web3 as Web3).then());
+    const USD: string = await getUSDPrice(item.symbol);
+    result.balanceUsd = (parseFloat(USD) * parseFloat(result.balance)).toString();
     return result;
   };
 
@@ -115,7 +147,8 @@ const Overview = () => {
                 <TextBlue>
                   {balance} {currenToken}{" "}
                 </TextBlue>
-                <ChooseToken /> ~ $56,040
+                <ChooseToken style={{ marginRight: "10px" }} />
+                {balanceUSD + "$"}
               </BalanceContainer>
               <Divider />
             </HeaderPageBalance>
@@ -162,7 +195,8 @@ const Overview = () => {
                         {item.symbol}
                       </ItemMyAssetsLeft>
                       <ItemMyAssetsRight>
-                        <TextCoin> {item.balance}</TextCoin>~ $0.6868
+                        <TextCoin> {item.balance}</TextCoin>
+                        {"~ $" + item.balanceUsd}
                       </ItemMyAssetsRight>
                     </ItemMyAssets>
                   ))
