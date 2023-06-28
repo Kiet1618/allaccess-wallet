@@ -7,7 +7,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
-import { listNetWorks } from "../../configs/data";
 import { TimeDropdown } from "../../assets/icon";
 import { rows } from "../../configs/data/test";
 import { Empty, Filter, SearchIcon } from "../../assets/icon";
@@ -17,6 +16,11 @@ import TableCustom from "../../components/Table";
 import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../components/Table/table.css";
 import { EmptyContainer } from "../Overview/overview.css";
 import { Page, TitlePage } from "../../styles";
+import { Token } from "@app/types/blockchain.type";
+import { listNetWorks } from "@app/configs/data";
+import { preProcessHistoryResponse } from "@app/utils";
+import { setHistoriesAddress } from "@app/store/redux/history/actions";
+
 import {
   ContainerButtonModalFilter,
   ModalSubtitle,
@@ -39,7 +43,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@app/store";
 import { setNetworkState } from "@app/store/redux/network/actions";
 import { ChainNetwork } from "@app/types/blockchain.type";
-
+import { getTorusKey } from "@app/storage/storage-service";
 const History = () => {
   const networkState = useAppSelector(state => state.network);
   const dispatch = useAppDispatch();
@@ -72,10 +76,18 @@ const History = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
+  const myAddress = getTorusKey().ethAddress;
   useEffect(() => {
+    if (network !== networkState.currentNetwork.data) fetchData(network);
+
     dispatch(setNetworkState(network));
   }, [network]);
+  const listTokenState = useAppSelector(state => state.token);
+  const fetchData = async (currentNetwork: ChainNetwork) => {
+    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === currentNetwork.rpcUrls && tokens.tokenContract !== undefined);
+    const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
+    dispatch(setHistoriesAddress(historyTransaction));
+  };
   return (
     <Page>
       <TilePageContainer>
@@ -121,7 +133,10 @@ const History = () => {
               select
               id='network'
               size='small'
-              onChange={e => setNetwork(listNetWorks.find(network => network.description === e.target.value) as ChainNetwork)}
+              onChange={e => {
+                setNetwork(listNetWorks.find(network => network.description === e.target.value) as ChainNetwork);
+                fetchData(listNetWorks.find(network => network.description === e.target.value) as ChainNetwork);
+              }}
             >
               {listNetWorks.map(network => (
                 <MenuItem key={network.rpcUrls} value={network.description}>
@@ -264,7 +279,10 @@ const History = () => {
             select
             id='network'
             size='small'
-            onChange={e => setNetwork(listNetWorks.find(network => network.description === e.target.value) as ChainNetwork)}
+            onChange={e => {
+              setNetwork(listNetWorks.find(network => network.description === e.target.value) as ChainNetwork);
+              fetchData(listNetWorks.find(network => network.description === e.target.value) as ChainNetwork);
+            }}
           >
             {listNetWorks.map(network => (
               <MenuItem key={network.rpcUrls} value={network.description}>

@@ -4,20 +4,36 @@ import { ThemeProvider } from "styled-components";
 import { Grid } from "@mui/material";
 import { lightTheme, darkTheme, GlobalStyles } from "@app/styles";
 import { RoutesProps } from "@app/types/route.type";
-
 import { routes } from "@app/configs/data";
 import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
 import { MessagePayload } from "@firebase/messaging";
 import { ShareInfo } from "@app/wallet/metadata";
-
 import { Header, Footer, Sidebar, DeviceModal } from "../";
 import { isEmpty } from "lodash";
-
+// import { ChainNetwork } from "@app/types/blockchain.type";
+// import { Token } from "@app/types/blockchain.type";
+// import { useAppSelector, useAppDispatch } from "@app/store";
+// import { preProcessHistoryResponse } from "@app/utils"
+// import { setHistoriesAddress } from "@app/store/redux/history/actions";
+// import { getTorusKey } from "@app/storage/storage-service";
 const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesProps>) => {
   //const [theme, setTheme] = useState("light");
   // const themeToggler = () => {
   //     theme === "light" ? setTheme("dark") : setTheme("light");
   // }
+  // const myAddress = getTorusKey().ethAddress;
+
+  // const dispatch = useAppDispatch();
+  // const listTokenState = useAppSelector(state => state.token);
+  // const networkState = useAppSelector(state => state.network);
+  // const fetchData = async (currentNetwork: ChainNetwork) => {
+  //   const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === currentNetwork.rpcUrls && tokens.tokenContract !== undefined);
+  //   const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
+  //   dispatch(setHistoriesAddress(historyTransaction));
+  // };
+  // useEffect(() => {
+  //   fetchData(networkState.currentNetwork.data)
+  // }, [])
   const location = useLocation();
   const { updateShareForPublicKey } = useFetchWallet();
   const { handleNotification } = useCustomSnackBar();

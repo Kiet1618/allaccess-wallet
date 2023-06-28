@@ -7,19 +7,13 @@ import { Table, TableContainer, TableBody, TableCell, TableHead, TableRow, Pagin
 import { Copy, Eyes } from "../../assets/icon";
 import { Empty } from "../../assets/icon";
 import { InfoModal } from "./type";
-import { Token } from "../../types/blockchain.type";
 import { sliceAddress, copyAddress } from "../../utils";
-import { listNetWorks } from "../../configs/data/blockchain";
 import { formatValue, useBlockchain } from "../../blockchain";
-import { preProcessHistoryResponse } from "../../utils";
-import { useAppDispatch, useAppSelector } from "../../store";
-import { setHistoriesAddress } from "../../store/redux/history/actions";
+import { useAppSelector } from "../../store";
 import { EmptyContainer } from "../../pages/Overview/overview.css";
 import { CopyAddressContainer } from "../../pages/Transaction/transaction.css";
 import { TitleModal, ContainerInfoTransactions, HeaderModalInfoTransaction, style, HeaderModalGroupLeft, ModalCustom, CustomMethod, TableCellCustomInOut, TableCellCustom } from "./table.css";
-import { setNetworkState } from "@app/store/redux/network/actions";
 import DoneIcon from "@mui/icons-material/Done";
-
 const sliceAddressIdTableCell = (str: string) => {
   if (str.length > 35) {
     return str.substr(0, 5) + "..." + str.substr(str.length - 3, str.length);
@@ -28,10 +22,8 @@ const sliceAddressIdTableCell = (str: string) => {
 };
 const TableWithPagination: React.FC = () => {
   const rowsPerPage = 5;
-  const listTokenState = useAppSelector(state => state.token);
-  const networkState = useAppSelector(state => state.network);
+
   const historyState = useAppSelector(state => state.history);
-  const dispatch = useAppDispatch();
   const { web3, account: myAddress } = useBlockchain();
   const [statusFrom, setStatusFrom] = useState(false);
   const [statusTo, setStatusTo] = useState(false);
@@ -83,14 +75,7 @@ const TableWithPagination: React.FC = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  useEffect(() => {
-    fetchData();
-  }, [networkState.currentNetwork.data]);
-  const fetchData = async () => {
-    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === networkState.currentNetwork.data.rpcUrls && tokens.tokenContract !== undefined);
-    const historyTransaction = await preProcessHistoryResponse(networkState.currentNetwork.data, myAddress, listToken);
-    dispatch(setHistoriesAddress(historyTransaction));
-  };
+
   return (
     <>
       <TableContainer>

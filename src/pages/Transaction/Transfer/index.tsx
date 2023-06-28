@@ -6,7 +6,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FormControl from "@mui/material/FormControl";
 import CustomInput from "../../../components/TextField";
 import { Copy, DropdownBlack, Success, SearchIcon } from "../../../assets/icon";
-import { TextHeaderOverview } from "../../Overview/overview.css";
+// import { TextHeaderOverview } from "../../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -318,7 +318,7 @@ const Transfer = () => {
           </BackgroundPage>
         </ContainerBalanceCard>
       </Grid>
-      <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
+      <ModalCustom open={open} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style} width={isDesktop ? 700 : 300}>
           <Stepper style={{ width: "100%" }} nonLinear activeStep={activeStep}>
             {steps.map((label, index) => (
