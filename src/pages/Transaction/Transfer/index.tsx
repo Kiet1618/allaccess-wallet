@@ -115,6 +115,7 @@ const Transfer = () => {
 
   const onSubmit = async (values: FormData) => {
     handleReset();
+    setTransactionHash("");
     setOpen(true);
     token?.tokenContract
       ? await sendTransactionToken(web3 as Web3, values, token.tokenContract, setTransactionHash, setInfoTransaction, setTransactionError)
@@ -197,6 +198,13 @@ const Transfer = () => {
     if (infoTransaction === "Error") {
       handleClose();
       setOpenAlert(true);
+    }
+    if (infoTransaction === "success") {
+      setActiveStep(2);
+      setCompleted({ 0: true, 1: true, 2: true });
+    }
+    if (infoTransaction == "pending") {
+      handleReset();
     }
   }, [infoTransaction]);
   return (
@@ -333,7 +341,13 @@ const Transfer = () => {
               <TransferSuccessSub>You are done the transaction successfully. You can now review your transaction in your history</TransferSuccessSub>
 
               <ContainerTwoButtonModal>
-                <CustomButton onClick={() => handleClose()} width='230px' height='44px' styleButton='inactive' text='View transfer history'></CustomButton>
+                <CustomButton
+                  onClick={() => window.open(networkState.currentNetwork.data.apiTransactionHash?.replace("{transactionHash}", transactionHash), "_blank")}
+                  width='230px'
+                  height='44px'
+                  styleButton='inactive'
+                  text='View transfer history'
+                ></CustomButton>
                 <CustomButton onClick={() => handleClose()} width='135px' height='44px' styleButton='primary' text='Ok, I got it'></CustomButton>
               </ContainerTwoButtonModal>
             </>

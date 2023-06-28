@@ -55,7 +55,6 @@ export const sendTransaction = async (
     })
     .on("receipt", receipt => {
       setInfoTransaction("success");
-      setTransactionHash("");
       return;
     })
     .on("error", error => {
@@ -113,7 +112,6 @@ export const sendTransactionToken = async (
     })
     .on("receipt", receipt => {
       setInfoTransaction("success");
-      setTransactionHash("");
       return;
     })
     .on("error", error => {

@@ -87,9 +87,8 @@ const TableWithPagination: React.FC = () => {
     fetchData();
   }, [networkState.currentNetwork.data]);
   const fetchData = async () => {
-    const currentNetwork = listNetWorks.find(networkTemp => networkTemp.rpcUrls === networkState.currentNetwork.data.rpcUrls);
     const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === networkState.currentNetwork.data.rpcUrls && tokens.tokenContract !== undefined);
-    const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
+    const historyTransaction = await preProcessHistoryResponse(networkState.currentNetwork.data, myAddress, listToken);
     dispatch(setHistoriesAddress(historyTransaction));
   };
   return (

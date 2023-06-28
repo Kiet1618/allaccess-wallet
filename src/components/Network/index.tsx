@@ -18,10 +18,13 @@ import { ChangeNetworkTag, ChangeNetworkTagSub, FormControlCustom, SelectCustom,
 
 import TagChangeNetwork from "./changeNetwork";
 import ButtonCustom from "../Button";
+import { getTorusKey } from "@app/storage/storage-service";
 export const NetworkContainer = () => {
-  const { account: myAddress } = useBlockchain();
   const networkState = useAppSelector(state => state.network);
   const [network, setNetwork] = useState(networkState.currentNetwork.data);
+  // const { account: myAddress } = useBlockchain(network.rpcUrls);
+  const myAddress = getTorusKey().ethAddress;
+  console.log(myAddress);
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -31,10 +34,13 @@ export const NetworkContainer = () => {
   const historyState = useAppSelector(state => state.history);
   const fetchData = async (e: string = "") => {
     try {
-      const rpc = e ? e : network;
-      const currentNetwork = listNetWorks.find(networkTemp => networkTemp.rpcUrls === rpc);
-      const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === rpc && tokens.tokenContract !== undefined);
-      const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
+      const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === network.rpcUrls && tokens.tokenContract !== undefined);
+      console.log(myAddress);
+      const historyTransaction = await preProcessHistoryResponse(network, myAddress, listToken);
+      console.log("--------------");
+      console.log(historyTransaction);
+      console.log("--------------");
+
       dispatch(setHistoriesAddress(historyTransaction));
     } catch (error) {
       console.log(error);
@@ -64,7 +70,7 @@ export const NetworkContainer = () => {
   }, []);
   useEffect(() => {
     dispatch(setNetworkState(network));
-    if (!historyState.getHistoriesAddress.data.length) fetchData();
+    fetchData();
   }, [network]);
 
   return (
