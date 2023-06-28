@@ -21,7 +21,7 @@ export const useBlockchain = (rpcUrl?: string) => {
 
   useEffect(() => {
     if (masterKey && !isEmpty(masterKey)) {
-      const web3 = new Web3(rpcUrl || networkState.currentNetwork.data);
+      const web3 = new Web3(rpcUrl || networkState.currentNetwork.data.rpcUrls);
       const account = web3.eth.accounts.wallet.add(masterKey?.priKey.padStart(64, "0"));
       web3.defaultAccount = account.address;
       setWeb3Instance(web3);

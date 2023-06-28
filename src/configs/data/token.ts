@@ -60,4 +60,11 @@ export const listTokens: Token[] = [
     symbol: "BNB",
     name: "BNB",
   },
+  {
+    rpcUrls: "https://bsc-testnet.publicnode.com",
+    img: USDTLogo,
+    symbol: "USDT",
+    name: "Tether",
+    tokenContract: "0x337610d27c682E347C9cD60BD4b3b107C9d34dDd",
+  },
 ];

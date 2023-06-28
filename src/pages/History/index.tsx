@@ -38,6 +38,7 @@ import {
 } from "./history.css";
 import { useAppDispatch, useAppSelector } from "@app/store";
 import { setNetworkState } from "@app/store/redux/network/actions";
+import { ChainNetwork } from "@app/types/blockchain.type";
 
 const History = () => {
   const networkState = useAppSelector(state => state.network);
@@ -114,9 +115,16 @@ const History = () => {
           </ContainerTextFieldMethod>
           <ContainerTextFieldNetwork>
             <label style={{ marginBottom: "5px" }}>Network</label>
-            <CustomInput value={network} styleTextField='default' select id='network' size='small' onChange={e => setNetwork(e.target.value)}>
+            <CustomInput
+              value={network.description}
+              styleTextField='default'
+              select
+              id='network'
+              size='small'
+              onChange={e => setNetwork(listNetWorks.find(network => network.description === e.target.value) as ChainNetwork)}
+            >
               {listNetWorks.map(network => (
-                <MenuItem key={network.rpcUrls} value={network.rpcUrls}>
+                <MenuItem key={network.rpcUrls} value={network.description}>
                   {network.description}
                 </MenuItem>
               ))}
@@ -250,9 +258,16 @@ const History = () => {
             <MenuItem value={"Approve"}>Approve</MenuItem>
           </CustomInput>
           <label style={{ marginBottom: "5px", marginTop: "5px" }}>Network</label>
-          <CustomInput value={network} styleTextField='default' select id='network' size='small' onChange={e => setNetwork(e.target.value)}>
+          <CustomInput
+            value={network.description}
+            styleTextField='default'
+            select
+            id='network'
+            size='small'
+            onChange={e => setNetwork(listNetWorks.find(network => network.description === e.target.value) as ChainNetwork)}
+          >
             {listNetWorks.map(network => (
-              <MenuItem key={network.rpcUrls} value={network.rpcUrls}>
+              <MenuItem key={network.rpcUrls} value={network.description}>
                 {network.description}
               </MenuItem>
             ))}

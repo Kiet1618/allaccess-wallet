@@ -6,7 +6,7 @@ import DoneIcon from "@mui/icons-material/Done";
 
 import { Dropdown } from "@app/assets/icon";
 import { listNetWorks } from "@app/configs/data";
-import { Token } from "@app/types/blockchain.type";
+import { ChainNetwork, Token } from "@app/types/blockchain.type";
 import { useAppDispatch, useAppSelector } from "@app/store";
 import { setNetworkState } from "@app/store/redux/network/actions";
 import { setHistoriesAddress } from "@app/store/redux/history/actions";
@@ -41,7 +41,8 @@ export const NetworkContainer = () => {
     }
   };
   const handleChange = async (event: any) => {
-    setNetwork(event.target.value);
+    const currentNetwork = listNetWorks.find(network => network.description === event.target.value) as ChainNetwork;
+    setNetwork(currentNetwork);
     handleOpen();
     await fetchData(event.target.value);
   };
@@ -70,9 +71,9 @@ export const NetworkContainer = () => {
     <Container>
       <ButtonCustom onClick={() => copyAddress(myAddress, setStatus)} width='40%' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text={sliceAddress(myAddress)} />
       <FormControlCustom>
-        <SelectCustom IconComponent={() => <Dropdown style={{ marginRight: "10px" }} />} value={network} onChange={handleChange}>
+        <SelectCustom IconComponent={() => <Dropdown style={{ marginRight: "10px" }} />} value={network.description} onChange={handleChange}>
           {listNetWorks.map(network => (
-            <MenuItemCustom key={network.chainID} value={network.rpcUrls}>
+            <MenuItemCustom key={network.chainID} value={network.description}>
               <p>{network.description}</p>
             </MenuItemCustom>
           ))}
@@ -83,7 +84,7 @@ export const NetworkContainer = () => {
           <HeaderModalInfoTransaction>
             <HeaderModalGroupLeft>
               <TitleModal>You have switched to</TitleModal>
-              <TagNetwork>{listNetWorks.find(e => e.rpcUrls === network)?.description}</TagNetwork>
+              <TagNetwork>{listNetWorks.find(e => e.rpcUrls === network.rpcUrls)?.description}</TagNetwork>
             </HeaderModalGroupLeft>
             <div>
               <IconButton onClick={handleClose}>
