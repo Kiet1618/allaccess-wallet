@@ -70,6 +70,7 @@ const Login = () => {
       const { error: error1, info, networkKey } = await getInfoWallet("google", profile.email, tokens?.id_token || "");
       if (error1) {
         handleNotification(error1, "error");
+        handleClose();
         return;
       }
       const { error: error2, success, mfa } = await fetchMasterKey(info!, networkKey!);
