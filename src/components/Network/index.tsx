@@ -9,30 +9,15 @@ import { useAppDispatch, useAppSelector } from "@app/store";
 import { setNetworkState } from "@app/store/redux/network/actions";
 import { setHistoriesAddress } from "@app/store/redux/history/actions";
 import { sliceAddress, copyAddress, preProcessHistoryResponse } from "@app/utils";
-
 import { ModalCustom, HeaderModalInfoTransaction, HeaderModalGroupLeft, TitleModal } from "../Table/table.css";
 import { ChangeNetworkTag, ChangeNetworkTagSub, FormControlCustom, SelectCustom, Container, MenuItemCustom, style, TagNetwork } from "./network.css";
-
 import TagChangeNetwork from "./changeNetwork";
 import ButtonCustom from "../Button";
-import { getTorusKey } from "@app/storage/storage-service";
-export const fetchData = async (currentNetwork: ChainNetwork) => {
-  const myAddress = getTorusKey().ethAddress;
-  const listTokenState = useAppSelector(state => state.token);
-  const dispatch = useAppDispatch();
-  try {
-    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.chainID === currentNetwork.chainID && tokens.tokenContract !== undefined);
-    const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
-    dispatch(setHistoriesAddress(historyTransaction));
-  } catch (error) {
-    console.log(error);
-  }
-};
+import { useBlockchain } from "@app/blockchain";
 export const NetworkContainer = () => {
   const networkState = useAppSelector(state => state.network);
   const [network, setNetwork] = useState(networkState.currentNetwork.data);
-  // const { account: myAddress } = useBlockchain(network.rpcUrls);
-  const myAddress = getTorusKey().ethAddress;
+  const { account: myAddress } = useBlockchain(network.rpcUrls);
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -66,6 +51,17 @@ export const NetworkContainer = () => {
     if (!historyState.getHistoriesAddress.data) fetchData(network);
     dispatch(setNetworkState(network));
   }, [network]);
+  const fetchData = async (currentNetwork: ChainNetwork) => {
+    const listTokenState = useAppSelector(state => state.token);
+    const dispatch = useAppDispatch();
+    try {
+      const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.chainID === currentNetwork.chainID && tokens.tokenContract !== undefined);
+      const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
+      dispatch(setHistoriesAddress(historyTransaction));
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <Container>
       <ButtonCustom onClick={() => copyAddress(myAddress, setStatus)} width='40%' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text={sliceAddress(myAddress)} />

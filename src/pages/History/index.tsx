@@ -43,9 +43,10 @@ import {
 import { useAppDispatch, useAppSelector } from "@app/store";
 import { setNetworkState } from "@app/store/redux/network/actions";
 import { ChainNetwork } from "@app/types/blockchain.type";
-import { getTorusKey } from "@app/storage/storage-service";
+import { useBlockchain } from "@app/blockchain";
 const History = () => {
   const networkState = useAppSelector(state => state.network);
+  const { account: myAddress } = useBlockchain(networkState.currentNetwork.data.rpcUrls);
   const dispatch = useAppDispatch();
   const [time, setTime] = useState("30");
   const [method, setMethod] = useState("All");
@@ -76,7 +77,6 @@ const History = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  const myAddress = getTorusKey().ethAddress;
   useEffect(() => {
     if (network !== networkState.currentNetwork.data) fetchData(network);
 
