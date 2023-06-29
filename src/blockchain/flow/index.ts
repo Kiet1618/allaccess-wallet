@@ -7,6 +7,7 @@ import { useAppSelector } from "@app/store";
 import { useEffect } from "react";
 import * as fcl from "@onflow/fcl";
 import { TransferFlowScript } from "./transactions";
+import { isEmpty } from "lodash";
 const { t } = fcl;
 const ec = new EC.ec("secp256k1");
 
@@ -57,9 +58,12 @@ export const useFlowBlockchain = (rpcUrl?: string) => {
   };
 
   useEffect(() => {
+    if (isEmpty(networkState)) return;
+    if (!networkState.currentNetwork.data.chainID.includes("flow")) return;
+    const { rpcUrls, chainID } = networkState.currentNetwork.data;
     fcl.config({
-      "accessNode.api": "https://access-testnet.onflow.org",
-      "flow.network": "testnet",
+      "accessNode.api": rpcUrls,
+      "flow.network": chainID.split("-")[1],
     });
   }, [networkState]);
 
