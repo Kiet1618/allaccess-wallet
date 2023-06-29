@@ -8,9 +8,9 @@ const cookies = new Cookies();
 const getCurrentNetworkInitiated = () => {
   const chainId = cookies.get("chainId") || "";
   if (chainId) {
-    return listNetWorks.find(network => network.chainID === chainId)?.rpcUrls as string;
+    return listNetWorks.find(network => network.chainID === chainId);
   } else {
-    return "https://goerli.blockpi.network/v1/rpc/public";
+    return listNetWorks.find(network => network.chainID === "5");
   }
 };
 
@@ -33,7 +33,7 @@ export const listNetwork = createSlice({
     builder.addCase(actions.setNetworkState.fulfilled, (state, action) => {
       state.currentNetwork.data = action.payload;
 
-      cookies.set("chainId", listNetWorks.find(network => network.rpcUrls === action.payload)?.chainID, { path: "/" });
+      cookies.set("chainId", listNetWorks.find(network => network === action.payload)?.chainID, { path: "/" });
       state.currentNetwork.loading = false;
     });
     builder.addCase(actions.setNetworkState.rejected, state => {

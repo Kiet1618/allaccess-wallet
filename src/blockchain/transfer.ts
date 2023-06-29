@@ -1,7 +1,8 @@
 import Web3 from "web3";
 import { FormData } from "../pages/Transaction/Transfer/type";
-import { privateKey } from "../configs/data/test";
+// import { privateKey } from "../configs/data/test";
 import abi from "../common/ERC20_ABI.json";
+import { getTorusKey } from "@app/storage/storage-service";
 export const sendTransaction = async (
   web3: Web3,
   data: FormData,
@@ -10,10 +11,18 @@ export const sendTransaction = async (
   setErrorTransaction: React.Dispatch<React.SetStateAction<string>>
 ) => {
   setInfoTransaction("pending");
+  const privateKey = getTorusKey().priKey;
+  if (!privateKey) {
+    setErrorTransaction("Error: Don't have private key");
+    setInfoTransaction("Error");
+    setTransactionHash("");
+    return;
+  }
   const { addressTo, amount } = data;
   const weiValue = Math.round(parseFloat(amount) * 10 ** 18);
   const hexValue = web3.utils.toHex(weiValue ? weiValue : 0);
   const price = await web3.eth.getGasPrice();
+
   const gasLimit = await web3.eth
     .estimateGas({
       to: addressTo,
@@ -27,6 +36,7 @@ export const sendTransaction = async (
       setTransactionHash("");
       return;
     });
+
   const tx = {
     to: addressTo,
     from: web3.defaultAccount as string,
@@ -35,34 +45,24 @@ export const sendTransaction = async (
     gasPrice: price,
     data: "0x",
   };
-  const signedTransaction: any = await web3.eth.accounts.signTransaction(tx, privateKey).catch((err: Error) => {
-    setErrorTransaction(err.message);
-    setInfoTransaction("Error");
-    setTransactionHash("");
-    return;
-  });
+
+  const signedTransaction: any = await web3.eth.accounts.signTransaction(tx, privateKey);
 
   const sendSignedTransaction = web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
   sendSignedTransaction
     .on("transactionHash", transactionHash => {
       setTransactionHash(transactionHash);
     })
+    .on("receipt", receipt => {
+      setInfoTransaction("success");
+      return;
+    })
     .on("error", error => {
-      setErrorTransaction(error.message.substring(0, error.message.indexOf(":")));
+      setErrorTransaction(error.message);
       setInfoTransaction("Error");
       setTransactionHash("");
       return;
-    })
-    .on("receipt", receipt => {
-      setInfoTransaction("success");
-      setTransactionHash("");
     });
-  await sendSignedTransaction.catch((err: Error) => {
-    setErrorTransaction(err.message);
-    setInfoTransaction("Error");
-    setTransactionHash("");
-    return;
-  });
 };
 export const sendTransactionToken = async (
   web3: Web3,
@@ -73,6 +73,7 @@ export const sendTransactionToken = async (
   setErrorTransaction: React.Dispatch<React.SetStateAction<string>>
 ) => {
   setInfoTransaction("pending");
+
   const { addressTo, amount } = data;
   const tokenAddress = new web3.eth.Contract(abi as any, tokenContract);
   const price = await web3.eth.getGasPrice();
@@ -82,12 +83,13 @@ export const sendTransactionToken = async (
   const gasLimit = await tokenAddress.methods
     .transfer(recipient, value)
     .estimateGas({ from: web3.defaultAccount })
-    .catch((err: Error) => {
-      setErrorTransaction(err.message);
+    .catch((error: Error) => {
+      setErrorTransaction(error.message);
       setInfoTransaction("Error");
       setTransactionHash("");
       return;
     });
+
   const transactionObject = {
     from: web3.defaultAccount as string,
     to: tokenAddress.options.address,
@@ -95,31 +97,27 @@ export const sendTransactionToken = async (
     gasPrice: price,
     data: transferData,
   };
-  const signedTransaction: any = await web3.eth.accounts.signTransaction(transactionObject, privateKey).catch((err: Error) => {
-    setErrorTransaction(err.message);
+  const privateKey = getTorusKey().priKey ? getTorusKey().priKey : "";
+  if (!privateKey) {
+    setErrorTransaction("Error: Don't have private key");
     setInfoTransaction("Error");
     setTransactionHash("");
     return;
-  });
+  }
+  const signedTransaction: any = await web3.eth.accounts.signTransaction(transactionObject, privateKey);
   const transactionReceipt = web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
   transactionReceipt
     .on("transactionHash", transactionHash => {
       setTransactionHash(transactionHash);
     })
+    .on("receipt", receipt => {
+      setInfoTransaction("success");
+      return;
+    })
     .on("error", error => {
-      setErrorTransaction(error.message.substring(0, error.message.indexOf(":")));
+      setErrorTransaction(error.message);
       setInfoTransaction("Error");
       setTransactionHash("");
       return;
-    })
-    .on("receipt", receipt => {
-      setInfoTransaction("success");
-      setTransactionHash("");
     });
-  await transactionReceipt.catch((err: Error) => {
-    setErrorTransaction(err.message);
-    setInfoTransaction("Error");
-    setTransactionHash("");
-    return;
-  });
 };

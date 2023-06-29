@@ -41,9 +41,9 @@ export const listNetWorks: ChainNetwork[] = [
   {
     chainID: "97",
     core: "evm",
-    apiScanNormalTransactionsByAddress: "https://api.bscscan.com/api?module=account&action=txlist&address={address}&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW",
+    apiScanNormalTransactionsByAddress: "https://testnet.bscscan.com/api?module=account&action=txlist&address={address}&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW",
     apiScanTokenTransactionsByAddress: `
-    https://api.bscscan.com/api
+    https://testnet.bscscan.com
    ?module=account
    &action=tokentx
    &contractaddress={contract}
@@ -57,6 +57,7 @@ export const listNetWorks: ChainNetwork[] = [
     rpcUrls: "https://bsc-testnet.publicnode.com",
     title: "BNB",
     description: "Binance Smart Chain Testnet",
+    apiTransactionHash: `https://testnet.bscscan.com/tx/{transactionHash}`,
   },
   {
     chainID: "9",

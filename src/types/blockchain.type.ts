@@ -7,6 +7,7 @@ export type ChainNetwork = {
   rpcUrls: string;
   title: string;
   description: string;
+  apiTransactionHash?: string;
 };
 export type Route = {
   path: string;

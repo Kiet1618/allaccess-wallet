@@ -6,7 +6,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FormControl from "@mui/material/FormControl";
 import CustomInput from "../../../components/TextField";
 import { Copy, DropdownBlack, Success, SearchIcon } from "../../../assets/icon";
-import { TextHeaderOverview } from "../../Overview/overview.css";
+// import { TextHeaderOverview } from "../../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -62,7 +62,7 @@ const Transfer = () => {
   const [balance, setBalance] = useState("");
   const [isDesktop, setIsDesktop] = useState(true);
   const [searchText, setSearchText] = useState("");
-  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentNetwork.data));
+  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentNetwork.data.rpcUrls));
   const [openSelect, setOpenSelect] = useState(false);
   const [gasPrice, setGasPrice] = useState<string | 0>("0");
   const [gasLimit, setGasLimit] = useState<string | 0>("0");
@@ -115,6 +115,7 @@ const Transfer = () => {
 
   const onSubmit = async (values: FormData) => {
     handleReset();
+    setTransactionHash("");
     setOpen(true);
     token?.tokenContract
       ? await sendTransactionToken(web3 as Web3, values, token.tokenContract, setTransactionHash, setInfoTransaction, setTransactionError)
@@ -139,7 +140,7 @@ const Transfer = () => {
 
   const handleGetInfoToken = async () => {
     try {
-      const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentNetwork.data);
+      const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentNetwork.data.rpcUrls);
       const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string);
       const check = listTokenState.currentListTokens.data.filter(token => token.tokenContract === tokenAddress).length;
       if (!check) {
@@ -160,7 +161,7 @@ const Transfer = () => {
   }, [searchText]);
   useEffect(() => {
     try {
-      setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentNetwork.data));
+      setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentNetwork.data.rpcUrls));
     } catch (e) {
       console.log(e);
     }
@@ -197,6 +198,13 @@ const Transfer = () => {
     if (infoTransaction === "Error") {
       handleClose();
       setOpenAlert(true);
+    }
+    if (infoTransaction === "success") {
+      setActiveStep(2);
+      setCompleted({ 0: true, 1: true, 2: true });
+    }
+    if (infoTransaction == "pending") {
+      handleReset();
     }
   }, [infoTransaction]);
   return (
@@ -285,7 +293,7 @@ const Transfer = () => {
               <ContainerFlexSpace>
                 <div>Total gas</div>
                 <div>
-                  {(Number(gasLimit) + Number(gasPrice)).toFixed(15)} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentNetwork.data)?.symbol}
+                  {(Number(gasLimit) + Number(gasPrice)).toFixed(15)} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentNetwork.data.rpcUrls)?.symbol}
                 </div>
               </ContainerFlexSpace>
 
@@ -310,7 +318,7 @@ const Transfer = () => {
           </BackgroundPage>
         </ContainerBalanceCard>
       </Grid>
-      <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
+      <ModalCustom open={open} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style} width={isDesktop ? 700 : 300}>
           <Stepper style={{ width: "100%" }} nonLinear activeStep={activeStep}>
             {steps.map((label, index) => (
@@ -333,7 +341,13 @@ const Transfer = () => {
               <TransferSuccessSub>You are done the transaction successfully. You can now review your transaction in your history</TransferSuccessSub>
 
               <ContainerTwoButtonModal>
-                <CustomButton onClick={() => handleClose()} width='230px' height='44px' styleButton='inactive' text='View transfer history'></CustomButton>
+                <CustomButton
+                  onClick={() => window.open(networkState.currentNetwork.data.apiTransactionHash?.replace("{transactionHash}", transactionHash), "_blank")}
+                  width='230px'
+                  height='44px'
+                  styleButton='inactive'
+                  text='View transfer history'
+                ></CustomButton>
                 <CustomButton onClick={() => handleClose()} width='135px' height='44px' styleButton='primary' text='Ok, I got it'></CustomButton>
               </ContainerTwoButtonModal>
             </>
@@ -388,14 +402,14 @@ const Transfer = () => {
             margin='dense'
           />
           {listTokenState.currentListTokens.data
-            .filter(coin => coin.rpcUrls === networkState.currentNetwork.data)
+            .filter(coin => coin.rpcUrls === networkState.currentNetwork.data.rpcUrls)
             .filter(
               searchText
                 ? coin => coin.symbol.toLowerCase().includes(searchText.toLowerCase()) || coin.name.toLowerCase().includes(searchText.toLowerCase()) || coin.tokenContract?.includes(searchText)
                 : coin => coin
             ).length ? (
             listTokenState.currentListTokens.data
-              .filter(coin => coin.rpcUrls === networkState.currentNetwork.data)
+              .filter(coin => coin.rpcUrls === networkState.currentNetwork.data.rpcUrls)
               .filter(
                 searchText
                   ? coin => coin.symbol.toLowerCase().includes(searchText.toLowerCase()) || coin.name.toLowerCase().includes(searchText.toLowerCase()) || coin.tokenContract?.includes(searchText)
