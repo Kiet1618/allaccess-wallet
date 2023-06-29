@@ -166,13 +166,7 @@ const Transfer = () => {
       console.log(e);
     }
   }, [networkState.currentNetwork.data]);
-  useEffect(() => {
-    try {
-      token?.tokenContract ? getBalanceToken(web3 as Web3, token.tokenContract).then(res => setBalance(res)) : getBalance(web3 as Web3).then(res => setBalance(res));
-    } catch {
-      setBalance("Error");
-    }
-  }, [networkState.currentNetwork.data, token, web3]);
+
   const handleChangeSearch = (e: string) => {
     setSearchText(e);
     setTokenAddress(e);
@@ -207,6 +201,13 @@ const Transfer = () => {
       handleReset();
     }
   }, [infoTransaction]);
+  useEffect(() => {
+    try {
+      token?.tokenContract ? getBalanceToken(web3 as Web3, token.tokenContract).then(res => setBalance(res)) : getBalance(web3 as Web3).then(res => setBalance(res));
+    } catch {
+      setBalance("Error");
+    }
+  }, [networkState.currentNetwork.data, token, web3, infoTransaction]);
   return (
     <Grid style={{ width: "100%" }} container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid>
