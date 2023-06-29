@@ -104,14 +104,14 @@ const Transfer = () => {
     };
 
     updateGasLimit();
-  }, [reRenderGas, token?.symbol, networkState.currentNetwork.data, web3]);
+  }, [reRenderGas, token?.symbol, networkState.currentNetwork.data, web3, amount]);
   useEffect(() => {
     const updateGasPrice = async () => {
       const gasPriceValue = await getGasPrice(web3 as Web3);
       setGasPrice(gasPriceValue);
     };
     updateGasPrice();
-  }, [networkState.currentNetwork.data, web3]);
+  }, [networkState.currentNetwork.data, web3, amount]);
 
   const onSubmit = async (values: FormData) => {
     handleReset();

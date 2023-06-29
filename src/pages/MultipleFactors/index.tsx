@@ -37,7 +37,6 @@ const MultipleFactors = () => {
   const [seed, setSeed] = useState("");
   const [checkSeed, setCheckSeed] = useState(true);
   const [loadingLogin, setLoadingLogin] = useState(false);
-
   useEffect(() => {
     if (infoMasterKey) {
       const devices = infoMasterKey.shares?.filter(elm => elm.type === "device");
@@ -143,7 +142,17 @@ const MultipleFactors = () => {
               navigate("/");
             }}
           ></CustomButton>
-          <CustomButton width='30%' padding='10px' text='Confirm' styleButton={typeButton ? "primary" : "inactive"} onClick={handleLogin} loading={loadingLogin} disabled={loadingLogin}></CustomButton>
+          <CustomButton
+            variant='contained'
+            width='30%'
+            padding='10px'
+            loadingPosition='end'
+            text={loadingLogin ? "Loading" : "Confirm"}
+            styleButton={loadingLogin ? "inactive" : typeButton ? "primary" : "inactive"}
+            onClick={handleLogin}
+            loading={loadingLogin}
+            disabled={loadingLogin}
+          ></CustomButton>
         </ContainerButton>
       </ContainerBackgroundCard>
     </ContainerMultipleFactors>
