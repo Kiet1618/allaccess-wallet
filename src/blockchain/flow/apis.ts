@@ -4,8 +4,8 @@ import { get } from "lodash";
 
 export type CreateFlowAccountRequest = {
   publicKey: string;
-  hashAlgo?: number;
-  signAlgo?: number;
+  hashAlgo?: number; // 3
+  signAlgo?: number; // 2
 };
 
 export type CreateFlowAccountResponse = string;

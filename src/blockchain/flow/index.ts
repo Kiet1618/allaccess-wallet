@@ -4,15 +4,17 @@ import { BN } from "bn.js";
 import { KeyPair } from "@app/wallet/types";
 import { useLocalStorage } from "usehooks-ts";
 import { useAppSelector } from "@app/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as fcl from "@onflow/fcl";
 import { TransferFlowScript } from "./transactions";
 import { isEmpty } from "lodash";
+import { createFlowAccount } from "./apis";
 const { t } = fcl;
 const ec = new EC.ec("secp256k1");
 
 export const useFlowBlockchain = (rpcUrl?: string) => {
-  const [masterKey] = useLocalStorage<KeyPair | null>("master-key", null);
+  const [account, setAccount] = useState("");
+  const [masterKey, setMasterKey] = useLocalStorage<KeyPair | null>("master-key", null);
   const networkState = useAppSelector(state => state.network);
 
   const hashMsgHex = (msgHex: string): Buffer => {
@@ -61,6 +63,8 @@ export const useFlowBlockchain = (rpcUrl?: string) => {
     if (isEmpty(networkState)) return;
     if (!networkState.currentNetwork.data.chainID.includes("flow")) return;
     const { rpcUrls, chainID } = networkState.currentNetwork.data;
+    console.log("🚀 ~ file: index.ts:66 ~ useEffect ~ chainID:", chainID);
+    createOrGetAccount();
     fcl.config({
       "accessNode.api": rpcUrls,
       "flow.network": chainID.split("-")[1],
@@ -73,8 +77,14 @@ export const useFlowBlockchain = (rpcUrl?: string) => {
   };
 
   const getAccount = async () => {
-    const accountResponse = await fcl.send([fcl.getAccount(masterKey?.flowAddress || "0xf2eb21c72bc9903a") as any]);
+    const accountResponse = await fcl.send([fcl.getAccount(masterKey?.flowAddress || "") as any]);
     return await fcl.decode(accountResponse);
+  };
+
+  const getBalance = async () => {
+    const accountResponse = await fcl.send([fcl.getAccount(masterKey?.flowAddress || "") as any]);
+    const account = await fcl.decode(accountResponse);
+    return account.balance;
   };
 
   const transferFlow = async (amount: string, recipient: string) => {
@@ -125,5 +135,18 @@ export const useFlowBlockchain = (rpcUrl?: string) => {
     return transaction;
   };
 
-  return { fcl, getBlock, getAccount, transferFlow };
+  const createOrGetAccount = async (): Promise<string> => {
+    const { data, error } = await createFlowAccount({ publicKey: masterKey?.pubKey || "", hashAlgo: 3, signAlgo: 2 });
+    if (error) {
+      throw new Error(error);
+    }
+    setAccount(data);
+    // setMasterKey({
+    //   ...masterKey!,
+    //   flowAddress: data,
+    // });
+    return data;
+  };
+
+  return { fcl, account, createOrGetAccount, getBlock, getAccount, getBalance, transferFlow };
 };

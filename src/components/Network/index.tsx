@@ -16,6 +16,10 @@ import { ChangeNetworkTag, ChangeNetworkTagSub, FormControlCustom, SelectCustom,
 import TagChangeNetwork from "./changeNetwork";
 import ButtonCustom from "../Button";
 import { getTorusKey } from "@app/storage/storage-service";
+import useBlockchain from "@app/blockchain/wrapper";
+import { createAccount } from "@app/store/redux/wallet/actions";
+import { useCustomSnackBar } from "@app/hooks";
+
 export const fetchData = async (currentNetwork: ChainNetwork) => {
   const myAddress = getTorusKey().ethAddress;
   const listTokenState = useAppSelector(state => state.token);
@@ -31,8 +35,10 @@ export const fetchData = async (currentNetwork: ChainNetwork) => {
 export const NetworkContainer = () => {
   const networkState = useAppSelector(state => state.network);
   const [selectedNetwork, setSelectedNetwork] = useState(networkState.currentNetwork.data);
-  // const { account: myAddress } = useBlockchain(network.rpcUrls);
+  const { handleNotification } = useCustomSnackBar();
+  const { getAccount } = useBlockchain();
   const myAddress = getTorusKey().ethAddress;
+  const myPubKey = getTorusKey().pubKey;
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -49,6 +55,13 @@ export const NetworkContainer = () => {
 
   const handleSelectedNetwork = async () => {
     if (!selectedNetwork) return;
+    if (selectedNetwork.chainID.includes("flow")) {
+      const { meta, payload } = await dispatch(createAccount({ publicKey: myPubKey || "", hashAlgo: 3, signAlgo: 2 }));
+      if (meta.requestStatus === "rejected") {
+        handleNotification(payload, "error");
+        return;
+      }
+    }
     await dispatch(setNetworkState(selectedNetwork));
     handleClose();
   };
