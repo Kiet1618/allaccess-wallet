@@ -21,7 +21,7 @@ export const fetchData = async (currentNetwork: ChainNetwork) => {
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
   try {
-    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === currentNetwork.rpcUrls && tokens.tokenContract !== undefined);
+    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.chainID === currentNetwork.chainID && tokens.tokenContract !== undefined);
     const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
     dispatch(setHistoriesAddress(historyTransaction));
   } catch (error) {
@@ -83,7 +83,7 @@ export const NetworkContainer = () => {
           <HeaderModalInfoTransaction>
             <HeaderModalGroupLeft>
               <TitleModal>You have switched to</TitleModal>
-              <TagNetwork>{listNetWorks.find(e => e.rpcUrls === network.rpcUrls)?.description}</TagNetwork>
+              <TagNetwork>{listNetWorks.find(e => e.chainID === network.chainID)?.description}</TagNetwork>
             </HeaderModalGroupLeft>
             <div>
               <IconButton onClick={handleClose}>

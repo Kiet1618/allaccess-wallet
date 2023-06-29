@@ -1,6 +1,7 @@
 type ChainCore = "evm" | "fvm";
+export type ChainID = "1" | "5" | "9" | "56" | "97" | "flow-testnet";
 export type ChainNetwork = {
-  chainID: string;
+  chainID: ChainID;
   core: ChainCore;
   apiScanNormalTransactionsByAddress: string;
   apiScanTokenTransactionsByAddress: string;
@@ -21,4 +22,5 @@ export type Token = {
   symbol: string;
   name: string;
   tokenContract?: string;
+  chainID: ChainID;
 };

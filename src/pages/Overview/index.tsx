@@ -60,7 +60,7 @@ const Overview = () => {
 
   const [listTokensBalance, setListTokensBalance] = useState<ListTokenBalance[]>(listTokenState.currentListTokens.data);
   const networkState = useAppSelector(state => state.network);
-  const [currenToken, setCurrenToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentNetwork.data.rpcUrls)?.symbol as string);
+  const [currenToken, setCurrenToken] = useState(listTokenState.currentListTokens.data.find(token => token.chainID === networkState.currentNetwork.data.chainID)?.symbol as string);
   const { web3, account: myAddress } = useBlockchain();
   const [balance, setBalance] = useState("");
   const [balanceUSD, setBalanceUSD] = useState("");
@@ -68,7 +68,7 @@ const Overview = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setCurrenToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentNetwork.data.rpcUrls)?.symbol as string);
+        setCurrenToken(listTokenState.currentListTokens.data.find(e => e.chainID === networkState.currentNetwork.data.chainID)?.symbol as string);
       } catch (e) {
         console.log(e);
       }
@@ -180,7 +180,7 @@ const Overview = () => {
             <ListItemMyAssets>
               {listTokensBalance ? (
                 listTokensBalance
-                  .filter(token => token.rpcUrls === networkState.currentNetwork.data.rpcUrls)
+                  .filter(token => token.chainID === networkState.currentNetwork.data.chainID)
                   .filter(
                     searchText
                       ? token =>

@@ -7,5 +7,5 @@ import LinkIcon from "./Icon.png";
 import SecondarySlider from "./Screenshot_from_2023-05-23_22-08-50-removebg-preview.png";
 import ThirdSlider from "./slider4.png";
 import LogoNew from "./all-access-website-favicon-color.png";
-import { BNBLogo, BUSDLogo, DAILogo, ETHLogo, OtherLogo, USDTLogo } from "./coin";
-export { BNBLogo, BUSDLogo, DAILogo, ETHLogo, OtherLogo, USDTLogo, LogoNew, SecondarySlider, ThirdSlider, Logo, LogoIcon, Background, FirstSlider, LogoIconXL, LinkIcon };
+import { BNBLogo, BUSDLogo, DAILogo, ETHLogo, OtherLogo, USDTLogo, FLOWLogo } from "./coin";
+export { BNBLogo, BUSDLogo, DAILogo, ETHLogo, OtherLogo, USDTLogo, LogoNew, SecondarySlider, ThirdSlider, Logo, LogoIcon, Background, FirstSlider, LogoIconXL, LinkIcon, FLOWLogo };

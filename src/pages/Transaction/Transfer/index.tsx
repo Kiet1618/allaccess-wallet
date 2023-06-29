@@ -62,7 +62,7 @@ const Transfer = () => {
   const [balance, setBalance] = useState("");
   const [isDesktop, setIsDesktop] = useState(true);
   const [searchText, setSearchText] = useState("");
-  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.rpcUrls === networkState.currentNetwork.data.rpcUrls));
+  const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.chainID === networkState.currentNetwork.data.chainID));
   const [openSelect, setOpenSelect] = useState(false);
   const [gasPrice, setGasPrice] = useState<string | 0>("0");
   const [gasLimit, setGasLimit] = useState<string | 0>("0");
@@ -140,7 +140,7 @@ const Transfer = () => {
 
   const handleGetInfoToken = async () => {
     try {
-      const currentNetwork = listNetWorks.find(networks => networks.rpcUrls === networkState.currentNetwork.data.rpcUrls);
+      const currentNetwork = listNetWorks.find(networks => networks.chainID === networkState.currentNetwork.data.chainID);
       const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string);
       const check = listTokenState.currentListTokens.data.filter(token => token.tokenContract === tokenAddress).length;
       if (!check) {
@@ -161,7 +161,7 @@ const Transfer = () => {
   }, [searchText]);
   useEffect(() => {
     try {
-      setToken(listTokenState.currentListTokens.data.find(e => e.rpcUrls === networkState.currentNetwork.data.rpcUrls));
+      setToken(listTokenState.currentListTokens.data.find(e => e.chainID === networkState.currentNetwork.data.chainID));
     } catch (e) {
       console.log(e);
     }
@@ -293,7 +293,7 @@ const Transfer = () => {
               <ContainerFlexSpace>
                 <div>Total gas</div>
                 <div>
-                  {(Number(gasLimit) + Number(gasPrice)).toFixed(15)} {listTokenState.currentListTokens.data.find(t => t.rpcUrls === networkState.currentNetwork.data.rpcUrls)?.symbol}
+                  {(Number(gasLimit) + Number(gasPrice)).toFixed(15)} {listTokenState.currentListTokens.data.find(t => t.chainID === networkState.currentNetwork.data.chainID)?.symbol}
                 </div>
               </ContainerFlexSpace>
 
@@ -402,14 +402,14 @@ const Transfer = () => {
             margin='dense'
           />
           {listTokenState.currentListTokens.data
-            .filter(coin => coin.rpcUrls === networkState.currentNetwork.data.rpcUrls)
+            .filter(coin => coin.chainID === networkState.currentNetwork.data.chainID)
             .filter(
               searchText
                 ? coin => coin.symbol.toLowerCase().includes(searchText.toLowerCase()) || coin.name.toLowerCase().includes(searchText.toLowerCase()) || coin.tokenContract?.includes(searchText)
                 : coin => coin
             ).length ? (
             listTokenState.currentListTokens.data
-              .filter(coin => coin.rpcUrls === networkState.currentNetwork.data.rpcUrls)
+              .filter(coin => coin.chainID === networkState.currentNetwork.data.chainID)
               .filter(
                 searchText
                   ? coin => coin.symbol.toLowerCase().includes(searchText.toLowerCase()) || coin.name.toLowerCase().includes(searchText.toLowerCase()) || coin.tokenContract?.includes(searchText)

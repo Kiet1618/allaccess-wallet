@@ -54,7 +54,7 @@ export const listNetWorks: ChainNetwork[] = [
    &endblock=999999999
    &sort=asc
    &apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW`,
-    rpcUrls: "https://bsc-testnet.publicnode.com",
+    rpcUrls: "https://data-seed-prebsc-2-s2.binance.org:8545",
     title: "BNB",
     description: "Binance Smart Chain Testnet",
     apiTransactionHash: `https://testnet.bscscan.com/tx/{transactionHash}`,
