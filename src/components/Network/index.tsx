@@ -30,7 +30,7 @@ export const fetchData = async (currentNetwork: ChainNetwork) => {
 };
 export const NetworkContainer = () => {
   const networkState = useAppSelector(state => state.network);
-  const [network, setNetwork] = useState(networkState.currentNetwork.data);
+  const [selectedNetwork, setSelectedNetwork] = useState(networkState.currentNetwork.data);
   // const { account: myAddress } = useBlockchain(network.rpcUrls);
   const myAddress = getTorusKey().ethAddress;
   const dispatch = useAppDispatch();
@@ -38,15 +38,21 @@ export const NetworkContainer = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [_, setStatus] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
   const historyState = useAppSelector(state => state.history);
 
-  const handleChange = async (event: any) => {
+  const handleChangeNetwork = async (event: any) => {
     const currentNetwork = listNetWorks.find(network => network.description === event.target.value) as ChainNetwork;
-    setNetwork(currentNetwork);
+    setSelectedNetwork(currentNetwork);
     handleOpen();
-    await fetchData(currentNetwork);
   };
-  const [isDesktop, setIsDesktop] = useState(true);
+
+  const handleSelectedNetwork = async () => {
+    if (!selectedNetwork) return;
+    await dispatch(setNetworkState(selectedNetwork));
+    handleClose();
+  };
+
   const handleResize = () => {
     if (window.innerWidth < 600) {
       setIsDesktop(false);
@@ -57,22 +63,26 @@ export const NetworkContainer = () => {
   useLayoutEffect(() => {
     handleResize();
     window.addEventListener("resize", handleResize);
-    dispatch(setNetworkState(network));
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
   useEffect(() => {
-    if (!historyState.getHistoriesAddress.data) fetchData(network);
-    dispatch(setNetworkState(network));
-  }, [network]);
+    if (!historyState.getHistoriesAddress.data) fetchData(networkState.currentNetwork.data);
+  }, [networkState]);
   return (
     <Container>
       <ButtonCustom onClick={() => copyAddress(myAddress, setStatus)} width='40%' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text={sliceAddress(myAddress)} />
       <FormControlCustom>
-        <SelectCustom IconComponent={() => <Dropdown style={{ marginRight: "10px" }} />} value={network.description} onChange={handleChange}>
+        <SelectCustom IconComponent={() => <Dropdown style={{ marginRight: "10px" }} />} value={networkState.currentNetwork.data.description} onChange={handleChangeNetwork}>
           {listNetWorks.map(network => (
-            <MenuItemCustom key={network.chainID} value={network.description}>
+            <MenuItemCustom
+              key={network.chainID}
+              value={network.description}
+              onChange={() => {
+                console.log(network);
+              }}
+            >
               <p>{network.description}</p>
             </MenuItemCustom>
           ))}
@@ -83,7 +93,7 @@ export const NetworkContainer = () => {
           <HeaderModalInfoTransaction>
             <HeaderModalGroupLeft>
               <TitleModal>You have switched to</TitleModal>
-              <TagNetwork>{listNetWorks.find(e => e.chainID === network.chainID)?.description}</TagNetwork>
+              <TagNetwork>{listNetWorks.find(e => e.chainID === selectedNetwork.chainID)?.description}</TagNetwork>
             </HeaderModalGroupLeft>
             <div>
               <IconButton onClick={handleClose}>
@@ -94,7 +104,10 @@ export const NetworkContainer = () => {
           <TagChangeNetwork text1={myAddress} text2={myAddress} />
           <ChangeNetworkTag>Change network</ChangeNetworkTag>
           <ChangeNetworkTagSub>The system will automatically create a new account for you on this network</ChangeNetworkTagSub>
-          <ButtonCustom onClick={() => handleClose()} width='146px' height='44px' styleButton='primary' text='Got it'></ButtonCustom>
+          <div>
+            <ButtonCustom onClick={() => handleClose()} mRight='8px' width='146px' height='44px' styleButton='default' text='Close'></ButtonCustom>
+            <ButtonCustom onClick={() => handleSelectedNetwork()} width='146px' height='44px' styleButton='primary' text='Got it'></ButtonCustom>
+          </div>
         </Box>
       </ModalCustom>
     </Container>
