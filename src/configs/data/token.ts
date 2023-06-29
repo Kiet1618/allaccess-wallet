@@ -1,5 +1,5 @@
 import { Token } from "../../types/blockchain.type";
-import { BNBLogo, BUSDLogo, DAILogo, ETHLogo, OtherLogo, USDTLogo } from "../../assets/img";
+import { BNBLogo, BUSDLogo, DAILogo, ETHLogo, FLOWLogo, OtherLogo, USDTLogo } from "../../assets/img";
 
 export const listTokens: Token[] = [
   {
@@ -7,12 +7,14 @@ export const listTokens: Token[] = [
     img: ETHLogo,
     symbol: "ETH",
     name: "Ethereum",
+    chainID: "1",
   },
   {
     rpcUrls: "https://goerli.blockpi.network/v1/rpc/public",
     img: ETHLogo,
     symbol: "ETH",
     name: "Ethereum",
+    chainID: "5",
   },
   {
     symbol: "USDT",
@@ -20,6 +22,7 @@ export const listTokens: Token[] = [
     img: USDTLogo,
     name: "Tether",
     tokenContract: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    chainID: "1",
   },
   {
     rpcUrls: "https://goerli.blockpi.network/v1/rpc/public",
@@ -27,6 +30,7 @@ export const listTokens: Token[] = [
     symbol: "TST",
     name: "Goerli Test Token",
     tokenContract: "0x7af963cF6D228E564e2A0aA0DdBF06210B38615D",
+    chainID: "5",
   },
   {
     rpcUrls: "https://goerli.blockpi.network/v1/rpc/public",
@@ -34,6 +38,7 @@ export const listTokens: Token[] = [
     symbol: "DAI",
     name: "DAI",
     tokenContract: "0xBa8DCeD3512925e52FE67b1b5329187589072A55",
+    chainID: "5",
   },
   {
     rpcUrls: "https://goerli.blockpi.network/v1/rpc/public",
@@ -41,24 +46,28 @@ export const listTokens: Token[] = [
     symbol: "BUSD",
     name: "BUSD",
     tokenContract: "0xa7c3Bf25FFeA8605B516Cf878B7435fe1768c89b",
+    chainID: "5",
   },
   {
     rpcUrls: "https://bsc-dataseed1.binance.org",
     img: BNBLogo,
     symbol: "BNB",
     name: "BNB",
+    chainID: "56",
   },
   {
     rpcUrls: "https://geth-kotti.etc-network.info",
     img: ETHLogo,
     symbol: "KOT",
     name: "KOT",
+    chainID: "9",
   },
   {
     rpcUrls: "https://bsc-testnet.publicnode.com",
     img: BNBLogo,
     symbol: "BNB",
     name: "BNB",
+    chainID: "97",
   },
   {
     rpcUrls: "https://bsc-testnet.publicnode.com",
@@ -66,5 +75,14 @@ export const listTokens: Token[] = [
     symbol: "USDT",
     name: "Tether",
     tokenContract: "0x337610d27c682E347C9cD60BD4b3b107C9d34dDd",
+    chainID: "97",
+  },
+  {
+    rpcUrls: "",
+    img: FLOWLogo,
+    symbol: "FLOW",
+    name: "Flow Testnet",
+    tokenContract: "0x",
+    chainID: "flow-testnet",
   },
 ];

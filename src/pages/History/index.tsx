@@ -84,7 +84,7 @@ const History = () => {
   }, [network]);
   const listTokenState = useAppSelector(state => state.token);
   const fetchData = async (currentNetwork: ChainNetwork) => {
-    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.rpcUrls === currentNetwork.rpcUrls && tokens.tokenContract !== undefined);
+    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.chainID === currentNetwork.chainID && tokens.tokenContract !== undefined);
     const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
     dispatch(setHistoriesAddress(historyTransaction));
   };
@@ -139,7 +139,7 @@ const History = () => {
               }}
             >
               {listNetWorks.map(network => (
-                <MenuItem key={network.rpcUrls} value={network.description}>
+                <MenuItem key={network.chainID} value={network.description}>
                   {network.description}
                 </MenuItem>
               ))}
