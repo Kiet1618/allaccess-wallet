@@ -6,7 +6,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FormControl from "@mui/material/FormControl";
 import CustomInput from "../../../components/TextField";
 import { Copy, DropdownBlack, Success, SearchIcon } from "../../../assets/icon";
-// import { TextHeaderOverview } from "../../Overview/overview.css";
+import { TextHeaderOverview } from "../../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -67,6 +67,7 @@ const Transfer = () => {
   const [gasPrice, setGasPrice] = useState<string | 0>("0");
   const [gasLimit, setGasLimit] = useState<string | 0>("0");
   const [reRenderGas, setRenderGasLimit] = useState<string>("0");
+  const [amount, setAmount] = useState("0");
   const [transactionError, setTransactionError] = useState("");
   const handleClose = () => {
     setOpen(false);
@@ -98,7 +99,6 @@ const Transfer = () => {
   useEffect(() => {
     const updateGasLimit = async () => {
       const addressTo = getValues("addressTo");
-      const amount = getValues("amount");
       const gasLimitValue = await getGasLimit(web3 as Web3, addressTo, amount, token?.tokenContract);
       setGasLimit(gasLimitValue);
     };
@@ -208,7 +208,7 @@ const Transfer = () => {
     }
   }, [infoTransaction]);
   return (
-    <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
+    <Grid style={{ width: "100%" }} container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid>
         <TitlePageContainer>
           <TitlePage>Transfer your Ethereum</TitlePage>
@@ -270,6 +270,7 @@ const Transfer = () => {
                       error={!!errors.amount}
                       onChange={e => {
                         setRenderGasLimit(e.target.value);
+                        setAmount(e.target.value);
                         onChange(e);
                       }}
                       name={name}
@@ -293,8 +294,21 @@ const Transfer = () => {
               <ContainerFlexSpace>
                 <div>Total gas</div>
                 <div>
-                  {(Number(gasLimit) + Number(gasPrice)).toFixed(15)} {listTokenState.currentListTokens.data.find(t => t.chainID === networkState.currentNetwork.data.chainID)?.symbol}
+                  {Number(gasLimit) + Number(gasPrice) ? (Number(gasLimit) ? Number(gasLimit).toFixed(10) + " + " : "") + Number(gasPrice).toFixed(10) : "0"} {networkState.currentNetwork.data.title}
                 </div>
+              </ContainerFlexSpace>
+              <ContainerFlexSpace>
+                <div>Value</div>
+                <div>{(Number(amount) ? "+ " + Number(amount) : "+ 0") + " " + token?.symbol}</div>
+              </ContainerFlexSpace>
+              <ContainerFlexSpace>
+                <TextHeaderOverview>Total fee</TextHeaderOverview>
+                <TextHeaderOverview>
+                  {networkState.currentNetwork.data.title === token?.symbol
+                    ? (Number(gasLimit) + Number(gasPrice) + Number(amount) ? Number(gasLimit) + Number(gasPrice) + Number(amount) : "0") + " " + networkState.currentNetwork.data.title
+                    : (Number(gasLimit) + Number(gasPrice) ? Number(gasLimit) + Number(gasPrice) + " " + networkState.currentNetwork.data.title : "") +
+                      ((Number(amount) ? " + " + Number(amount) : " + 0") + " " + token?.symbol)}
+                </TextHeaderOverview>
               </ContainerFlexSpace>
 
               <ContainerRight>

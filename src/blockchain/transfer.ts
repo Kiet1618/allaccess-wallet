@@ -11,6 +11,11 @@ export const sendTransaction = async (
   setErrorTransaction: React.Dispatch<React.SetStateAction<string>>
 ) => {
   setInfoTransaction("pending");
+  setTimeout(() => {
+    setErrorTransaction("Error: Time out");
+    setInfoTransaction("Error");
+    setTransactionHash("");
+  }, 60000);
   const privateKey = getTorusKey().priKey;
   if (!privateKey) {
     setErrorTransaction("Error: Don't have private key");
@@ -73,7 +78,11 @@ export const sendTransactionToken = async (
   setErrorTransaction: React.Dispatch<React.SetStateAction<string>>
 ) => {
   setInfoTransaction("pending");
-
+  setTimeout(() => {
+    setErrorTransaction("Error: Time out");
+    setInfoTransaction("Error");
+    setTransactionHash("");
+  }, 60000);
   const { addressTo, amount } = data;
   const tokenAddress = new web3.eth.Contract(abi as any, tokenContract);
   const price = await web3.eth.getGasPrice();
