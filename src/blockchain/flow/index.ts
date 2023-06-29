@@ -97,5 +97,29 @@ export const useFlowBlockchain = (rpcUrl?: string) => {
     return transaction;
   };
 
+  const transferToken = async (amount: string, recipient: string) => {
+    const blockResponse = await fcl.send([fcl.getBlock(true) as any]);
+    const response = await fcl.send([
+      fcl.transaction(TransferFlowScript),
+      fcl.args([
+        fcl.arg(amount, t.UFix64), // Amount to transfer
+        fcl.arg(recipient, t.Address), // Recipient's address
+      ]),
+      fcl.payer(authorization),
+      fcl.proposer(authorization),
+      fcl.authorizations([authorization]),
+      fcl.ref(blockResponse.block.id),
+      fcl.limit(100),
+    ]);
+
+    fcl.tx(response).subscribe(status => {
+      console.log("🚀 ~ file: index.ts:95 ~ fcl.tx ~ status:", status);
+    });
+
+    const transaction = await fcl.tx(response).onceSealed();
+
+    return transaction;
+  };
+
   return { fcl, getBlock, getAccount, transferFlow };
 };
