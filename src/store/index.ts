@@ -5,6 +5,7 @@ import listNetwork from "./redux/network/reducer";
 import listToken from "./redux/token/reducer";
 import listHistory from "./redux/history/reducer";
 import profile from "./redux/profile/reducer";
+import walletReducer from "./redux/wallet/reducer";
 export const store = configureStore({
   reducer: {
     login: loginReducer,
@@ -12,6 +13,7 @@ export const store = configureStore({
     token: listToken,
     history: listHistory,
     profile: profile,
+    wallet: walletReducer,
   },
 });
 
