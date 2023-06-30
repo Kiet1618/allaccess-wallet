@@ -5,12 +5,12 @@ import CustomInput from "../../../components/TextField";
 import { Copy } from "../../../assets/icon";
 import QRCode from "react-qr-code";
 import { TitlePageContainer, SubTitlePage, ReceiveTagHeader, BackgroundPage, ContainerFlexSpace, CopyAddressContainer, AddressContainer, ContainerQRCode, BackgroundPageQR } from "./receive.css";
-import { useBlockchain } from "@app/blockchain";
+import useBlockchain from "@app/blockchain/wrapper";
 import { copyAddress } from "@app/utils";
 import DoneIcon from "@mui/icons-material/Done";
 
 const Receive = () => {
-  const { account: myAddress } = useBlockchain();
+  const { getAccount } = useBlockchain();
   const [status, setStatus] = useState(false);
   return (
     <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -26,7 +26,7 @@ const Receive = () => {
             <ReceiveTagHeader>Address</ReceiveTagHeader>
             <CopyAddressContainer
               onClick={() => {
-                copyAddress(myAddress, setStatus);
+                copyAddress(getAccount(), setStatus);
               }}
             >
               {status ? <DoneIcon /> : <Copy />}
@@ -34,14 +34,14 @@ const Receive = () => {
             </CopyAddressContainer>
           </ContainerFlexSpace>
           <AddressContainer>
-            <CustomInput size='small' disabled value={myAddress} variant='outlined' fullWidth margin='normal' styleTextField='disable' />
+            <CustomInput size='small' disabled value={getAccount()} variant='outlined' fullWidth margin='normal' styleTextField='disable' />
           </AddressContainer>
         </BackgroundPage>
       </Grid>
       <Grid item xs={100} sm={100} md={100} lg={50} xl={45}>
         <ContainerQRCode>
           <BackgroundPageQR>
-            <QRCode value={myAddress || ""}></QRCode>
+            <QRCode value={getAccount() || ""}></QRCode>
           </BackgroundPageQR>
         </ContainerQRCode>
       </Grid>

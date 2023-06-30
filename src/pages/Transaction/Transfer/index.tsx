@@ -13,13 +13,13 @@ import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress } from "../../../utils";
 import { setCurrentListTokens } from "../../../store/redux/token/actions";
 import Web3 from "web3";
-import { sendTransaction, getBalanceToken, useBlockchain, getBalance, getToken, getGasLimit } from "../../../blockchain";
+import { sendTransaction, getBalanceToken, getBalance, getToken, getGasLimit, sendTransactionToken, getGasPrice } from "../../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../../components/Table/table.css";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
 import Box from "@mui/material/Box";
-import { sendTransactionToken, getGasPrice } from "../../../blockchain";
+import useBlockchain from "@app/blockchain/wrapper";
 import { Token } from "../../../types/blockchain.type";
 import { listNetWorks } from "../../../configs/data";
 import { FormData } from "./type";
@@ -54,7 +54,7 @@ const Transfer = () => {
   const dispatch = useAppDispatch();
   const [status, setStatus] = useState(false);
   const [statusTransactionHash, setStatusTransactionHash] = useState(false);
-  const { web3, account: myAddress } = useBlockchain();
+  const { web3, getAccount } = useBlockchain();
   const [openAlert, setOpenAlert] = useState(false);
   const [open, setOpen] = useState(false);
   const [tokenAddress, setTokenAddress] = useState("");
@@ -323,8 +323,8 @@ const Transfer = () => {
         <ContainerBalanceCard>
           <BackgroundPage>
             <ReceiveTagHeader>Account balance</ReceiveTagHeader>
-            <CopyAddressContainer onClick={() => copyAddress(myAddress, setStatus)}>
-              {sliceAddress(myAddress)}
+            <CopyAddressContainer onClick={() => copyAddress(getAccount(), setStatus)}>
+              {sliceAddress(getAccount())}
               {status ? <DoneIcon /> : <Copy />}
             </CopyAddressContainer>
             <BalanceNumberCard>

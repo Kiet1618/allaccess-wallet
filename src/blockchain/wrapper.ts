@@ -64,7 +64,7 @@ const useBlockchain = () => {
     return "";
   };
 
-  return { getBalance, getAccount, transfer, transferToken };
+  return { web3, getBalance, getAccount, transfer, transferToken };
 };
 
 export default useBlockchain;
