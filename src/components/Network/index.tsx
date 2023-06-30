@@ -9,10 +9,8 @@ import { useAppDispatch, useAppSelector } from "@app/store";
 import { setNetworkState } from "@app/store/redux/network/actions";
 import { setHistoriesAddress } from "@app/store/redux/history/actions";
 import { sliceAddress, copyAddress, preProcessHistoryResponse } from "@app/utils";
-
 import { ModalCustom, HeaderModalInfoTransaction, HeaderModalGroupLeft, TitleModal } from "../Table/table.css";
 import { ChangeNetworkTag, ChangeNetworkTagSub, FormControlCustom, SelectCustom, Container, MenuItemCustom, style, TagNetwork } from "./network.css";
-
 import TagChangeNetwork from "./changeNetwork";
 import ButtonCustom from "../Button";
 import { getTorusKey } from "@app/storage/storage-service";

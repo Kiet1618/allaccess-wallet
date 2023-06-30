@@ -149,7 +149,17 @@ const MFA = () => {
             </ContainerTextField>
             <ContainerButtonFactors>
               <CustomButton height='48px' width='100px' mTop='50px' mBottom='20px' mRight='20px' text='Cancel' styleButton='inactive'></CustomButton>
-              <CustomButton height='48px' width='100px' mTop='50px' mBottom='20px' text='Confirm' styleButton='primary' loading={loadingRecovery} onClick={changeRecoveryPhrase}></CustomButton>
+              <CustomButton
+                variant='contained'
+                height='48px'
+                width='100px'
+                mTop='50px'
+                mBottom='20px'
+                text={loadingRecovery ? "" : "Confirm"}
+                styleButton={loadingRecovery ? "inactive" : "primary"}
+                loading={loadingRecovery}
+                onClick={changeRecoveryPhrase}
+              ></CustomButton>
             </ContainerButtonFactors>
           </BackgroundPage>
         </Grid>
@@ -194,7 +204,16 @@ const MFA = () => {
           </ContainerDeviceModal>
           <ContainerButtonFactors>
             <CustomButton onClick={handleClose} height='48px' width='150px' mTop='50px' mBottom='20px' mRight='20px' text='Back' styleButton='inactive'></CustomButton>
-            <CustomButton loading={loadingDeleteDevice} onClick={handleDelete} height='48px' width='150px' mTop='50px' mBottom='20px' text="Yes, I'm sure" styleButton='primary'></CustomButton>
+            <CustomButton
+              text={loadingDeleteDevice ? "" : "Yes, I'm sure"}
+              styleButton={loadingDeleteDevice ? "inactive" : "primary"}
+              loading={loadingDeleteDevice}
+              onClick={handleDelete}
+              height='48px'
+              width='150px'
+              mTop='50px'
+              mBottom='20px'
+            ></CustomButton>
           </ContainerButtonFactors>
         </Box>
       </Modal>

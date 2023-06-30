@@ -12,7 +12,7 @@ import { Google, LogoText } from "@app/assets/icon";
 import { UserGoogle } from "@app/types/oauth.type";
 import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
 import { useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@app/store";
+import { useAppDispatch } from "@app/store";
 import { setProfile } from "@app/store/redux/profile/actions";
 import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
 import { getGoogleToken } from "@app/wallet/metadata";
@@ -56,6 +56,7 @@ const Login = () => {
       const { data: tokens, error } = await getGoogleToken({ code: tokenResponse.code });
       if (error) {
         handleNotification(error, "error");
+        handleClose();
         return;
       }
       const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: tokens?.id_token } });
@@ -70,15 +71,18 @@ const Login = () => {
       const { error: error1, info, networkKey } = await getInfoWallet("google", profile.email, tokens?.id_token || "");
       if (error1) {
         handleNotification(error1, "error");
+        handleClose();
         return;
       }
       const { error: error2, success, mfa } = await fetchMasterKey(info!, networkKey!);
       if (error2) {
         handleNotification(error2, "error");
+        handleClose();
         return;
       }
 
       if (mfa) {
+        handleClose();
         navigate("multiple-factors");
         return;
       }
@@ -90,6 +94,7 @@ const Login = () => {
         navigate("overview");
         return;
       }
+      handleClose();
     },
     onError: error => {
       handleNotification(error?.error_description || "", "error");

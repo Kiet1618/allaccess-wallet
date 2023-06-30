@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import Web3 from "web3";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
@@ -22,9 +22,9 @@ const sliceAddressIdTableCell = (str: string) => {
 };
 const TableWithPagination: React.FC = () => {
   const rowsPerPage = 5;
-
+  const networkState = useAppSelector(state => state.network);
   const historyState = useAppSelector(state => state.history);
-  const { web3, account: myAddress } = useBlockchain();
+  const { web3, account: myAddress } = useBlockchain(networkState.currentNetwork.data.rpcUrls);
   const [statusFrom, setStatusFrom] = useState(false);
   const [statusTo, setStatusTo] = useState(false);
   const [statusTransactionHash, setStatusTransactionHash] = useState(false);
