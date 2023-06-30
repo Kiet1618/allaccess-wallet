@@ -56,6 +56,7 @@ const Login = () => {
       const { data: tokens, error } = await getGoogleToken({ code: tokenResponse.code });
       if (error) {
         handleNotification(error, "error");
+        handleClose();
         return;
       }
       const { data: profile } = await axios.get<UserGoogle>("https://www.googleapis.com/oauth2/v3/tokeninfo", { params: { id_token: tokens?.id_token } });
@@ -76,10 +77,12 @@ const Login = () => {
       const { error: error2, success, mfa } = await fetchMasterKey(info!, networkKey!);
       if (error2) {
         handleNotification(error2, "error");
+        handleClose();
         return;
       }
 
       if (mfa) {
+        handleClose();
         navigate("multiple-factors");
         return;
       }
@@ -91,6 +94,7 @@ const Login = () => {
         navigate("overview");
         return;
       }
+      handleClose();
     },
     onError: error => {
       handleNotification(error?.error_description || "", "error");

@@ -298,12 +298,12 @@ const Transfer = () => {
                   {Number(gasLimit) + Number(gasPrice) ? (Number(gasLimit) ? Number(gasLimit).toFixed(10) + " + " : "") + Number(gasPrice).toFixed(10) : "0"} {networkState.currentNetwork.data.title}
                 </div>
               </ContainerFlexSpace>
-              <ContainerFlexSpace>
+              {/* <ContainerFlexSpace>
                 <div>Value</div>
                 <div>{(Number(amount) ? "+ " + Number(amount) : "+ 0") + " " + token?.symbol}</div>
-              </ContainerFlexSpace>
+              </ContainerFlexSpace> */}
               <ContainerFlexSpace>
-                <TextHeaderOverview>Total fee</TextHeaderOverview>
+                <TextHeaderOverview>Total amount</TextHeaderOverview>
                 <TextHeaderOverview>
                   {networkState.currentNetwork.data.title === token?.symbol
                     ? (Number(gasLimit) + Number(gasPrice) + Number(amount) ? Number(gasLimit) + Number(gasPrice) + Number(amount) : "0") + " " + networkState.currentNetwork.data.title
