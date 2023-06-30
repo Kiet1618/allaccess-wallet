@@ -12,7 +12,7 @@ import { Google, LogoText } from "@app/assets/icon";
 import { UserGoogle } from "@app/types/oauth.type";
 import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
 import { useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@app/store";
+import { useAppDispatch } from "@app/store";
 import { setProfile } from "@app/store/redux/profile/actions";
 import { CustomSlider, BackgroundImg, ImgSlider, TextSlider, ContainerSlider, TextLogo, LoginH1, Subtitle, ContainerLoginButton, CustomGrid, OrLineContainer } from "./login.css";
 import { getGoogleToken } from "@app/wallet/metadata";

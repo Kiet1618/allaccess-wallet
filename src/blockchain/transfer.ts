@@ -58,7 +58,7 @@ export const sendTransaction = async (
     .on("transactionHash", transactionHash => {
       setTransactionHash(transactionHash);
     })
-    .on("receipt", receipt => {
+    .on("receipt", () => {
       setInfoTransaction("success");
       return;
     })
@@ -119,7 +119,7 @@ export const sendTransactionToken = async (
     .on("transactionHash", transactionHash => {
       setTransactionHash(transactionHash);
     })
-    .on("receipt", receipt => {
+    .on("receipt", () => {
       setInfoTransaction("success");
       return;
     })
