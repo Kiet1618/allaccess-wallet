@@ -13,7 +13,7 @@ import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress } from "../../../utils";
 import { setCurrentListTokens } from "../../../store/redux/token/actions";
 import Web3 from "web3";
-import { sendTransaction, getBalanceToken, getBalance, getToken, getGasLimit, sendTransactionToken, getGasPrice } from "../../../blockchain";
+import { sendTransaction, getToken, getGasLimit, sendTransactionToken, getGasPrice } from "../../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../../components/Table/table.css";
 import Snackbar from "@mui/material/Snackbar";
@@ -54,7 +54,7 @@ const Transfer = () => {
   const dispatch = useAppDispatch();
   const [status, setStatus] = useState(false);
   const [statusTransactionHash, setStatusTransactionHash] = useState(false);
-  const { web3, getAccount } = useBlockchain();
+  const { web3, getAccount, getBalance, getBalanceToken } = useBlockchain();
   const [openAlert, setOpenAlert] = useState(false);
   const [open, setOpen] = useState(false);
   const [tokenAddress, setTokenAddress] = useState("");
@@ -63,6 +63,7 @@ const Transfer = () => {
   const [isDesktop, setIsDesktop] = useState(true);
   const [searchText, setSearchText] = useState("");
   const [token, setToken] = useState(listTokenState.currentListTokens.data.find(token => token.chainID === networkState.currentNetwork.data.chainID));
+
   const [openSelect, setOpenSelect] = useState(false);
   const [gasPrice, setGasPrice] = useState<string | 0>("0");
   const [gasLimit, setGasLimit] = useState<string | 0>("0");
@@ -203,7 +204,11 @@ const Transfer = () => {
   }, [infoTransaction]);
   useEffect(() => {
     try {
-      token?.tokenContract ? getBalanceToken(web3 as Web3, token.tokenContract).then(res => setBalance(res)) : getBalance(web3 as Web3).then(res => setBalance(res));
+      if (token?.tokenContract) {
+        getBalanceToken({ tokenContract: token.tokenContract }).then(res => setBalance(res));
+      } else {
+        getBalance().then(res => setBalance(res));
+      }
     } catch {
       setBalance("Error");
     }

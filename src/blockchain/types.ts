@@ -9,6 +9,10 @@ export type TransferToken = {
   tokenContract?: string;
 };
 
+export type GetBalanceToken = {
+  tokenContract: string;
+};
+
 export type Callbacks = {
   onHash?: (msg: string) => void;
   onInfo?: (msg: string) => void;

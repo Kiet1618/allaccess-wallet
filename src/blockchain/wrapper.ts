@@ -2,7 +2,7 @@ import { useAppSelector } from "@app/store";
 import { useEVMBlockchain } from "./evm";
 import { useFlowBlockchain } from "./flow";
 import { isEmpty } from "lodash";
-import { Callbacks, TransferNative, TransferToken } from "./types";
+import { Callbacks, GetBalanceToken, TransferNative, TransferToken } from "./types";
 // interface Blockchain {
 //   getBalance: () => number;
 //   transferNative: () => number;
@@ -13,8 +13,8 @@ import { Callbacks, TransferNative, TransferToken } from "./types";
 const useBlockchain = () => {
   const networkState = useAppSelector(state => state.network);
 
-  const { web3, getBalance: evmGetBalance, account: evmAccount, transfer: evmTransfer, transferToken: evmTransferToken } = useEVMBlockchain();
-  const { getBalance: fvmGetBalance, account: fvmAccount, transfer: fvmTransfer, transferToken: fvmTransferToken } = useFlowBlockchain();
+  const { web3, account: evmAccount, transfer: evmTransfer, transferToken: evmTransferToken, getBalance: evmGetBalance, getBalanceToken: evmGetBalanceToken } = useEVMBlockchain();
+  const { account: fvmAccount, transfer: fvmTransfer, transferToken: fvmTransferToken, getBalance: fvmGetBalance, getBalanceToken: fvmGetBalanceToken } = useFlowBlockchain();
 
   const getBalance = async () => {
     if (isEmpty(networkState.currentNetwork.data)) return 0;
@@ -24,6 +24,18 @@ const useBlockchain = () => {
     }
     if (core === "fvm") {
       return fvmGetBalance();
+    }
+    return 0;
+  };
+
+  const getBalanceToken = async (data: GetBalanceToken) => {
+    if (isEmpty(networkState.currentNetwork.data)) return 0;
+    const { core } = networkState.currentNetwork.data;
+    if (core === "evm" && web3) {
+      return evmGetBalanceToken(web3, data.tokenContract);
+    }
+    if (core === "fvm") {
+      return fvmGetBalanceToken();
     }
     return 0;
   };
@@ -64,7 +76,7 @@ const useBlockchain = () => {
     return "";
   };
 
-  return { web3, getBalance, getAccount, transfer, transferToken };
+  return { web3, getBalance, getBalanceToken, getAccount, transfer, transferToken };
 };
 
 export default useBlockchain;

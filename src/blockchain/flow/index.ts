@@ -86,6 +86,12 @@ export const useFlowBlockchain = () => {
     return account.balance;
   };
 
+  const getBalanceToken = async () => {
+    const accountResponse = await fcl.send([fcl.getAccount(masterKey?.flowAddress || "") as any]);
+    const account = await fcl.decode(accountResponse);
+    return account.balance;
+  };
+
   const transfer = async (data: TransferNative, callbacks: Callbacks) => {
     const blockResponse = await fcl.send([fcl.getBlock(true) as any]);
     const response = await fcl.send([
@@ -147,5 +153,5 @@ export const useFlowBlockchain = () => {
     return data;
   };
 
-  return { fcl, account, createOrGetAccount, getBlock, getAccount, getBalance, transfer, transferToken };
+  return { fcl, account, createOrGetAccount, getBlock, getAccount, getBalance, getBalanceToken, transfer, transferToken };
 };
