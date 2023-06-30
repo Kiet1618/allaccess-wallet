@@ -41,7 +41,6 @@ import {
   styleMobile,
 } from "./history.css";
 import { useAppDispatch, useAppSelector } from "@app/store";
-import { setNetworkState } from "@app/store/redux/network/actions";
 import { ChainNetwork } from "@app/types/blockchain.type";
 import { useBlockchain } from "@app/blockchain";
 const History = () => {
@@ -78,10 +77,13 @@ const History = () => {
     };
   }, []);
   useEffect(() => {
-    if (network !== networkState.currentNetwork.data) fetchData(network);
-
-    dispatch(setNetworkState(network));
+    fetchData(network);
   }, [network]);
+  // useEffect(() => {
+  //   if (network !== networkState.currentNetwork.data) fetchData(network);
+
+  //   dispatch(setNetworkState(network));
+  // }, [network]);
   const listTokenState = useAppSelector(state => state.token);
   const fetchData = async (currentNetwork: ChainNetwork) => {
     const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.chainID === currentNetwork.chainID && tokens.tokenContract !== undefined);
