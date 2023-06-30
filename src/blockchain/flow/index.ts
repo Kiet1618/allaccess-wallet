@@ -1,6 +1,5 @@
 import { SHA3 } from "sha3";
 import * as EC from "elliptic";
-import { BN } from "bn.js";
 import { KeyPair } from "@app/wallet/types";
 import { useLocalStorage } from "usehooks-ts";
 import { useAppSelector } from "@app/store";
@@ -9,12 +8,13 @@ import * as fcl from "@onflow/fcl";
 import { TransferFlowScript } from "./transactions";
 import { isEmpty } from "lodash";
 import { createFlowAccount } from "./apis";
+import { Callbacks, TransferNative, TransferToken } from "../types";
 const { t } = fcl;
 const ec = new EC.ec("secp256k1");
 
-export const useFlowBlockchain = (rpcUrl?: string) => {
+export const useFlowBlockchain = () => {
   const [account, setAccount] = useState("");
-  const [masterKey, setMasterKey] = useLocalStorage<KeyPair | null>("master-key", null);
+  const [masterKey, _] = useLocalStorage<KeyPair | null>("master-key", null);
   const networkState = useAppSelector(state => state.network);
 
   const hashMsgHex = (msgHex: string): Buffer => {
@@ -60,16 +60,15 @@ export const useFlowBlockchain = (rpcUrl?: string) => {
   };
 
   useEffect(() => {
-    if (isEmpty(networkState)) return;
+    if (isEmpty(networkState.currentNetwork.data)) return;
     if (!networkState.currentNetwork.data.chainID.includes("flow")) return;
     const { rpcUrls, chainID } = networkState.currentNetwork.data;
-    console.log("🚀 ~ file: index.ts:66 ~ useEffect ~ chainID:", chainID);
     createOrGetAccount();
     fcl.config({
       "accessNode.api": rpcUrls,
       "flow.network": chainID.split("-")[1],
     });
-  }, [networkState]);
+  }, [masterKey?.priKey, networkState.currentNetwork.data]);
 
   const getBlock = async () => {
     const blockResponse = await fcl.send([fcl.getBlock(true) as any]);
@@ -87,13 +86,13 @@ export const useFlowBlockchain = (rpcUrl?: string) => {
     return account.balance;
   };
 
-  const transferFlow = async (amount: string, recipient: string) => {
+  const transfer = async (data: TransferNative, callbacks: Callbacks) => {
     const blockResponse = await fcl.send([fcl.getBlock(true) as any]);
     const response = await fcl.send([
       fcl.transaction(TransferFlowScript),
       fcl.args([
-        fcl.arg(amount, t.UFix64), // Amount to transfer
-        fcl.arg(recipient, t.Address), // Recipient's address
+        fcl.arg(data.amount, t.UFix64), // Amount to transfer
+        fcl.arg(data.addressTo, t.Address), // Recipient's address
       ]),
       fcl.payer(authorization),
       fcl.proposer(authorization),
@@ -107,17 +106,17 @@ export const useFlowBlockchain = (rpcUrl?: string) => {
     });
 
     const transaction = await fcl.tx(response).onceSealed();
-
+    if (typeof callbacks.onSuccess === "function") callbacks.onSuccess(transaction);
     return transaction;
   };
 
-  const transferToken = async (amount: string, recipient: string) => {
+  const transferToken = async (data: TransferToken, callbacks: Callbacks) => {
     const blockResponse = await fcl.send([fcl.getBlock(true) as any]);
     const response = await fcl.send([
       fcl.transaction(TransferFlowScript),
       fcl.args([
-        fcl.arg(amount, t.UFix64), // Amount to transfer
-        fcl.arg(recipient, t.Address), // Recipient's address
+        fcl.arg(data.amount, t.UFix64), // Amount to transfer
+        fcl.arg(data.addressTo, t.Address), // Recipient's address
       ]),
       fcl.payer(authorization),
       fcl.proposer(authorization),
@@ -131,7 +130,7 @@ export const useFlowBlockchain = (rpcUrl?: string) => {
     });
 
     const transaction = await fcl.tx(response).onceSealed();
-
+    if (typeof callbacks.onSuccess === "function") callbacks.onSuccess(transaction);
     return transaction;
   };
 
@@ -148,5 +147,5 @@ export const useFlowBlockchain = (rpcUrl?: string) => {
     return data;
   };
 
-  return { fcl, account, createOrGetAccount, getBlock, getAccount, getBalance, transferFlow };
+  return { fcl, account, createOrGetAccount, getBlock, getAccount, getBalance, transfer, transferToken };
 };

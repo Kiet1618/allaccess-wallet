@@ -35,7 +35,7 @@ export const NetworkContainer = () => {
   const [selectedNetwork, setSelectedNetwork] = useState(networkState.currentNetwork.data);
   const { handleNotification } = useCustomSnackBar();
   const { getAccount } = useBlockchain();
-  const myAddress = getTorusKey().ethAddress;
+  // const myAddress = getTorusKey().ethAddress;
   const myPubKey = getTorusKey().pubKey;
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(false);
@@ -83,7 +83,16 @@ export const NetworkContainer = () => {
   }, [networkState]);
   return (
     <Container>
-      <ButtonCustom onClick={() => copyAddress(myAddress, setStatus)} width='40%' height='40px' styleButton='style' padding='8px 12px' gap='10px' fontSize='14px' text={sliceAddress(myAddress)} />
+      <ButtonCustom
+        onClick={() => copyAddress(getAccount(), setStatus)}
+        width='40%'
+        height='40px'
+        styleButton='style'
+        padding='8px 12px'
+        gap='10px'
+        fontSize='14px'
+        text={sliceAddress(getAccount())}
+      />
       <FormControlCustom>
         <SelectCustom IconComponent={() => <Dropdown style={{ marginRight: "10px" }} />} value={networkState.currentNetwork.data.description} onChange={handleChangeNetwork}>
           {listNetWorks.map(network => (
@@ -112,7 +121,7 @@ export const NetworkContainer = () => {
               </IconButton>
             </div>
           </HeaderModalInfoTransaction>
-          <TagChangeNetwork text1={myAddress} text2={myAddress} />
+          <TagChangeNetwork text1={getAccount()} text2={getAccount()} />
           <ChangeNetworkTag>Change network</ChangeNetworkTag>
           <ChangeNetworkTagSub>The system will automatically create a new account for you on this network</ChangeNetworkTagSub>
           <div>
