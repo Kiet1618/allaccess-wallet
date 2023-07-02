@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import { Grid } from "@mui/material";
@@ -8,8 +8,10 @@ import { routes } from "@app/configs/data";
 import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
 import { MessagePayload } from "@firebase/messaging";
 import { ShareInfo } from "@app/wallet/metadata";
-import { Header, Footer, Sidebar, DeviceModal } from "../";
+import { Header, Footer, Sidebar, DeviceModal, LoginRequestModal } from "../";
 import { isEmpty } from "lodash";
+import Cookies from "universal-cookie";
+import { useBlockchain } from "@app/blockchain";
 // import { ChainNetwork } from "@app/types/blockchain.type";
 // import { Token } from "@app/types/blockchain.type";
 // import { useAppSelector, useAppDispatch } from "@app/store";
@@ -34,12 +36,15 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
   // useEffect(() => {
   //   fetchData(networkState.currentNetwork.data)
   // }, [])
+  const cookies = new Cookies();
   const location = useLocation();
   const { updateShareForPublicKey } = useFetchWallet();
   const { handleNotification } = useCustomSnackBar();
   const checkLayout = routes.find(route => route.path === location.pathname);
   const [isDesktop, setIsDesktop] = useState(false);
+  const { account } = useBlockchain();
   const [detectDevice, setDetectDevice] = useState<ShareInfo | null>(null);
+  const [origin, setOrigin] = useState<string | null>("");
   const handleResize = () => {
     if (window.innerWidth < 600) {
       setIsDesktop(false);
@@ -54,7 +59,9 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
+  useEffect(() => {
+    if (checkLayout?.layout) setOrigin(cookies.get("origin"));
+  });
   const theme = "light";
 
   const handleDetectDevice = (message: MessagePayload) => {
@@ -66,6 +73,11 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
       setDetectDevice(share);
     }
     return;
+  };
+  const handleLoginRequest = () => {
+    cookies.set("masterKey", account);
+    setOrigin(null);
+    cookies.remove("origin");
   };
 
   usePushNotifications(handleDetectDevice);
@@ -91,6 +103,17 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
         isCurrent={false}
         handleClose={() => setDetectDevice(null)}
         handleConfirm={handleConfirmDevice}
+      />
+      <LoginRequestModal
+        title='Login request'
+        subTitle='Login request from Marketplace'
+        loading={false}
+        origin={origin}
+        handleClose={() => {
+          setOrigin(null);
+          cookies.remove("origin");
+        }}
+        handleConfirm={handleLoginRequest}
       />
       {checkLayout?.layout ? (
         <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100 }}>

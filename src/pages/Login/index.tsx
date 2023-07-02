@@ -83,13 +83,14 @@ const Login = () => {
 
       if (mfa) {
         handleClose();
-        navigate("multiple-factors");
+        ChainIdParams ? cookies.set("chainId", ChainIdParams.chainId, { path: "/" }) : null;
+        navigate("/multiple-factors");
         return;
       }
       if (success) {
         insertTokenFCM(token, info!);
         ChainIdParams ? cookies.set("chainId", ChainIdParams.chainId, { path: "/" }) : null;
-        ChainIdParams ? window.close() : null;
+        // ChainIdParams ? window.close() : null;
         handleClose();
         navigate("overview");
         return;
