@@ -44,6 +44,7 @@ export const NetworkContainer = () => {
   const [_, setStatus] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
   const historyState = useAppSelector(state => state.history);
+  const createAccountState = useAppSelector(state => state.wallet.createAccount);
 
   const handleChangeNetwork = async (event: any) => {
     const currentNetwork = listNetWorks.find(network => network.description === event.target.value) as ChainNetwork;
@@ -126,7 +127,7 @@ export const NetworkContainer = () => {
           <ChangeNetworkTagSub>The system will automatically create a new account for you on this network</ChangeNetworkTagSub>
           <div>
             <ButtonCustom onClick={() => handleClose()} mRight='8px' width='146px' height='44px' styleButton='default' text='Close'></ButtonCustom>
-            <ButtonCustom onClick={() => handleSelectedNetwork()} width='146px' height='44px' styleButton='primary' text='Got it'></ButtonCustom>
+            <ButtonCustom loading={createAccountState.loading} onClick={() => handleSelectedNetwork()} width='146px' height='44px' styleButton='primary' text='Got it'></ButtonCustom>
           </div>
         </Box>
       </ModalCustom>
