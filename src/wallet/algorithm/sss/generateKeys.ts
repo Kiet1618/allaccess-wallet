@@ -91,7 +91,7 @@ export const decryptedMessage = async (privateKey: BN, opts: AdditionalTypes<Eci
     iv: Buffer.from(opts.iv as string, "hex"),
     mac: Buffer.from(opts.mac as string, "hex"),
   };
-  const decrypted = await decrypt(Buffer.from(privateKey.toString("hex"), "hex"), encryptedToBuffer);
+  const decrypted = await decrypt(Buffer.from(privateKey.toString("hex").padStart(64, "0"), "hex"), encryptedToBuffer);
   return decrypted;
 };
 
