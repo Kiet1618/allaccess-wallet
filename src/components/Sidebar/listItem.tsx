@@ -9,7 +9,7 @@ import { MenuLink, IconArrowMenu, ListItemDiv, NavLinkCustom } from "./sidebar.c
 import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { KeyPair } from "@app/wallet/types";
 import { InfoMasterKey } from "@app/wallet/metadata";
-
+import Cookies from "universal-cookie";
 type Props = {
   name: string;
   icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & { title?: string }>;
@@ -17,6 +17,7 @@ type Props = {
 };
 
 const Slider: React.FC<Props> = (props: Props) => {
+  const cookies = new Cookies();
   const [_, setMasterKey] = useLocalStorage<KeyPair | null>("master-key", null);
   const [__, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [___, setNetworkKey] = useSessionStorage<KeyPair | null>("network-key", null);
@@ -46,6 +47,7 @@ const Slider: React.FC<Props> = (props: Props) => {
                     setMasterKey(null);
                     setNetworkKey(null);
                     setInfoMasterKey(null);
+                    cookies.remove("masterKey");
                   }
                 }}
               />

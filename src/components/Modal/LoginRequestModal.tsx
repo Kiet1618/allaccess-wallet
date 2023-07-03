@@ -25,7 +25,7 @@ const LoginRequestModal: React.FC<Props> = props => {
       setBalance(fetchBalance);
     };
     fetchBalance();
-  }, []);
+  }, [web3, account]);
   return (
     <Modal open={Boolean(origin)} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
       <Box sx={style}>

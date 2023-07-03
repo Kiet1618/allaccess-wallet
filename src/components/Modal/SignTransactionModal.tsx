@@ -14,6 +14,7 @@ export type InfoTransacions = {
   amount: string;
   contractTo?: string;
   origin: string;
+  symbol?: string;
 };
 type Props = {
   title?: string;
@@ -52,12 +53,12 @@ const SignTransactionModal: React.FC<Props> = props => {
           </FlexContainer>
           <FlexContainer>
             <div>Amount:</div>
-            <div>{info?.amount + " " + networkState.currentNetwork.data.title}</div>
+            <div>{info?.amount + " " + info?.symbol}</div>
           </FlexContainer>
           {info?.contractTo ? (
             <FlexContainer>
               <div>Contract:</div>
-              <div>{info.contractTo}</div>
+              <div>{sliceAddress(info.contractTo)}</div>
             </FlexContainer>
           ) : null}
           <FlexContainer>

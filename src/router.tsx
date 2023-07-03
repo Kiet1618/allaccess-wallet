@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { Overview, Login, History, Profile, Error, Transaction, MultipleFactors, SignTransaction } from "./pages";
+import { Overview, Login, History, Profile, Error, Transaction, MultipleFactors } from "./pages";
 import { ProtectProp } from "./types/protectProp.type";
 import { LayoutApp } from "./components";
 import { useLocalStorage } from "usehooks-ts";
@@ -16,23 +16,28 @@ const RouterApp = () => {
     }
     return children;
   };
-
+  const ProtectedRouteLogin = ({ children }: ProtectProp): JSX.Element => {
+    if (masterKey) {
+      return <Navigate to='/overview' replace />;
+    }
+    return children;
+  };
   const user = masterKey ? true : false;
   return (
     <Router>
       <LayoutApp>
         <Routes>
-          <Route path='/' element={<Login />} />
-          <Route path='/:chainId' element={<Login />} />
-          <Route path='/multiple-factors' element={<MultipleFactors />} />
           <Route
-            path='/sign-transaction/:transactionId'
+            path='/'
             element={
-              <ProtectedRoute user={user}>
-                <SignTransaction />
-              </ProtectedRoute>
+              <ProtectedRouteLogin user={user}>
+                <Login />
+              </ProtectedRouteLogin>
             }
           />
+
+          <Route path='/multiple-factors' element={<MultipleFactors />} />
+
           <Route
             path='/overview'
             element={

@@ -32,7 +32,6 @@ export const listNetwork = createSlice({
     });
     builder.addCase(actions.setNetworkState.fulfilled, (state, action) => {
       state.currentNetwork.data = action.payload;
-
       cookies.set("chainId", listNetWorks.find(network => network === action.payload)?.chainID, { path: "/" });
       state.currentNetwork.loading = false;
     });

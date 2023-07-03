@@ -14,17 +14,19 @@ import { ChangeNetworkTag, ChangeNetworkTagSub, FormControlCustom, SelectCustom,
 import TagChangeNetwork from "./changeNetwork";
 import ButtonCustom from "../Button";
 import { useBlockchain } from "@app/blockchain";
+import Cookies from "universal-cookie";
 export const NetworkContainer = () => {
   const networkState = useAppSelector(state => state.network);
   const [network, setNetwork] = useState(networkState.currentNetwork.data);
   const { account: myAddress } = useBlockchain(network.rpcUrls);
+  const cookies = new Cookies();
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [_, setStatus] = useState(false);
   const historyState = useAppSelector(state => state.history);
-
+  const initialNetwork = cookies.get("chainId") ? cookies.get("chainId") : null;
   const handleChange = async (event: any) => {
     const currentNetwork = listNetWorks.find(network => network.description === event.target.value) as ChainNetwork;
     setNetwork(currentNetwork);
