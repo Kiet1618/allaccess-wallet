@@ -23,6 +23,7 @@ import { ReactComponent as Filter } from "./system/filter-square.svg";
 import { ReactComponent as LogoText } from "./system/logo-no-background.svg";
 import { ReactComponent as Move } from "./system/move.svg";
 import { ReactComponent as Success } from "./system/modal_image.svg";
+import { ReactComponent as Arrow } from "./system/Arrow 1.svg";
 
 export {
   Success,
@@ -50,4 +51,5 @@ export {
   Computer,
   Dropdown,
   DropdownBlack,
+  Arrow,
 };

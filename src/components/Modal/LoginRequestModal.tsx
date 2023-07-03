@@ -5,8 +5,10 @@ import { TitlePage } from "@app/styles";
 import { Button as CustomButton } from "@app/components";
 import { useBlockchain, getBalance } from "@app/blockchain";
 import { SubTitlePage, ContainerDeviceModal, ContainerButtonFactors, FlexContainer, style } from "./css";
+import { sliceAddress, copyAddress } from "@app/utils";
+import { useAppSelector } from "@app/store";
+
 import Web3 from "web3";
-import { sliceAddress } from "@app/utils";
 type Props = {
   title?: string;
   subTitle?: string;
@@ -17,8 +19,10 @@ type Props = {
 };
 const LoginRequestModal: React.FC<Props> = props => {
   const { loading, origin, handleClose, handleConfirm, title, subTitle } = props;
-  const { web3, account } = useBlockchain();
+  const networkState = useAppSelector(state => state.network);
+  const { web3, account } = useBlockchain(networkState.currentNetwork.data.rpcUrls);
   const [balance, setBalance] = React.useState("0");
+  const [_, setStatus] = React.useState(false);
   useEffect(() => {
     const fetchBalance = async () => {
       const fetchBalance = await getBalance(web3 as Web3);
@@ -34,15 +38,15 @@ const LoginRequestModal: React.FC<Props> = props => {
         <ContainerDeviceModal style={{ marginTop: "10px" }}>
           <FlexContainer>
             <div>
-              <b>Amount</b>
+              <b>Account</b>
             </div>
             <div>
               <b>Balance</b>
             </div>
           </FlexContainer>
           <FlexContainer style={{ marginTop: "10px" }}>
-            <div>{sliceAddress(account)}</div>
-            <div>{balance}</div>
+            <CustomButton onClick={() => copyAddress(account, setStatus)} style={{ borderRadius: "8px" }} variant='outlined' text={sliceAddress(account)} styleButton='default'></CustomButton>
+            <CustomButton style={{ borderRadius: "8px" }} variant='outlined' text={balance} styleButton='default' border='none'></CustomButton>
           </FlexContainer>
           <FlexContainer style={{ marginTop: "30px", marginBottom: "30px" }}>
             <div>
