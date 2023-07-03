@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import * as actions from "./actions";
-import { ProfileState, Profile } from "./types";
+import { ProfileState } from "./types";
 import { getProfileInfo } from "@app/storage/storage-service";
 const initialState = {
   profileInfo: {

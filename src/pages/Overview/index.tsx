@@ -12,7 +12,8 @@ import { ChooseToken } from "../../assets/icon";
 import CustomButton from "../../components/Button";
 import SearchComponent from "../../components/TextField";
 import { NetworkContainer } from "../../components/Network";
-import { formatValue, useBlockchain, getBalance, getBalanceToken } from "../../blockchain";
+import { formatValue } from "../../blockchain";
+import useBlockchain from "@app/blockchain/wrapper";
 import { SearchIcon, ReceiveTransactionHistory, SendTransactionHistory, LinkTransaction, Empty } from "../../assets/icon";
 import {
   NetworkContainerFixed,
@@ -61,7 +62,7 @@ const Overview = () => {
   const [listTokensBalance, setListTokensBalance] = useState<ListTokenBalance[]>(listTokenState.currentListTokens.data);
   const networkState = useAppSelector(state => state.network);
   const [currenToken, setCurrenToken] = useState(listTokenState.currentListTokens.data.find(token => token.chainID === networkState.currentNetwork.data.chainID)?.symbol as string);
-  const { web3, account: myAddress } = useBlockchain();
+  const { web3, getAccount, getBalance, getBalanceToken } = useBlockchain();
   const [balance, setBalance] = useState("");
   const [balanceUSD, setBalanceUSD] = useState("");
   const [searchText, setSearchText] = useState("");
@@ -73,14 +74,14 @@ const Overview = () => {
         console.log(e);
       }
       try {
-        const balance = await getBalance(web3 as Web3);
+        const balance = await getBalance();
         setBalance(balance);
       } catch (error) {
         setBalance("Error");
       }
       try {
         const USD: string = await getUSDPrice(networkState.currentNetwork.data.title);
-        const balance = await getBalance(web3 as Web3);
+        const balance = await getBalance();
         const balanceUSD = parseFloat(USD) * parseFloat(balance);
         setBalanceUSD(balanceUSD.toString());
       } catch (error) {
@@ -108,7 +109,7 @@ const Overview = () => {
       }
     };
 
-    fetchData();
+    // fetchData();
   }, []);
 
   const handleGetBalance = async (item: Token) => {
@@ -120,7 +121,7 @@ const Overview = () => {
       balance: "N/A",
       balanceUsd: "N/A",
     };
-    item.tokenContract ? (result.balance = await getBalanceToken(web3 as Web3, item.tokenContract)) : (result.balance = await getBalance(web3 as Web3).then());
+    item.tokenContract ? (result.balance = await getBalanceToken({ tokenContract: item.tokenContract })) : (result.balance = await getBalance());
     const USD: string = await getUSDPrice(item.symbol);
     result.balanceUsd = (parseFloat(USD) * parseFloat(result.balance)).toString();
     return result;
@@ -239,7 +240,7 @@ const Overview = () => {
                       width='150px'
                       text={(item.value ? formatValue(web3 as Web3, item.value as string) : "Error") + " " + (item.tokenSymbol ? item.tokenSymbol : currenToken)}
                       styleButton='default'
-                      iconRight={item.from === myAddress ? SendTransactionHistory : ReceiveTransactionHistory}
+                      iconRight={item.from === getAccount() ? SendTransactionHistory : ReceiveTransactionHistory}
                     ></CustomButton>
                   </ItemMyAssets>
                 ))

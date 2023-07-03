@@ -1,4 +1,5 @@
 import { SHA3 } from "sha3";
+import { formatUnits } from "ethers";
 import * as EC from "elliptic";
 import { KeyPair } from "@app/wallet/types";
 import { useLocalStorage } from "usehooks-ts";
@@ -68,7 +69,7 @@ export const useFlowBlockchain = () => {
       "accessNode.api": rpcUrls,
       "flow.network": chainID.split("-")[1],
     });
-  }, [masterKey?.priKey, networkState.currentNetwork.data]);
+  }, [masterKey, networkState.currentNetwork.data]);
 
   const getBlock = async () => {
     const blockResponse = await fcl.send([fcl.getBlock(true) as any]);
@@ -76,20 +77,20 @@ export const useFlowBlockchain = () => {
   };
 
   const getAccount = async () => {
-    const accountResponse = await fcl.send([fcl.getAccount(masterKey?.flowAddress || "") as any]);
+    const accountResponse = await fcl.send([fcl.getAccount(account || "") as any]);
     return await fcl.decode(accountResponse);
   };
 
   const getBalance = async () => {
-    const accountResponse = await fcl.send([fcl.getAccount(masterKey?.flowAddress || "") as any]);
-    const account = await fcl.decode(accountResponse);
-    return account.balance;
+    const accountResponse = await fcl.send([fcl.getAccount(account || "") as any]);
+    const { balance } = await fcl.decode(accountResponse);
+    return formatUnits(balance, 8);
   };
 
   const getBalanceToken = async () => {
-    const accountResponse = await fcl.send([fcl.getAccount(masterKey?.flowAddress || "") as any]);
-    const account = await fcl.decode(accountResponse);
-    return account.balance;
+    const accountResponse = await fcl.send([fcl.getAccount(account || "") as any]);
+    const { balance } = await fcl.decode(accountResponse);
+    return balance;
   };
 
   const transfer = async (data: TransferNative, callbacks: Callbacks) => {

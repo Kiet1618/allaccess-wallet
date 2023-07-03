@@ -17,7 +17,7 @@ const useBlockchain = () => {
   const { account: fvmAccount, transfer: fvmTransfer, transferToken: fvmTransferToken, getBalance: fvmGetBalance, getBalanceToken: fvmGetBalanceToken } = useFlowBlockchain();
 
   const getBalance = async () => {
-    if (isEmpty(networkState.currentNetwork.data)) return 0;
+    if (isEmpty(networkState.currentNetwork.data)) return "0";
     const { core } = networkState.currentNetwork.data;
     if (core === "evm" && web3) {
       return evmGetBalance(web3);
@@ -25,7 +25,7 @@ const useBlockchain = () => {
     if (core === "fvm") {
       return fvmGetBalance();
     }
-    return 0;
+    return "0";
   };
 
   const getBalanceToken = async (data: GetBalanceToken) => {
