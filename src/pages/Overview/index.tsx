@@ -109,7 +109,7 @@ const Overview = () => {
       }
     };
 
-    // fetchData();
+    fetchData();
   }, []);
 
   const handleGetBalance = async (item: Token) => {
