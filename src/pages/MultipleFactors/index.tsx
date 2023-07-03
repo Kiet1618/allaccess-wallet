@@ -87,6 +87,7 @@ const MultipleFactors = () => {
     insertTokenFCM(token, infoMasterKey);
     getInfoWalletByNetworkKey(networkKey as KeyPair);
     setLoadingLogin(false);
+    // window.close();
     navigate("/overview");
   };
 

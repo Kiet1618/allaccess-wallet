@@ -115,3 +115,9 @@ export const IpText = styled.div`
         font-size: 12px;
     `}
 `;
+
+export const FlexContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+`;

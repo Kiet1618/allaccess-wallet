@@ -186,7 +186,7 @@ export const useFetchWallet = () => {
           deviceInfo: await deviceInfo(),
         });
         setDeviceKey(deviceKey);
-        cookies.set("masterKey", masterKeyFormatted.ethAddress, { path: "/" });
+        //  cookies.set("masterKey", masterKeyFormatted.ethAddress, { path: "/" });
 
         return { error: "", success: true, mfa: false };
       }

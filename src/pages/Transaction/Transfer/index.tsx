@@ -23,6 +23,7 @@ import useBlockchain from "@app/blockchain/wrapper";
 import { Token } from "../../../types/blockchain.type";
 import { listNetWorks } from "../../../configs/data";
 import { FormData } from "./type";
+import { SignTransactionModal } from "@app/components";
 import {
   style,
   CustomMenuItem,
@@ -42,13 +43,16 @@ import {
   ContainerIconSuccess,
   ContainerTwoButtonModal,
 } from "./transfer.css";
+import Cookies from "universal-cookie";
 const steps = ["Start", "Pending", "Success"];
 import DoneIcon from "@mui/icons-material/Done";
+import { InfoTransacions } from "@app/components/Modal/SignTransactionModal";
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
 
 const Transfer = () => {
+  const cookies = new Cookies();
   const networkState = useAppSelector(state => state.network);
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
@@ -70,6 +74,18 @@ const Transfer = () => {
   const [reRenderGas, setRenderGasLimit] = useState<string>("0");
   const [amount, setAmount] = useState("0");
   const [transactionError, setTransactionError] = useState("");
+  //Modal Transactions d-app
+  const [transactionInfoCookies, setTransactionInfoCookies] = useState<InfoTransacions | null>(null);
+
+  useEffect(() => {
+    try {
+      const data: InfoTransacions = cookies.get("transaction");
+      setTransactionInfoCookies(data);
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -123,7 +139,20 @@ const Transfer = () => {
       : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction, setTransactionError);
     reset();
   };
-
+  const handleSubmitModal = async () => {
+    handleReset();
+    setTransactionHash("");
+    setOpen(true);
+    const values: FormData = {
+      addressTo: transactionInfoCookies?.addressTo as string,
+      amount: transactionInfoCookies?.amount as string,
+    };
+    transactionInfoCookies?.contractTo
+      ? await sendTransactionToken(web3 as Web3, values, transactionInfoCookies?.contractTo, setTransactionHash, setInfoTransaction, setTransactionError)
+      : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction, setTransactionError);
+    setTransactionInfoCookies(null);
+    cookies.remove("transaction");
+  };
   const handleResize = () => {
     if (window.innerWidth < 600) {
       setIsDesktop(false);
@@ -465,6 +494,17 @@ const Transfer = () => {
           ) : null}
         </Box>
       </ModalCustom>
+      <SignTransactionModal
+        title='Transaction request'
+        subTitle='Application wants to sign'
+        loading={false}
+        info={transactionInfoCookies}
+        handleClose={() => {
+          setTransactionInfoCookies(null);
+          cookies.remove("transaction");
+        }}
+        handleConfirm={handleSubmitModal}
+      />
     </Grid>
   );
 };
