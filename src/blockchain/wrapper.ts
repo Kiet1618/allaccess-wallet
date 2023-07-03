@@ -29,7 +29,7 @@ const useBlockchain = () => {
   };
 
   const getBalanceToken = async (data: GetBalanceToken) => {
-    if (isEmpty(networkState.currentNetwork.data)) return 0;
+    if (isEmpty(networkState.currentNetwork.data)) return "0";
     const { core } = networkState.currentNetwork.data;
     if (core === "evm" && web3) {
       return evmGetBalanceToken(web3, data.tokenContract);
@@ -37,7 +37,7 @@ const useBlockchain = () => {
     if (core === "fvm") {
       return fvmGetBalanceToken();
     }
-    return 0;
+    return "0";
   };
 
   const getAccount = (): string => {
