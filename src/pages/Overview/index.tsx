@@ -3,7 +3,7 @@ import Web3 from "web3";
 import { Grid } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import { sliceAddress } from "../../utils";
+import { formatBalance, sliceAddress } from "../../utils";
 import { useAppSelector } from "../../store";
 import { Page } from "../../styles";
 import { TitlePage } from "../../styles";
@@ -61,7 +61,7 @@ const Overview = () => {
 
   const [listTokensBalance, setListTokensBalance] = useState<ListTokenBalance[]>(listTokenState.currentListTokens.data);
   const networkState = useAppSelector(state => state.network);
-  const [currenToken, setCurrenToken] = useState(listTokenState.currentListTokens.data.find(token => token.chainID === networkState.currentNetwork.data.chainID)?.symbol as string);
+  const [currenToken, _] = useState(listTokenState.currentListTokens.data.find(token => token.chainID === networkState.currentNetwork.data.chainID)?.symbol as string);
   const { web3, getAccount, getBalance, getBalanceToken } = useBlockchain();
   const [balance, setBalance] = useState("");
   const [balanceUSD, setBalanceUSD] = useState("");
@@ -69,24 +69,16 @@ const Overview = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setCurrenToken(listTokenState.currentListTokens.data.find(e => e.chainID === networkState.currentNetwork.data.chainID)?.symbol as string);
-      } catch (e) {
-        console.log(e);
-      }
-      try {
         const balance = await getBalance();
-        setBalance(balance);
-      } catch (error) {
-        setBalance("Error");
-      }
-      try {
         const USD: string = await getUSDPrice(networkState.currentNetwork.data.title);
-        const balance = await getBalance();
         const balanceUSD = parseFloat(USD) * parseFloat(balance);
         setBalanceUSD(balanceUSD.toString());
+        setBalance(balance);
       } catch (error) {
+        setBalance("N/A");
         setBalanceUSD("N/A");
       }
+
       try {
         const updateBalance = await Promise.all(
           listTokensBalance.map(async item => {
@@ -110,7 +102,7 @@ const Overview = () => {
     };
 
     fetchData();
-  }, []);
+  }, [getAccount()]);
 
   const handleGetBalance = async (item: Token) => {
     type Result = {
@@ -146,10 +138,10 @@ const Overview = () => {
               <SubHeaderPage>Estimated balance</SubHeaderPage>
               <BalanceContainer>
                 <TextBlue>
-                  {balance} {currenToken}{" "}
+                  {formatBalance(balance)} {currenToken}{" "}
                 </TextBlue>
                 <ChooseToken style={{ marginRight: "10px" }} />
-                {balanceUSD + "$"}
+                {formatBalance(balanceUSD) + "$"}
               </BalanceContainer>
               <Divider />
             </HeaderPageBalance>
@@ -196,8 +188,8 @@ const Overview = () => {
                         {item.symbol}
                       </ItemMyAssetsLeft>
                       <ItemMyAssetsRight>
-                        <TextCoin> {item.balance}</TextCoin>
-                        {"~ $" + item.balanceUsd}
+                        <TextCoin> {formatBalance(String(item.balance))}</TextCoin>
+                        {"~ $" + formatBalance(String(item.balanceUsd))}
                       </ItemMyAssetsRight>
                     </ItemMyAssets>
                   ))

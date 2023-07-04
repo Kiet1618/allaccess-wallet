@@ -10,7 +10,7 @@ import { TextHeaderOverview } from "../../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { sliceAddress, copyAddress } from "../../../utils";
+import { sliceAddress, copyAddress, formatBalance } from "../../../utils";
 import { setCurrentListTokens } from "../../../store/redux/token/actions";
 import Web3 from "web3";
 import { sendTransaction, getToken, getGasLimit, sendTransactionToken, getGasPrice } from "../../../blockchain";
@@ -241,7 +241,7 @@ const Transfer = () => {
     } catch {
       setBalance("Error");
     }
-  }, [networkState.currentNetwork.data, token, web3, infoTransaction]);
+  }, [networkState.currentNetwork.data, token, web3, infoTransaction, getAccount()]);
   return (
     <Grid style={{ width: "100%" }} container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid>
@@ -362,7 +362,7 @@ const Transfer = () => {
               {status ? <DoneIcon /> : <Copy />}
             </CopyAddressContainer>
             <BalanceNumberCard>
-              {balance} {token?.symbol}
+              {formatBalance(balance)} {token?.symbol}
             </BalanceNumberCard>
           </BackgroundPage>
         </ContainerBalanceCard>

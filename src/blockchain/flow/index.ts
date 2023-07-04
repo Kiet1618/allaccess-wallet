@@ -82,15 +82,21 @@ export const useFlowBlockchain = () => {
   };
 
   const getBalance = async () => {
-    const accountResponse = await fcl.send([fcl.getAccount(account || "") as any]);
-    const { balance } = await fcl.decode(accountResponse);
-    return formatUnits(balance, 8);
+    if (account) {
+      const accountResponse = await fcl.send([fcl.getAccount(account || "") as any]);
+      const { balance } = await fcl.decode(accountResponse);
+      return formatUnits(balance, 8);
+    }
+    return "0";
   };
 
   const getBalanceToken = async () => {
-    const accountResponse = await fcl.send([fcl.getAccount(account || "") as any]);
-    const { balance } = await fcl.decode(accountResponse);
-    return balance;
+    if (account) {
+      const accountResponse = await fcl.send([fcl.getAccount(account || "") as any]);
+      const { balance } = await fcl.decode(accountResponse);
+      return formatUnits(balance, 8);
+    }
+    return "0";
   };
 
   const transfer = async (data: TransferNative, callbacks: Callbacks) => {
