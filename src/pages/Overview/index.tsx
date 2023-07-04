@@ -3,7 +3,7 @@ import Web3 from "web3";
 import { Grid } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import { sliceAddress } from "../../utils";
+import { formatBalance, sliceAddress } from "../../utils";
 import { useAppSelector } from "../../store";
 import { Page } from "../../styles";
 import { TitlePage } from "../../styles";
@@ -138,10 +138,10 @@ const Overview = () => {
               <SubHeaderPage>Estimated balance</SubHeaderPage>
               <BalanceContainer>
                 <TextBlue>
-                  {balance} {currenToken}{" "}
+                  {formatBalance(balance)} {currenToken}{" "}
                 </TextBlue>
                 <ChooseToken style={{ marginRight: "10px" }} />
-                {balanceUSD + "$"}
+                {formatBalance(balanceUSD) + "$"}
               </BalanceContainer>
               <Divider />
             </HeaderPageBalance>
@@ -188,8 +188,8 @@ const Overview = () => {
                         {item.symbol}
                       </ItemMyAssetsLeft>
                       <ItemMyAssetsRight>
-                        <TextCoin> {item.balance}</TextCoin>
-                        {"~ $" + item.balanceUsd}
+                        <TextCoin> {formatBalance(String(item.balance))}</TextCoin>
+                        {"~ $" + formatBalance(String(item.balanceUsd))}
                       </ItemMyAssetsRight>
                     </ItemMyAssets>
                   ))
