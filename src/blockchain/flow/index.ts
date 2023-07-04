@@ -9,7 +9,7 @@ import * as fcl from "@onflow/fcl";
 import { TransferFlowScript } from "./transactions";
 import { isEmpty } from "lodash";
 import { createFlowAccount } from "./apis";
-import { Callbacks, TransferNative, TransferToken } from "../types";
+import { Callbacks, DefaultCallbacks, TransferNative, TransferToken } from "../types";
 import numeral from "numeral";
 import { GetBalanceFlowScript } from "./scripts";
 import { TransactionStatus } from "./types";
@@ -105,33 +105,39 @@ export const useFlowBlockchain = () => {
     return "0";
   };
 
-  const transfer = async (data: TransferNative, callbacks: Callbacks) => {
-    const blockResponse = await fcl.send([fcl.getBlock(true) as any]);
-    const response = await fcl.send([
-      fcl.transaction(TransferFlowScript),
-      fcl.args([
-        fcl.arg(numeral(data.amount).format("0.0[0000000000]"), t.UFix64), // Amount to transfer
-        fcl.arg(data.addressTo, t.Address), // Recipient's address
-      ]),
-      fcl.payer(authorization),
-      fcl.proposer(authorization),
-      fcl.authorizations([authorization]),
-      fcl.ref(blockResponse.block.id),
-      fcl.limit(100),
-    ]);
-    const { transactionId } = response;
-    fcl.tx(response).subscribe(status => {
-      // status
-      if (TransactionStatus.Pending === status) {
-        if (typeof callbacks.onHash === "function") callbacks.onHash(transactionId);
-      }
-      if (TransactionStatus.Sealed === status) {
-        if (typeof callbacks.onSuccess === "function") callbacks.onSuccess(transaction);
-      }
-    });
-
-    const transaction = await fcl.tx(response).onceSealed();
-    return transaction;
+  const transfer = async (data: TransferNative, callbacks: Callbacks = DefaultCallbacks) => {
+    const { onError, onHash, onSuccess } = callbacks;
+    try {
+      const blockResponse = await fcl.send([fcl.getBlock(true) as any]);
+      const response = await fcl.send([
+        fcl.transaction(TransferFlowScript),
+        fcl.args([
+          fcl.arg(numeral(data.amount).format("0.0[0000000000]"), t.UFix64), // Amount to transfer
+          fcl.arg(data.addressTo, t.Address), // Recipient's address
+        ]),
+        fcl.payer(authorization),
+        fcl.proposer(authorization),
+        fcl.authorizations([authorization]),
+        fcl.ref(blockResponse.block.id),
+        fcl.limit(100),
+      ]);
+      const { transactionId } = response;
+      fcl.tx(response).subscribe(res => {
+        const { status, errorMessage } = res;
+        if (TransactionStatus.Pending === status) {
+          onHash(transactionId);
+        }
+        if (TransactionStatus.Sealed === status) {
+          if (errorMessage) {
+            onError(errorMessage);
+            return;
+          }
+          onSuccess(transactionId);
+        }
+      });
+    } catch (error: any) {
+      onError(error?.message || "Unknown error");
+    }
   };
 
   const transferToken = async (data: TransferToken, callbacks: Callbacks) => {

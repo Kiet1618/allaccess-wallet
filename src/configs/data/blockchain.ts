@@ -79,6 +79,7 @@ export const listNetWorks: ChainNetwork[] = [
 
     flowToken: "0x7e60df042a9c0868",
     flowFungibleToken: "0x9a0766d93b6608b7",
+    apiTransactionHash: `https://testnet.flowscan.org/transaction/{transactionHash}`,
   },
 ];
 
