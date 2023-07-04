@@ -31,7 +31,7 @@ export const useEVMBlockchain = (rpcUrl?: string) => {
     }
   }, [masterKey, networkState.currentNetwork.data]);
 
-  return { web3: web3Instance, account, getGasPrice, getBalanceToken, getBalance, transfer, transferToken, formatValue, getToken };
+  return { web3: web3Instance, account, getGasPrice, getGasLimit, getBalanceToken, getBalance, transfer, transferToken, formatValue, getToken };
 };
 
 export { getGasPrice, getGasLimit, getBalanceToken, getBalance, transfer, transferToken, formatValue, getToken };

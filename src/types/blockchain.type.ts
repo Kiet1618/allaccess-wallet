@@ -9,6 +9,10 @@ export type ChainNetwork = {
   title: string;
   description: string;
   apiTransactionHash?: string;
+
+  // Flow config
+  flowToken?: string;
+  flowFungibleToken?: string;
 };
 export type Route = {
   path: string;

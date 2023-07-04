@@ -13,7 +13,7 @@ import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress, formatBalance } from "../../../utils";
 import { setCurrentListTokens } from "../../../store/redux/token/actions";
 import Web3 from "web3";
-import { sendTransaction, getToken, getGasLimit, sendTransactionToken, getGasPrice } from "../../../blockchain";
+import { sendTransaction, getToken, sendTransactionToken } from "../../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../../components/Table/table.css";
 import Snackbar from "@mui/material/Snackbar";
@@ -58,7 +58,7 @@ const Transfer = () => {
   const dispatch = useAppDispatch();
   const [status, setStatus] = useState(false);
   const [statusTransactionHash, setStatusTransactionHash] = useState(false);
-  const { web3, getAccount, getBalance, getBalanceToken } = useBlockchain();
+  const { web3, getAccount, getBalance, getBalanceToken, getGasPrice, getGasLimit } = useBlockchain();
   const [openAlert, setOpenAlert] = useState(false);
   const [open, setOpen] = useState(false);
   const [tokenAddress, setTokenAddress] = useState("");
@@ -116,7 +116,11 @@ const Transfer = () => {
   useEffect(() => {
     const updateGasLimit = async () => {
       const addressTo = getValues("addressTo");
-      const gasLimitValue = await getGasLimit(web3 as Web3, addressTo, amount, token?.tokenContract);
+      const gasLimitValue = await getGasLimit({
+        addressTo,
+        amount,
+        tokenContract: token?.tokenContract,
+      });
       setGasLimit(gasLimitValue);
     };
 
@@ -124,7 +128,7 @@ const Transfer = () => {
   }, [reRenderGas, token?.symbol, networkState.currentNetwork.data, web3, amount]);
   useEffect(() => {
     const updateGasPrice = async () => {
-      const gasPriceValue = await getGasPrice(web3 as Web3);
+      const gasPriceValue = await getGasPrice();
       setGasPrice(gasPriceValue);
     };
     updateGasPrice();

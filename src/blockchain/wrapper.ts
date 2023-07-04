@@ -2,7 +2,7 @@ import { useAppSelector } from "@app/store";
 import { useEVMBlockchain } from "./evm";
 import { useFlowBlockchain } from "./flow";
 import { isEmpty } from "lodash";
-import { Callbacks, GetBalanceToken, TransferNative, TransferToken } from "./types";
+import { Callbacks, GetBalanceToken, GetGasTransaction, TransferNative, TransferToken } from "./types";
 // interface Blockchain {
 //   getBalance: () => number;
 //   transferNative: () => number;
@@ -13,8 +13,25 @@ import { Callbacks, GetBalanceToken, TransferNative, TransferToken } from "./typ
 const useBlockchain = () => {
   const networkState = useAppSelector(state => state.network);
 
-  const { web3, account: evmAccount, transfer: evmTransfer, transferToken: evmTransferToken, getBalance: evmGetBalance, getBalanceToken: evmGetBalanceToken } = useEVMBlockchain();
-  const { account: fvmAccount, transfer: fvmTransfer, transferToken: fvmTransferToken, getBalance: fvmGetBalance, getBalanceToken: fvmGetBalanceToken } = useFlowBlockchain();
+  const {
+    web3,
+    account: evmAccount,
+    transfer: evmTransfer,
+    transferToken: evmTransferToken,
+    getBalance: evmGetBalance,
+    getBalanceToken: evmGetBalanceToken,
+    getGasPrice: evmGetGasPrice,
+    getGasLimit: evmGetGasLimit,
+  } = useEVMBlockchain();
+  const {
+    account: fvmAccount,
+    transfer: fvmTransfer,
+    transferToken: fvmTransferToken,
+    getBalance: fvmGetBalance,
+    getBalanceToken: fvmGetBalanceToken,
+    getGasPrice: fvmGetGasPrice,
+    getGasLimit: fvmGetGasLimit,
+  } = useFlowBlockchain();
 
   const getBalance = async () => {
     if (isEmpty(networkState.currentNetwork.data)) return "0";
@@ -76,7 +93,31 @@ const useBlockchain = () => {
     return "";
   };
 
-  return { web3, getBalance, getBalanceToken, getAccount, transfer, transferToken };
+  const getGasPrice = async () => {
+    if (isEmpty(networkState.currentNetwork.data)) return "0";
+    const { core } = networkState.currentNetwork.data;
+    if (core === "evm") {
+      return evmGetGasPrice(web3!);
+    }
+    if (core === "fvm") {
+      return fvmGetGasPrice();
+    }
+    return "0";
+  };
+
+  const getGasLimit = async (data: GetGasTransaction) => {
+    if (isEmpty(networkState.currentNetwork.data)) return "0";
+    const { core } = networkState.currentNetwork.data;
+    if (core === "evm") {
+      return evmGetGasLimit(web3!, data);
+    }
+    if (core === "fvm") {
+      return fvmGetGasLimit();
+    }
+    return "0";
+  };
+
+  return { web3, getBalance, getBalanceToken, getAccount, transfer, transferToken, getGasPrice, getGasLimit };
 };
 
 export default useBlockchain;

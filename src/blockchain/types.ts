@@ -13,6 +13,13 @@ export type GetBalanceToken = {
   tokenContract: string;
 };
 
+export type GetGasTransaction = {
+  addressTo: string;
+  amount: string;
+  tokenContract?: string;
+  // type: "transfer_native" | "transfer_token";
+};
+
 export type Callbacks = {
   onHash?: (msg: string) => void;
   onInfo?: (msg: string) => void;

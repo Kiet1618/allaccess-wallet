@@ -41,6 +41,7 @@ type ListTokenBalance = Token & {
   balanceUsd?: string;
 };
 import axios from "axios";
+import { get } from "lodash";
 const convertTokenBalanceURL = `https://min-api.cryptocompare.com/data/price?fsym={symbol}&tsyms=USD`;
 const getUSDPrice = async (symbol: string) => {
   try {
@@ -61,7 +62,6 @@ const Overview = () => {
 
   const [listTokensBalance, setListTokensBalance] = useState<ListTokenBalance[]>(listTokenState.currentListTokens.data);
   const networkState = useAppSelector(state => state.network);
-  const [currenToken, _] = useState(listTokenState.currentListTokens.data.find(token => token.chainID === networkState.currentNetwork.data.chainID)?.symbol as string);
   const { web3, getAccount, getBalance, getBalanceToken } = useBlockchain();
   const [balance, setBalance] = useState("");
   const [balanceUSD, setBalanceUSD] = useState("");
@@ -138,7 +138,7 @@ const Overview = () => {
               <SubHeaderPage>Estimated balance</SubHeaderPage>
               <BalanceContainer>
                 <TextBlue>
-                  {formatBalance(balance)} {currenToken}{" "}
+                  {formatBalance(balance)} {get(networkState, "currentNetwork.data.title")}{" "}
                 </TextBlue>
                 <ChooseToken style={{ marginRight: "10px" }} />
                 {formatBalance(balanceUSD) + "$"}
@@ -230,7 +230,7 @@ const Overview = () => {
                     </TransactionLinkContainer>
                     <CustomButton
                       width='150px'
-                      text={(item.value ? formatValue(web3 as Web3, item.value as string) : "Error") + " " + (item.tokenSymbol ? item.tokenSymbol : currenToken)}
+                      text={(item.value ? formatValue(web3 as Web3, item.value as string) : "Error") + " " + (item.tokenSymbol ? item.tokenSymbol : get(networkState, "currentNetwork.data.title"))}
                       styleButton='default'
                       iconRight={item.from === getAccount() ? SendTransactionHistory : ReceiveTransactionHistory}
                     ></CustomButton>

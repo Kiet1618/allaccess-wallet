@@ -1,5 +1,6 @@
 import Web3 from "web3";
 import abi from "../../common/ERC20_ABI.json";
+import { GetGasTransaction } from "../types";
 
 export const getGasPrice = async (web3: Web3): Promise<string> => {
   try {
@@ -10,7 +11,8 @@ export const getGasPrice = async (web3: Web3): Promise<string> => {
     return "0";
   }
 };
-export const getGasLimit = async (web3: Web3, addressTo: string, amount: string, tokenContract: string | undefined = undefined) => {
+export const getGasLimit = async (web3: Web3, data: GetGasTransaction) => {
+  const { addressTo, amount, tokenContract } = data;
   const weiValue = Math.round(parseFloat(amount) * 10 ** 18);
   const hexValue = web3.utils.toHex(weiValue ? weiValue : 0);
   try {

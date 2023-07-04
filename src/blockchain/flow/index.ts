@@ -63,11 +63,13 @@ export const useFlowBlockchain = () => {
   useEffect(() => {
     if (isEmpty(networkState.currentNetwork.data)) return;
     if (!networkState.currentNetwork.data.chainID.includes("flow")) return;
-    const { rpcUrls, chainID } = networkState.currentNetwork.data;
+    const { rpcUrls, chainID, flowToken, flowFungibleToken } = networkState.currentNetwork.data;
     createOrGetAccount();
     fcl.config({
       "accessNode.api": rpcUrls,
       "flow.network": chainID.split("-")[1],
+      "0xFungibleToken": flowToken,
+      "0xFlowToken": flowFungibleToken,
     });
   }, [masterKey, networkState.currentNetwork.data]);
 
@@ -160,5 +162,13 @@ export const useFlowBlockchain = () => {
     return data;
   };
 
-  return { fcl, account, createOrGetAccount, getBlock, getAccount, getBalance, getBalanceToken, transfer, transferToken };
+  const getGasPrice = async () => {
+    return "0";
+  };
+
+  const getGasLimit = async () => {
+    return "0";
+  };
+
+  return { fcl, account, createOrGetAccount, getBlock, getAccount, getBalance, getBalanceToken, transfer, transferToken, getGasPrice, getGasLimit };
 };
