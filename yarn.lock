@@ -38,10 +38,10 @@
   optionalDependencies:
     secp256k1 "^3.8.0"
 
-"@allaccessone/fetch-node-details@^4.0.5":
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/@allaccessone/fetch-node-details/-/fetch-node-details-4.0.5.tgz#042a46894f6b80baa2baa56ee66be41c0cc497f2"
-  integrity sha512-1/FCEjpQg+/FQlkTiXNYEt4zSMbz9z9UfJ5QmEyd4whFrowfmzK9OenhcA8Au75yex+0B7at9MQ3e4oHIKdOYg==
+"@allaccessone/fetch-node-details@^4.0.7":
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/@allaccessone/fetch-node-details/-/fetch-node-details-4.0.7.tgz#a37b956cb3ba2dfdcbcde0a181d0fe75d14a52a2"
+  integrity sha512-a0iMKalwdPkzzbexp4p1q0kb8lLPwTjNyCBGpdQ5sYan/pOQuRYJQ9Qs/6WF+viljajcVmRPrJUF0uAoUWELBQ==
   dependencies:
     web3-eth-contract "^1.6.1"
     web3-utils "^1.6.1"
