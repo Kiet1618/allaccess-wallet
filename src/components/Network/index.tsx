@@ -85,7 +85,14 @@ export const NetworkContainer = () => {
   return (
     <Container>
       <ButtonCustom
-        onClick={() => copyAddress(getAccount(), setStatus)}
+        onClick={() =>
+          copyAddress(getAccount(), () => {
+            setStatus(true);
+            setTimeout(() => {
+              setStatus(false);
+            }, 3000);
+          })
+        }
         width='40%'
         height='40px'
         styleButton='style'

@@ -20,18 +20,14 @@ export type GetGasTransaction = {
   // type: "transfer_native" | "transfer_token";
 };
 
-export interface Callbacks {
-  onHash?: (_: string) => void;
-  onInfo?: (_: string) => void;
-  onError?: (_: string) => void;
-  onSuccess?: (_: string) => void;
-}
+export type Callbacks = {
+  onHash: (_: string) => void;
+  onError: (_: string) => void;
+  onSuccess: (_: string) => void;
+};
 
 export const DefaultCallbacks = {
   onHash: (_: string) => {
-    return;
-  },
-  onInfo: (_: string) => {
     return;
   },
   onError: (_: string) => {

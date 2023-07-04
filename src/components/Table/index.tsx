@@ -108,7 +108,16 @@ const TableWithPagination: React.FC = () => {
                     {formatValue(web3 as Web3, row.value as string)} {row.tokenSymbol ? row.tokenSymbol : "ETH"}
                   </TableCellCustom>
                   <TableCellCustom>
-                    <CopyAddressContainer onClick={() => copyAddress(row.from, setStatusFrom)}>
+                    <CopyAddressContainer
+                      onClick={() =>
+                        copyAddress(row.from, () => {
+                          setStatusFrom(true);
+                          setTimeout(() => {
+                            setStatusFrom(false);
+                          }, 3000);
+                        })
+                      }
+                    >
                       {sliceAddress(row.from ? row.from : "")} {statusFrom ? <DoneIcon /> : <Copy />}
                     </CopyAddressContainer>
                   </TableCellCustom>
@@ -116,13 +125,31 @@ const TableWithPagination: React.FC = () => {
                     <TableCellCustomInOut text={row.from === myAddress ? "Out" : "In"}>{row.from === myAddress ? "Out" : "In"}</TableCellCustomInOut>
                   </TableCellCustom>
                   <TableCellCustom>
-                    <CopyAddressContainer onClick={() => copyAddress(row.to, setStatusTo)}>
+                    <CopyAddressContainer
+                      onClick={() =>
+                        copyAddress(row.to, () => {
+                          setStatusTo(true);
+                          setTimeout(() => {
+                            setStatusTo(false);
+                          }, 3000);
+                        })
+                      }
+                    >
                       {sliceAddress(row.to ? row.to : "")} {statusTo ? <DoneIcon /> : <Copy />}
                     </CopyAddressContainer>
                   </TableCellCustom>
                   <TableCellCustom>Ethereum Network</TableCellCustom>
                   <TableCell>
-                    <CopyAddressContainer onClick={() => copyAddress(row.blockHash, setStatusTransactionHash)}>
+                    <CopyAddressContainer
+                      onClick={() =>
+                        copyAddress(row.blockHash, () => {
+                          setStatusTransactionHash(true);
+                          setTimeout(() => {
+                            setStatusTransactionHash(false);
+                          }, 3000);
+                        })
+                      }
+                    >
                       {isDesktop ? sliceAddress(row.blockHash ? row.blockHash : "") : sliceAddressIdTableCell(row.blockHash ? row.blockHash : "")} {statusTransactionHash ? <DoneIcon /> : <Copy />}
                     </CopyAddressContainer>
                   </TableCell>
@@ -193,7 +220,16 @@ const TableWithPagination: React.FC = () => {
             </HeaderModalInfoTransaction>
             <HeaderModalInfoTransaction>
               <div>TxID</div>
-              <CopyAddressContainer onClick={() => copyAddress(row.id, setStatusFrom)}>
+              <CopyAddressContainer
+                onClick={() =>
+                  copyAddress(row.id, () => {
+                    setStatusFrom(true);
+                    setTimeout(() => {
+                      setStatusFrom(false);
+                    }, 3000);
+                  })
+                }
+              >
                 {isDesktop ? row.id : sliceAddress(row.id)}
                 {statusFrom ? <DoneIcon /> : <Copy />}
               </CopyAddressContainer>
@@ -208,13 +244,27 @@ const TableWithPagination: React.FC = () => {
             </HeaderModalInfoTransaction>
             <HeaderModalInfoTransaction>
               <div>From</div>
-              <CopyAddressContainer onClick={() => copyAddress(row.from, setStatusTo)}>
+              <CopyAddressContainer
+                onClick={() =>
+                  copyAddress(row.from, () => {
+                    setStatusTo(true);
+                    setTimeout(() => setStatusTo(false), 3000);
+                  })
+                }
+              >
                 {isDesktop ? row.from : sliceAddress(row.from)} {statusTo ? <DoneIcon /> : <Copy />}
               </CopyAddressContainer>
             </HeaderModalInfoTransaction>
             <HeaderModalInfoTransaction>
               <div>To</div>
-              <CopyAddressContainer onClick={() => copyAddress(row.to, setStatusTransactionHash)}>
+              <CopyAddressContainer
+                onClick={() =>
+                  copyAddress(row.to, () => {
+                    setStatusTransactionHash(true);
+                    setTimeout(() => setStatusTransactionHash(false), 3000);
+                  })
+                }
+              >
                 {isDesktop ? row.to : sliceAddress(row.to)} {statusTransactionHash ? <DoneIcon /> : <Copy />}
               </CopyAddressContainer>
             </HeaderModalInfoTransaction>

@@ -4,10 +4,9 @@ const sliceAddress = (str: string) => {
   }
   return str;
 };
-const copyAddress = (address: string, setStatus: React.Dispatch<React.SetStateAction<boolean>>) => {
+const copyAddress = (address: string, callback?: () => void) => {
   navigator.clipboard.writeText(address);
-  setStatus(true);
-  setTimeout(() => setStatus(false), 5000);
+  if (callback && typeof callback === "function") callback();
 };
 
 export { sliceAddress, copyAddress };

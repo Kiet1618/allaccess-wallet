@@ -29,7 +29,17 @@ const Info = () => {
               <Grid item xs={100} md={30}>
                 <ContainerAvatar>
                   <Avatar alt='Remy Sharp' src={profileState.profileInfo.data.avatar} sx={{ width: 200, height: 200 }} />
-                  <CopyAddressContainer style={{ margin: "20px 0" }} onClick={() => copyAddress(myAddress, setStatus)}>
+                  <CopyAddressContainer
+                    style={{ margin: "20px 0" }}
+                    onClick={() =>
+                      copyAddress(myAddress, () => {
+                        setStatus(true);
+                        setTimeout(() => {
+                          setStatus(false);
+                        }, 3000);
+                      })
+                    }
+                  >
                     {sliceAddress(myAddress)}
                     {status ? <DoneIcon /> : <Copy />}
                   </CopyAddressContainer>

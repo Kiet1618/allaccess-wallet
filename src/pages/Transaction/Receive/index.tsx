@@ -11,7 +11,7 @@ import DoneIcon from "@mui/icons-material/Done";
 
 const Receive = () => {
   const { getAccount } = useBlockchain();
-  const [status, setStatus] = useState(false);
+  const [copied, setCopied] = useState(false);
   return (
     <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid item xs={100}>
@@ -26,10 +26,13 @@ const Receive = () => {
             <ReceiveTagHeader>Address</ReceiveTagHeader>
             <CopyAddressContainer
               onClick={() => {
-                copyAddress(getAccount(), setStatus);
+                copyAddress(getAccount(), () => {
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 3000);
+                });
               }}
             >
-              {status ? <DoneIcon /> : <Copy />}
+              {copied ? <DoneIcon /> : <Copy />}
               Copy
             </CopyAddressContainer>
           </ContainerFlexSpace>

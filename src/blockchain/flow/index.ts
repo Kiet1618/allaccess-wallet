@@ -119,12 +119,11 @@ export const useFlowBlockchain = () => {
       fcl.ref(blockResponse.block.id),
       fcl.limit(100),
     ]);
-
+    const { transactionId } = response;
     fcl.tx(response).subscribe(status => {
       // status
       if (TransactionStatus.Pending === status) {
-      }
-      if (TransactionStatus.Executed === status) {
+        if (typeof callbacks.onHash === "function") callbacks.onHash(transactionId);
       }
       if (TransactionStatus.Sealed === status) {
         if (typeof callbacks.onSuccess === "function") callbacks.onSuccess(transaction);
