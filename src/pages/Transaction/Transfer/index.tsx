@@ -241,7 +241,7 @@ const Transfer = () => {
     } catch {
       setBalance("Error");
     }
-  }, [networkState.currentNetwork.data, token, web3, infoTransaction]);
+  }, [networkState.currentNetwork.data, token, web3, infoTransaction, getAccount()]);
   return (
     <Grid style={{ width: "100%" }} container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid>
