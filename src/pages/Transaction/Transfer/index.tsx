@@ -132,7 +132,7 @@ const Transfer = () => {
         setStatusTransaction("pending");
       },
       onSuccess() {
-        handleNotification("Transfer successfully", "error");
+        handleNotification("Transfer successfully", "success");
         setStatusTransaction("success");
         handleGetBalance();
       },

@@ -75,7 +75,8 @@ const TransactionModal: React.FC<Props> = memo(props => {
                 </Box>
               </ContainerIconSuccess>
             </HeaderModalInfoTransaction>
-            <TransferSuccessTitle style={{ marginBottom: "40px" }}>Transfer pending</TransferSuccessTitle>
+            <TransferSuccessTitle>Transfer pending</TransferSuccessTitle>
+            <TransferSuccessSub style={{ marginBottom: "20px" }}>The transaction continues regardless of whether you close the modal.</TransferSuccessSub>
             {transactionHash ? (
               <CopyAddressContainer
                 onClick={() =>
