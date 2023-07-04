@@ -2,7 +2,7 @@ import { useAppSelector } from "@app/store";
 import { useEVMBlockchain } from "./evm";
 import { useFlowBlockchain } from "./flow";
 import { isEmpty } from "lodash";
-import { Callbacks, GetBalanceToken, GetGasTransaction, TransferNative, TransferToken } from "./types";
+import { Callbacks, DefaultCallbacks, GetBalanceToken, GetGasTransaction, TransferNative, TransferToken } from "./types";
 // interface Blockchain {
 //   getBalance: () => number;
 //   transferNative: () => number;
@@ -69,7 +69,7 @@ const useBlockchain = () => {
     return "";
   };
 
-  const transfer = async (data: TransferNative, cb: Callbacks) => {
+  const transfer = async (data: TransferNative, cb: Callbacks = DefaultCallbacks) => {
     if (isEmpty(networkState.currentNetwork.data)) return;
     const { core } = networkState.currentNetwork.data;
     if (core === "evm") {

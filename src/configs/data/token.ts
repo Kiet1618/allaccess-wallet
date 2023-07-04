@@ -82,7 +82,6 @@ export const listTokens: Token[] = [
     img: FLOWLogo,
     symbol: "FLOW",
     name: "Flow Testnet",
-    tokenContract: "0x",
     chainID: "flow-testnet",
   },
 ];

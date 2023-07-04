@@ -1,8 +1,8 @@
 import Web3 from "web3";
 import abi from "../../common/ERC20_ABI.json";
 import { getTorusKey } from "@app/storage/storage-service";
-import { Callbacks, TransferNative, TransferToken } from "../types";
-export const transfer = async (web3: Web3, data: TransferNative, callbacks: Callbacks) => {
+import { Callbacks, DefaultCallbacks, TransferNative, TransferToken } from "../types";
+export const transfer = async (web3: Web3, data: TransferNative, callbacks: Callbacks = DefaultCallbacks) => {
   const { onError, onHash, onInfo } = callbacks;
   const privateKey = getTorusKey().priKey;
   if (!privateKey) {

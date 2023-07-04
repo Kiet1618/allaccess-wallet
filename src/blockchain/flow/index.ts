@@ -10,6 +10,9 @@ import { TransferFlowScript } from "./transactions";
 import { isEmpty } from "lodash";
 import { createFlowAccount } from "./apis";
 import { Callbacks, TransferNative, TransferToken } from "../types";
+import numeral from "numeral";
+import { GetBalanceFlowScript } from "./scripts";
+import { TransactionStatus } from "./types";
 const { t } = fcl;
 const ec = new EC.ec("secp256k1");
 
@@ -65,12 +68,13 @@ export const useFlowBlockchain = () => {
     if (!networkState.currentNetwork.data.chainID.includes("flow")) return;
     const { rpcUrls, chainID, flowToken, flowFungibleToken } = networkState.currentNetwork.data;
     createOrGetAccount();
-    fcl.config({
+    const config = {
       "accessNode.api": rpcUrls,
       "flow.network": chainID.split("-")[1],
-      "0xFungibleToken": flowToken,
-      "0xFlowToken": flowFungibleToken,
-    });
+      "0xFlowToken": flowToken,
+      "0xFungibleToken": flowFungibleToken,
+    };
+    fcl.config(config);
   }, [masterKey, networkState.currentNetwork.data]);
 
   const getBlock = async () => {
@@ -85,11 +89,11 @@ export const useFlowBlockchain = () => {
 
   const getBalance = async () => {
     if (account) {
-      const accountResponse = await fcl.send([fcl.getAccount(account || "") as any]);
-      const { balance } = await fcl.decode(accountResponse);
-      return formatUnits(balance, 8);
+      const response = await fcl.send([fcl.script(GetBalanceFlowScript), fcl.args([fcl.arg(account, t.Address)])]);
+      const res = await fcl.decode(response);
+      return res;
     }
-    return "0";
+    return;
   };
 
   const getBalanceToken = async () => {
@@ -106,7 +110,7 @@ export const useFlowBlockchain = () => {
     const response = await fcl.send([
       fcl.transaction(TransferFlowScript),
       fcl.args([
-        fcl.arg(data.amount, t.UFix64), // Amount to transfer
+        fcl.arg(numeral(data.amount).format("0.0[0000000000]"), t.UFix64), // Amount to transfer
         fcl.arg(data.addressTo, t.Address), // Recipient's address
       ]),
       fcl.payer(authorization),
@@ -117,11 +121,17 @@ export const useFlowBlockchain = () => {
     ]);
 
     fcl.tx(response).subscribe(status => {
-      console.log("🚀 ~ file: index.ts:95 ~ fcl.tx ~ status:", status);
+      // status
+      if (TransactionStatus.Pending === status) {
+      }
+      if (TransactionStatus.Executed === status) {
+      }
+      if (TransactionStatus.Sealed === status) {
+        if (typeof callbacks.onSuccess === "function") callbacks.onSuccess(transaction);
+      }
     });
 
     const transaction = await fcl.tx(response).onceSealed();
-    if (typeof callbacks.onSuccess === "function") callbacks.onSuccess(transaction);
     return transaction;
   };
 
@@ -130,7 +140,7 @@ export const useFlowBlockchain = () => {
     const response = await fcl.send([
       fcl.transaction(TransferFlowScript),
       fcl.args([
-        fcl.arg(data.amount, t.UFix64), // Amount to transfer
+        fcl.arg(Number(data.amount), t.UFix64), // Amount to transfer
         fcl.arg(data.addressTo, t.Address), // Recipient's address
       ]),
       fcl.payer(authorization),

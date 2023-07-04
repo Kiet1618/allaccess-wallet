@@ -1,4 +1,4 @@
-type ChainCore = "evm" | "fvm";
+export type ChainCore = "evm" | "fvm";
 export type ChainID = "1" | "5" | "9" | "56" | "97" | "flow-testnet";
 export type ChainNetwork = {
   chainID: ChainID;

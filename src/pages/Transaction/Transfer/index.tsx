@@ -10,10 +10,10 @@ import { TextHeaderOverview } from "../../Overview/overview.css";
 import FormGroup from "@mui/material/FormGroup";
 import React, { useLayoutEffect, useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { sliceAddress, copyAddress, formatBalance } from "../../../utils";
+import { sliceAddress, copyAddress, formatBalance, isValidAddress } from "../../../utils";
 import { setCurrentListTokens } from "../../../store/redux/token/actions";
 import Web3 from "web3";
-import { sendTransaction, getToken, sendTransactionToken } from "../../../blockchain";
+import { getToken, sendTransactionToken } from "../../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../../components/Table/table.css";
 import Snackbar from "@mui/material/Snackbar";
@@ -23,7 +23,6 @@ import useBlockchain from "@app/blockchain/wrapper";
 import { Token } from "../../../types/blockchain.type";
 import { listNetWorks } from "../../../configs/data";
 import { FormData } from "./type";
-import { SignTransactionModal } from "@app/components";
 import {
   style,
   CustomMenuItem,
@@ -43,22 +42,19 @@ import {
   ContainerIconSuccess,
   ContainerTwoButtonModal,
 } from "./transfer.css";
-import Cookies from "universal-cookie";
 const steps = ["Start", "Pending", "Success"];
 import DoneIcon from "@mui/icons-material/Done";
-import { InfoTransacions } from "@app/components/Modal/SignTransactionModal";
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
 
 const Transfer = () => {
-  const cookies = new Cookies();
   const networkState = useAppSelector(state => state.network);
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
   const [status, setStatus] = useState(false);
   const [statusTransactionHash, setStatusTransactionHash] = useState(false);
-  const { web3, getAccount, getBalance, getBalanceToken, getGasPrice, getGasLimit } = useBlockchain();
+  const { web3, getAccount, getBalance, getBalanceToken, getGasPrice, getGasLimit, transfer } = useBlockchain();
   const [openAlert, setOpenAlert] = useState(false);
   const [open, setOpen] = useState(false);
   const [tokenAddress, setTokenAddress] = useState("");
@@ -74,17 +70,6 @@ const Transfer = () => {
   const [reRenderGas, setRenderGasLimit] = useState<string>("0");
   const [amount, setAmount] = useState("0");
   const [transactionError, setTransactionError] = useState("");
-  //Modal Transactions d-app
-  const [transactionInfoCookies, setTransactionInfoCookies] = useState<InfoTransacions | null>(null);
-
-  useEffect(() => {
-    try {
-      const data: InfoTransacions = cookies.get("transaction");
-      setTransactionInfoCookies(data);
-    } catch (err) {
-      console.error(err);
-    }
-  });
 
   const handleClose = () => {
     setOpen(false);
@@ -106,12 +91,20 @@ const Transfer = () => {
       amount: "",
     },
   });
+
   const validateAmount = (value: string) => {
     const parsedValue = Number(value);
     if (isNaN(parsedValue) || parsedValue <= 0) {
       return false;
     }
     return true;
+  };
+  const validateAddress = (value: string) => {
+    const isValid = isValidAddress(value, networkState.currentNetwork.data.core);
+    if (!isValid) {
+      return `Invalid ${networkState.currentNetwork.data.title} address`;
+    }
+    return isValid;
   };
   useEffect(() => {
     const updateGasLimit = async () => {
@@ -138,25 +131,18 @@ const Transfer = () => {
     handleReset();
     setTransactionHash("");
     setOpen(true);
-    token?.tokenContract
-      ? await sendTransactionToken(web3 as Web3, values, token.tokenContract, setTransactionHash, setInfoTransaction, setTransactionError)
-      : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction, setTransactionError);
+    if (token?.tokenContract) {
+      await sendTransactionToken(web3 as Web3, values, token.tokenContract, setTransactionHash, setInfoTransaction, setTransactionError);
+    }
+    if (!token?.tokenContract) {
+      await transfer({
+        addressTo: values.addressTo,
+        amount: values.amount,
+      });
+    }
     reset();
   };
-  const handleSubmitModal = async () => {
-    handleReset();
-    setTransactionHash("");
-    setOpen(true);
-    const values: FormData = {
-      addressTo: transactionInfoCookies?.addressTo as string,
-      amount: transactionInfoCookies?.amount as string,
-    };
-    transactionInfoCookies?.contractTo
-      ? await sendTransactionToken(web3 as Web3, values, transactionInfoCookies?.contractTo, setTransactionHash, setInfoTransaction, setTransactionError)
-      : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction, setTransactionError);
-    setTransactionInfoCookies(null);
-    cookies.remove("transaction");
-  };
+
   const handleResize = () => {
     if (window.innerWidth < 600) {
       setIsDesktop(false);
@@ -250,7 +236,7 @@ const Transfer = () => {
     <Grid style={{ width: "100%" }} container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid>
         <TitlePageContainer>
-          <TitlePage>Transfer your Ethereum</TitlePage>
+          <TitlePage>Transfer your assets</TitlePage>
         </TitlePageContainer>
         <SubTitlePage>You need to choose the correct network, address and coin to transfer to another wallet address.</SubTitlePage>
       </Grid>
@@ -280,7 +266,7 @@ const Transfer = () => {
                       }}
                       name={name}
                       value={value}
-                      helperText={errors.addressTo && "Invalid address"}
+                      helperText={errors.addressTo?.message}
                       placeholder='Enter address'
                       id='addressTo'
                       size='small'
@@ -291,11 +277,7 @@ const Transfer = () => {
                   name='addressTo'
                   defaultValue=''
                   rules={{
-                    pattern: {
-                      value: /^0x[a-fA-F0-9]{40}$/,
-                      message: "",
-                    },
-                    required: { value: true, message: "" },
+                    validate: validateAddress,
                   }}
                 />
               </ContainerTextField>
@@ -498,17 +480,6 @@ const Transfer = () => {
           ) : null}
         </Box>
       </ModalCustom>
-      <SignTransactionModal
-        title='Transaction request'
-        subTitle='Application wants to sign'
-        loading={false}
-        info={transactionInfoCookies}
-        handleClose={() => {
-          setTransactionInfoCookies(null);
-          cookies.remove("transaction");
-        }}
-        handleConfirm={handleSubmitModal}
-      />
     </Grid>
   );
 };

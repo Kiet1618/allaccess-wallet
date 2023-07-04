@@ -1,12 +1,12 @@
 export type TransferNative = {
   addressTo: string;
-  amount: number;
+  amount: string;
 };
 
 export type TransferToken = {
   addressTo: string;
-  amount: number;
-  tokenContract?: string;
+  amount: string;
+  tokenContract: string;
 };
 
 export type GetBalanceToken = {
@@ -20,9 +20,24 @@ export type GetGasTransaction = {
   // type: "transfer_native" | "transfer_token";
 };
 
-export type Callbacks = {
-  onHash?: (msg: string) => void;
-  onInfo?: (msg: string) => void;
-  onError?: (msg: string) => void;
-  onSuccess?: (msg: string) => void;
+export interface Callbacks {
+  onHash?: (_: string) => void;
+  onInfo?: (_: string) => void;
+  onError?: (_: string) => void;
+  onSuccess?: (_: string) => void;
+}
+
+export const DefaultCallbacks = {
+  onHash: (_: string) => {
+    return;
+  },
+  onInfo: (_: string) => {
+    return;
+  },
+  onError: (_: string) => {
+    return;
+  },
+  onSuccess: (_: string) => {
+    return;
+  },
 };
