@@ -50,6 +50,7 @@ const MultipleFactors = () => {
       if (data.error) return;
       const { error } = await fetchMasterKeyWithDevice(data.info!);
       if (error) return;
+      insertTokenFCM(token, data.info!);
       navigate("/overview");
     }
   };
