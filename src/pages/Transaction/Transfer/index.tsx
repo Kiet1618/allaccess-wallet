@@ -12,8 +12,6 @@ import React, { useLayoutEffect, useState, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress, formatBalance, isValidAddress } from "../../../utils";
 import { setCurrentListTokens } from "../../../store/redux/token/actions";
-import Web3 from "web3";
-import { sendTransactionToken } from "../../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../../components/Table/table.css";
 import Box from "@mui/material/Box";
@@ -47,7 +45,7 @@ const Transfer = () => {
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
   const [status, setStatus] = useState(false);
-  const { web3, getAccount, getBalance, getBalanceToken, getGasPrice, getGasLimit, transfer, getToken } = useBlockchain();
+  const { web3, getAccount, getBalance, getBalanceToken, getGasPrice, getGasLimit, transfer, transferToken, getToken } = useBlockchain();
   const [tokenAddress, setTokenAddress] = useState("");
   const [tokenImport, setTokenImport] = useState<Token>();
   const [balance, setBalance] = useState("");
@@ -138,12 +136,19 @@ const Transfer = () => {
       },
     };
     if (token?.tokenContract) {
-      await sendTransactionToken(web3 as Web3, values, token.tokenContract, callbacks);
+      await transferToken(
+        {
+          recipient: values.addressTo,
+          amount: values.amount,
+          tokenContract: token.tokenContract,
+        },
+        callbacks
+      );
     }
     if (!token?.tokenContract) {
       await transfer(
         {
-          addressTo: values.addressTo,
+          recipient: values.addressTo,
           amount: values.amount,
         },
         callbacks

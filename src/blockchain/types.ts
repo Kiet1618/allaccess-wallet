@@ -1,10 +1,10 @@
 export type TransferNative = {
-  addressTo: string;
+  recipient: string;
   amount: string;
 };
 
 export type TransferToken = {
-  addressTo: string;
+  recipient: string;
   amount: string;
   tokenContract: string;
 };

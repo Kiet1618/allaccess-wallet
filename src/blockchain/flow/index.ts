@@ -113,7 +113,7 @@ export const useFlowBlockchain = () => {
         fcl.transaction(TransferFlowScript),
         fcl.args([
           fcl.arg(numeral(data.amount).format("0.0[0000000000]"), t.UFix64), // Amount to transfer
-          fcl.arg(data.addressTo, t.Address), // Recipient's address
+          fcl.arg(data.recipient, t.Address), // Recipient's address
         ]),
         fcl.payer(authorization),
         fcl.proposer(authorization),
@@ -146,7 +146,7 @@ export const useFlowBlockchain = () => {
       fcl.transaction(TransferFlowScript),
       fcl.args([
         fcl.arg(Number(data.amount), t.UFix64), // Amount to transfer
-        fcl.arg(data.addressTo, t.Address), // Recipient's address
+        fcl.arg(data.recipient, t.Address), // Recipient's address
       ]),
       fcl.payer(authorization),
       fcl.proposer(authorization),
