@@ -5,10 +5,6 @@ import { Callbacks, DefaultCallbacks, TransferNative, TransferToken } from "../t
 export const transfer = async (web3: Web3, data: TransferNative, callbacks: Callbacks = DefaultCallbacks) => {
   const { onError, onHash, onSuccess } = callbacks;
   try {
-    const privateKey = getTorusKey().priKey;
-    if (!privateKey) {
-      return;
-    }
     const { addressTo, amount } = data;
     const weiValue = Math.round(parseFloat(String(amount)) * 10 ** 18);
     const hexValue = web3.utils.toHex(weiValue ? weiValue : 0);
@@ -30,9 +26,7 @@ export const transfer = async (web3: Web3, data: TransferNative, callbacks: Call
       data: "0x",
     };
 
-    const signedTransaction: any = await web3.eth.accounts.signTransaction(tx, privateKey);
-
-    const sendSignedTransaction = web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+    const sendSignedTransaction = web3.eth.sendTransaction(tx);
     sendSignedTransaction
       .on("transactionHash", transactionHash => {
         onHash(transactionHash);
