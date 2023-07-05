@@ -69,6 +69,16 @@ const useBlockchain = () => {
     return "";
   };
 
+  const getAccountByCore = (core: string): string => {
+    if (core === "evm") {
+      return evmAccount;
+    }
+    if (core === "fvm") {
+      return fvmAccount;
+    }
+    return "";
+  };
+
   const transfer = async (data: TransferNative, cb: Callbacks = DefaultCallbacks) => {
     if (isEmpty(networkState.currentNetwork.data)) return;
     const { core } = networkState.currentNetwork.data;
@@ -117,7 +127,7 @@ const useBlockchain = () => {
     return "0";
   };
 
-  return { web3, getBalance, getBalanceToken, getAccount, transfer, transferToken, getGasPrice, getGasLimit };
+  return { web3, getBalance, getBalanceToken, getAccount, getAccountByCore, transfer, transferToken, getGasPrice, getGasLimit };
 };
 
 export default useBlockchain;

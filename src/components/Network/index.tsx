@@ -1,4 +1,5 @@
 import React, { useState, useLayoutEffect, useEffect } from "react";
+import { get } from "lodash";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
@@ -34,7 +35,7 @@ export const NetworkContainer = () => {
   const networkState = useAppSelector(state => state.network);
   const [selectedNetwork, setSelectedNetwork] = useState(networkState.currentNetwork.data);
   const { handleNotification } = useCustomSnackBar();
-  const { getAccount } = useBlockchain();
+  const { getAccount, getAccountByCore } = useBlockchain();
   // const myAddress = getTorusKey().ethAddress;
   const myPubKey = getTorusKey().pubKey;
   const dispatch = useAppDispatch();
@@ -129,7 +130,7 @@ export const NetworkContainer = () => {
               </IconButton>
             </div>
           </HeaderModalInfoTransaction>
-          <TagChangeNetwork text1={getAccount()} text2={getAccount()} />
+          <TagChangeNetwork text1={getAccount()} text2={getAccountByCore(get(selectedNetwork, "core", ""))} />
           <ChangeNetworkTag>Change network</ChangeNetworkTag>
           <ChangeNetworkTagSub>The system will automatically create a new account for you on this network</ChangeNetworkTagSub>
           <div>
