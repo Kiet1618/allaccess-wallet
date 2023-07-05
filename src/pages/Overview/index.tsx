@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Web3 from "web3";
+import { getTorusKey } from "@app/storage/storage-service";
 import { Grid } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import { sliceAddress } from "../../utils";
-import { useAppSelector } from "../../store";
+import { useAppSelector, useAppDispatch } from "../../store";
 import { Page } from "../../styles";
 import { TitlePage } from "../../styles";
-import { Token } from "../../types/blockchain.type";
+import { ChainNetwork, Token } from "../../types/blockchain.type";
 import { ChooseToken } from "../../assets/icon";
 import CustomButton from "../../components/Button";
 import SearchComponent from "../../components/TextField";
 import { NetworkContainer } from "../../components/Network";
+import { setNetworkState } from "@app/store/redux/network/actions";
+import { listNetWorks } from "@app/configs/data";
 import { formatValue, useBlockchain, getBalance, getBalanceToken } from "../../blockchain";
 import { SearchIcon, ReceiveTransactionHistory, SendTransactionHistory, LinkTransaction, Empty } from "../../assets/icon";
 import {
@@ -52,12 +55,14 @@ const getUSDPrice = async (symbol: string) => {
     return "";
   }
 };
+import Cookies from "universal-cookie";
 const Overview = () => {
+  const dispatch = useAppDispatch();
   const historyState = useAppSelector(state => state.history);
+  const cookies = new Cookies();
   //const [number, setNumber] = useState(6);
   const number = 6;
   const listTokenState = useAppSelector(state => state.token);
-
   const [listTokensBalance, setListTokensBalance] = useState<ListTokenBalance[]>(listTokenState.currentListTokens.data);
   const networkState = useAppSelector(state => state.network);
   const [currenToken, setCurrenToken] = useState(listTokenState.currentListTokens.data.find(token => token.chainID === networkState.currentNetwork.data.chainID)?.symbol as string);
@@ -65,6 +70,25 @@ const Overview = () => {
   const [balance, setBalance] = useState("");
   const [balanceUSD, setBalanceUSD] = useState("");
   const [searchText, setSearchText] = useState("");
+  const testAddress = networkState.currentNetwork.data.chainID === "flow-testnet" ? getTorusKey().flowAddress : getTorusKey().ethAddress;
+  const handleLogin = () => {
+    const handlePopupResponse = (event: any) => {
+      window.addEventListener("beforeunload", () => {
+        event.source.postMessage({ type: "ADDRESS", data: testAddress }, event.origin);
+      });
+      if (event.data.type === "CHAIN_ID") {
+        const chainId = event.data.data;
+        cookies.set("chainId", chainId);
+        const currentNetwork = listNetWorks.find(network => network.chainID === chainId) as ChainNetwork;
+        dispatch(setNetworkState(currentNetwork));
+        window.close();
+      }
+    };
+    window.addEventListener("message", handlePopupResponse);
+  };
+  useEffect(() => {
+    handleLogin();
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
