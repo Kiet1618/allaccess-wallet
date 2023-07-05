@@ -546,7 +546,7 @@ export const useFetchWallet = () => {
         signature: encrypted.signature,
         networkShare: shares["network-key"] || null,
         deviceShares: shares.device || [],
-        recoveryShare: shares["recovery-phrase"] || {},
+        ...(shares["recovery-phrase"] ? { recoveryShare: shares["recovery-phrase"] } : null),
       });
 
       if (pss.error) {
