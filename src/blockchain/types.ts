@@ -20,6 +20,10 @@ export type GetGasTransaction = {
   // type: "transfer_native" | "transfer_token";
 };
 
+export type GetToken = {
+  tokenContract: string;
+};
+
 export type Callbacks = {
   onHash: (_: string) => void;
   onError: (_: string) => void;

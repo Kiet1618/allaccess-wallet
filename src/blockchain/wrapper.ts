@@ -2,7 +2,8 @@ import { useAppSelector } from "@app/store";
 import { useEVMBlockchain } from "./evm";
 import { useFlowBlockchain } from "./flow";
 import { isEmpty } from "lodash";
-import { Callbacks, DefaultCallbacks, GetBalanceToken, GetGasTransaction, TransferNative, TransferToken } from "./types";
+import { Callbacks, DefaultCallbacks, GetBalanceToken, GetGasTransaction, GetToken, TransferNative, TransferToken } from "./types";
+import { Token } from "@app/types/blockchain.type";
 // interface Blockchain {
 //   getBalance: () => number;
 //   transferNative: () => number;
@@ -22,6 +23,7 @@ const useBlockchain = () => {
     getBalanceToken: evmGetBalanceToken,
     getGasPrice: evmGetGasPrice,
     getGasLimit: evmGetGasLimit,
+    getToken: evmGetToken,
   } = useEVMBlockchain();
   const {
     account: fvmAccount,
@@ -31,6 +33,7 @@ const useBlockchain = () => {
     getBalanceToken: fvmGetBalanceToken,
     getGasPrice: fvmGetGasPrice,
     getGasLimit: fvmGetGasLimit,
+    getToken: fvmGetToken,
   } = useFlowBlockchain();
 
   const getBalance = async () => {
@@ -127,7 +130,19 @@ const useBlockchain = () => {
     return "0";
   };
 
-  return { web3, getBalance, getBalanceToken, getAccount, getAccountByCore, transfer, transferToken, getGasPrice, getGasLimit };
+  const getToken = async (data: GetToken): Promise<Token | null> => {
+    if (isEmpty(networkState.currentNetwork.data)) return null;
+    const { core } = networkState.currentNetwork.data;
+    if (core === "evm") {
+      return evmGetToken(web3!, data.tokenContract);
+    }
+    if (core === "fvm") {
+      return fvmGetToken();
+    }
+    return null;
+  };
+
+  return { web3, getBalance, getBalanceToken, getAccount, getAccountByCore, transfer, transferToken, getGasPrice, getGasLimit, getToken };
 };
 
 export default useBlockchain;

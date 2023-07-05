@@ -13,13 +13,12 @@ import { Controller, useForm } from "react-hook-form";
 import { sliceAddress, copyAddress, formatBalance, isValidAddress } from "../../../utils";
 import { setCurrentListTokens } from "../../../store/redux/token/actions";
 import Web3 from "web3";
-import { getToken, sendTransactionToken } from "../../../blockchain";
+import { sendTransactionToken } from "../../../blockchain";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../../components/Table/table.css";
 import Box from "@mui/material/Box";
 import useBlockchain from "@app/blockchain/wrapper";
 import { Token } from "../../../types/blockchain.type";
-import { listNetWorks } from "../../../configs/data";
 import { FormData } from "./type";
 import {
   style,
@@ -40,6 +39,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import TransactionModal from "./transaction-modal";
 import { useCustomSnackBar } from "@app/hooks";
 import { Callbacks } from "@app/blockchain/types";
+import { get } from "lodash";
 
 const Transfer = () => {
   const { handleNotification } = useCustomSnackBar();
@@ -47,7 +47,7 @@ const Transfer = () => {
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
   const [status, setStatus] = useState(false);
-  const { web3, getAccount, getBalance, getBalanceToken, getGasPrice, getGasLimit, transfer } = useBlockchain();
+  const { web3, getAccount, getBalance, getBalanceToken, getGasPrice, getGasLimit, transfer, getToken } = useBlockchain();
   const [tokenAddress, setTokenAddress] = useState("");
   const [tokenImport, setTokenImport] = useState<Token>();
   const [balance, setBalance] = useState("");
@@ -176,14 +176,24 @@ const Transfer = () => {
 
   const handleGetInfoToken = async () => {
     try {
-      const currentNetwork = listNetWorks.find(networks => networks.chainID === networkState.currentNetwork.data.chainID);
-      const addToken = await getToken(web3 as Web3, tokenAddress, currentNetwork?.rpcUrls as string);
+      const {
+        currentNetwork: { data: currentNetwork },
+      } = networkState;
+      const addToken = await getToken({
+        tokenContract: tokenAddress,
+      });
       const check = listTokenState.currentListTokens.data.filter(token => token.tokenContract === tokenAddress).length;
+      if (!addToken) return;
       if (!check) {
-        setTokenImport(addToken);
+        setTokenImport({
+          ...addToken,
+          rpcUrls: currentNetwork.rpcUrls,
+          chainID: currentNetwork.chainID,
+        });
       }
     } catch (err) {
       console.error(err);
+      return;
     }
   };
   const handleAddToken = () => {
@@ -193,7 +203,9 @@ const Transfer = () => {
     }
   };
   useEffect(() => {
-    handleGetInfoToken();
+    if (isValidAddress(searchText, get(networkState, "currentNetwork.data.core"))) {
+      handleGetInfoToken();
+    }
   }, [searchText]);
   useEffect(() => {
     try {

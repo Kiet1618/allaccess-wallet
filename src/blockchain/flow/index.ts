@@ -185,5 +185,9 @@ export const useFlowBlockchain = () => {
     return "0";
   };
 
-  return { fcl, account, createOrGetAccount, getBlock, getAccount, getBalance, getBalanceToken, transfer, transferToken, getGasPrice, getGasLimit };
+  const getToken = async () => {
+    return null;
+  };
+
+  return { fcl, account, createOrGetAccount, getBlock, getAccount, getBalance, getBalanceToken, transfer, transferToken, getGasPrice, getGasLimit, getToken };
 };
