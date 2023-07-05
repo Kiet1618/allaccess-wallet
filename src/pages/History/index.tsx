@@ -42,10 +42,10 @@ import {
 } from "./history.css";
 import { useAppDispatch, useAppSelector } from "@app/store";
 import { ChainNetwork } from "@app/types/blockchain.type";
-import { useBlockchain } from "@app/blockchain";
+import useBlockchain from "@app/blockchain/wrapper";
 const History = () => {
   const networkState = useAppSelector(state => state.network);
-  const { account: myAddress } = useBlockchain(networkState.currentNetwork.data.rpcUrls);
+  const { getAccount } = useBlockchain();
   const dispatch = useAppDispatch();
   const [time, setTime] = useState("30");
   const [method, setMethod] = useState("All");
@@ -77,8 +77,10 @@ const History = () => {
     };
   }, []);
   useEffect(() => {
-    fetchData(network);
-  }, [network]);
+    if (getAccount()) {
+      fetchData(network);
+    }
+  }, [network, getAccount(), status, customTimeFrom, customTimeTo]);
   // useEffect(() => {
   //   if (network !== networkState.currentNetwork.data) fetchData(network);
 
@@ -87,7 +89,7 @@ const History = () => {
   const listTokenState = useAppSelector(state => state.token);
   const fetchData = async (currentNetwork: ChainNetwork) => {
     const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.chainID === currentNetwork.chainID && tokens.tokenContract !== undefined);
-    const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
+    const historyTransaction = await preProcessHistoryResponse(currentNetwork, getAccount(), listToken);
     dispatch(setHistoriesAddress(historyTransaction));
   };
   return (
@@ -137,7 +139,6 @@ const History = () => {
               size='small'
               onChange={e => {
                 setNetwork(listNetWorks.find(network => network.description === e.target.value) as ChainNetwork);
-                fetchData(listNetWorks.find(network => network.description === e.target.value) as ChainNetwork);
               }}
             >
               {listNetWorks.map(network => (
@@ -283,7 +284,6 @@ const History = () => {
             size='small'
             onChange={e => {
               setNetwork(listNetWorks.find(network => network.description === e.target.value) as ChainNetwork);
-              fetchData(listNetWorks.find(network => network.description === e.target.value) as ChainNetwork);
             }}
           >
             {listNetWorks.map(network => (

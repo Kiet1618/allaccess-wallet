@@ -43,17 +43,7 @@ export const listNetWorks: ChainNetwork[] = [
     core: "evm",
     apiScanNormalTransactionsByAddress: "https://testnet.bscscan.com/api?module=account&action=txlist&address={address}&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW",
     apiScanTokenTransactionsByAddress: `
-    https://testnet.bscscan.com
-   ?module=account
-   &action=tokentx
-   &contractaddress={contract}
-   &address={address}
-   &page=1
-   &offset=5
-   &startblock=0
-   &endblock=999999999
-   &sort=asc
-   &apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW`,
+    https://testnet.bscscan.com/api?module=account&action=tokentx&contractaddress={contract}&address={address}&page=1&offset=5&startblock=0&endblock=999999999&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW`,
     rpcUrls: "https://data-seed-prebsc-2-s2.binance.org:8545",
     title: "BNB",
     description: "Binance Smart Chain Testnet",

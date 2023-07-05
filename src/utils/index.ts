@@ -6,4 +6,5 @@ export * from "./user-agent";
 export * from "./seed-phrase";
 export * from "./numbers";
 export * from "./valid";
+export * from "./transactions";
 export { sliceAddress, copyAddress, getHistoryTransaction, getHistoryTransactionToken, preProcessHistoryResponse, TabPanel, a11yProps, breakpoint };

@@ -1,6 +1,7 @@
 import { ChainNetwork, Token } from "../../types/blockchain.type";
 import axios from "axios";
 import _, { get } from "lodash";
+import { transactionName } from "../transactions";
 type HistoryResponseNormal = {
   blockNumber: string;
   timeStamp: string;
@@ -44,7 +45,7 @@ type HistoryResponseERC20 = {
 export type PreProcessHistoryResponse = {
   id: number;
   timeStamp: string;
-  method: "Approve";
+  method: string;
   tokenSymbol: string;
   value: string;
   from: string;
@@ -57,13 +58,12 @@ export const getHistoryTransaction = async (currentNetwork: ChainNetwork | undef
     const urlNormalTransaction = urlRawNormalTransaction.replace("{address}", myAddress);
     const normalTransaction = await axios.get(urlNormalTransaction);
     const { data } = normalTransaction;
-    if (get(data, "message") || get(data, "message") === "NOTOK") {
+    if (get(data, "message") && get(data, "message") === "NOTOK") {
       throw new Error(get(data, "message"));
     }
     const result: HistoryResponseNormal[] = get(data, "result", []);
     return result;
   } catch (err) {
-    console.error(err);
     return [];
   }
 };
@@ -75,6 +75,9 @@ export const getHistoryTransactionToken = async (currentNetwork: ChainNetwork | 
         const urlTokenTransaction = urlRawTokenTransaction.replace("{address}", myAddress).replace("{contract}", token.tokenContract as string);
         const tokenTransaction = await axios.get(urlTokenTransaction);
         const { data } = tokenTransaction;
+        if (get(data, "message") && get(data, "message") === "NOTOK") {
+          throw new Error(get(data, "message"));
+        }
         return get(data, "result", []);
       })
     );
@@ -97,7 +100,7 @@ export const preProcessHistoryResponse = async (currentNetwork: ChainNetwork | u
         const preProcessedItem: PreProcessHistoryResponse = {
           id: idCounter++,
           timeStamp: item.timeStamp,
-          method: "Approve",
+          method: "Transfer",
           tokenSymbol: currentNetwork?.title || "",
           value: item.value,
           from: item.from,
@@ -114,7 +117,7 @@ export const preProcessHistoryResponse = async (currentNetwork: ChainNetwork | u
         const preProcessedItem: PreProcessHistoryResponse = {
           id: idCounter++,
           timeStamp: item.timeStamp,
-          method: "Approve",
+          method: transactionName(item.input, currentNetwork?.core || "evm"),
           tokenSymbol: item.tokenSymbol,
           value: item.value,
           from: item.from,
