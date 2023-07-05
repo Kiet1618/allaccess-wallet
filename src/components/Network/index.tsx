@@ -134,7 +134,14 @@ export const NetworkContainer = () => {
           <ChangeNetworkTagSub>The system will automatically create a new account for you on this network</ChangeNetworkTagSub>
           <div>
             <ButtonCustom onClick={() => handleClose()} mRight='8px' width='146px' height='44px' styleButton='default' text='Close'></ButtonCustom>
-            <ButtonCustom loading={createAccountState.loading} onClick={() => handleSelectedNetwork()} width='146px' height='44px' styleButton='primary' text='Got it'></ButtonCustom>
+            <ButtonCustom
+              styleButton={createAccountState.loading ? "inactive" : "primary"}
+              loading={createAccountState.loading}
+              onClick={() => handleSelectedNetwork()}
+              width='146px'
+              height='44px'
+              text='Got it'
+            ></ButtonCustom>
           </div>
         </Box>
       </ModalCustom>
