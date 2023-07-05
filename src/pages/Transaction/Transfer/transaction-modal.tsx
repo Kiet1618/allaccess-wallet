@@ -1,13 +1,12 @@
 import { CircularProgress } from "@mui/material";
 import CustomButton from "../../../components/Button";
-import { Copy, Success } from "../../../assets/icon";
+import { Success } from "../../../assets/icon";
 import React, { useState, memo, useLayoutEffect } from "react";
-import { sliceAddress, copyAddress } from "../../../utils";
+import { sliceAddress } from "../../../utils";
 import { useAppSelector } from "../../../store";
 import { ModalCustom, HeaderModalInfoTransaction } from "../../../components/Table/table.css";
 import Box from "@mui/material/Box";
 import { style, TransferSuccessTitle, TransferSuccessSub, CopyAddressContainer, ContainerIconSuccess, ContainerTwoButtonModal } from "./transfer.css";
-import DoneIcon from "@mui/icons-material/Done";
 
 type Props = {
   isOpen: boolean;
@@ -19,7 +18,6 @@ type Props = {
 const TransactionModal: React.FC<Props> = memo(props => {
   const { isOpen, status, handleClose, transactionHash } = props;
   const networkState = useAppSelector(state => state.network);
-  const [copied, setCopied] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
 
   const onClose = () => {
@@ -79,15 +77,13 @@ const TransactionModal: React.FC<Props> = memo(props => {
             <TransferSuccessSub style={{ marginBottom: "20px" }}>The transaction continues regardless of whether you close the modal.</TransferSuccessSub>
             {transactionHash ? (
               <CopyAddressContainer
-                onClick={() =>
-                  copyAddress(transactionHash, () => {
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 5000);
-                  })
-                }
+                onClick={() => {
+                  const link = networkState.currentNetwork.data.apiTransactionHash?.replace("{transactionHash}", transactionHash || "");
+                  console.log("🚀 ~ file: transaction-modal.tsx:82 ~ link:", link);
+                  window.open(link, "_blank");
+                }}
               >
                 {"Transaction hash: " + sliceAddress(transactionHash)}
-                {copied ? <DoneIcon /> : <Copy />}
               </CopyAddressContainer>
             ) : null}
           </>

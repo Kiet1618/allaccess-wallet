@@ -8,6 +8,7 @@ export const listNetWorks: ChainNetwork[] = [
     rpcUrls: "https://eth.llamarpc.com",
     title: "ETH",
     description: "Ethereum Mainnet",
+    apiTransactionHash: "https://etherscan.io/tx/{transactionHash}",
   },
   {
     chainID: "5",
@@ -17,6 +18,7 @@ export const listNetWorks: ChainNetwork[] = [
     rpcUrls: "https://goerli.blockpi.network/v1/rpc/public",
     title: "ETH",
     description: "Goerli Testnet",
+    apiTransactionHash: "https://goerli.etherscan.io/tx/{transactionHash}",
   },
   {
     chainID: "56",
@@ -37,6 +39,7 @@ export const listNetWorks: ChainNetwork[] = [
     rpcUrls: "https://bsc-dataseed1.binance.org",
     title: "BNB",
     description: "Binance Smart Chain Mainnet",
+    apiTransactionHash: "https://bscscan.com/tx/{transactionHash}",
   },
   {
     chainID: "97",
@@ -49,15 +52,15 @@ export const listNetWorks: ChainNetwork[] = [
     description: "Binance Smart Chain Testnet",
     apiTransactionHash: `https://testnet.bscscan.com/tx/{transactionHash}`,
   },
-  {
-    chainID: "9",
-    core: "evm",
-    apiScanNormalTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=txlist&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
-    apiScanTokenTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=tokentx&contractaddress={contract}&address={address}&startblock=0&endblock=99999999&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
-    rpcUrls: "https://geth-kotti.etc-network.info",
-    title: "KOT",
-    description: "Ethereum Classic Testnet Kotti",
-  },
+  // {
+  //   chainID: "9",
+  //   core: "evm",
+  //   apiScanNormalTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=txlist&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
+  //   apiScanTokenTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=tokentx&contractaddress={contract}&address={address}&startblock=0&endblock=99999999&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
+  //   rpcUrls: "https://geth-kotti.etc-network.info",
+  //   title: "KOT",
+  //   description: "Ethereum Classic Testnet Kotti",
+  // },
   {
     chainID: "flow-testnet",
     core: "fvm",
