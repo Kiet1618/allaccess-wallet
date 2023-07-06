@@ -49,7 +49,7 @@ export const getTorusKey = (): KeyPair => {
 export const getProfileInfo = (): Profile => {
   try {
     if (typeof win !== "undefined") {
-      const data = win.sessionStorage.getItem("profileInfo");
+      const data = win.localStorage.getItem("profileInfo");
       if (typeof data === "string") {
         return JSON.parse(data);
       }

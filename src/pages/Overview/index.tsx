@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Web3 from "web3";
-import { getTorusKey } from "@app/storage/storage-service";
 import { Grid } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -8,13 +7,11 @@ import { sliceAddress } from "../../utils";
 import { useAppSelector, useAppDispatch } from "../../store";
 import { Page } from "../../styles";
 import { TitlePage } from "../../styles";
-import { ChainNetwork, Token } from "../../types/blockchain.type";
+import { Token } from "../../types/blockchain.type";
 import { ChooseToken } from "../../assets/icon";
 import CustomButton from "../../components/Button";
 import SearchComponent from "../../components/TextField";
 import { NetworkContainer } from "../../components/Network";
-import { setNetworkState } from "@app/store/redux/network/actions";
-import { listNetWorks } from "@app/configs/data";
 import { formatValue, useBlockchain, getBalance, getBalanceToken } from "../../blockchain";
 import { SearchIcon, ReceiveTransactionHistory, SendTransactionHistory, LinkTransaction, Empty } from "../../assets/icon";
 import {
@@ -42,6 +39,8 @@ type ListTokenBalance = Token & {
   balance?: string;
   balanceUsd?: string;
 };
+import Cookies from "universal-cookie";
+
 import axios from "axios";
 const convertTokenBalanceURL = `https://min-api.cryptocompare.com/data/price?fsym={symbol}&tsyms=USD`;
 const getUSDPrice = async (symbol: string) => {
@@ -55,9 +54,12 @@ const getUSDPrice = async (symbol: string) => {
     return "";
   }
 };
-import Cookies from "universal-cookie";
+import { setNetworkState } from "@app/store/redux/network/actions";
+import { listNetWorks } from "@app/configs/data";
+import { ChainNetwork } from "@app/types/blockchain.type";
+import { LoginRequestModal } from "@app/components";
+
 const Overview = () => {
-  const dispatch = useAppDispatch();
   const historyState = useAppSelector(state => state.history);
   const cookies = new Cookies();
   //const [number, setNumber] = useState(6);
@@ -70,25 +72,9 @@ const Overview = () => {
   const [balance, setBalance] = useState("");
   const [balanceUSD, setBalanceUSD] = useState("");
   const [searchText, setSearchText] = useState("");
-  const testAddress = networkState.currentNetwork.data.chainID === "flow-testnet" ? getTorusKey().flowAddress : getTorusKey().ethAddress;
-  const handleLogin = () => {
-    const handlePopupResponse = (event: any) => {
-      window.addEventListener("beforeunload", () => {
-        event.source.postMessage({ type: "ADDRESS", data: testAddress }, event.origin);
-      });
-      if (event.data.type === "CHAIN_ID") {
-        const chainId = event.data.data;
-        cookies.set("chainId", chainId);
-        const currentNetwork = listNetWorks.find(network => network.chainID === chainId) as ChainNetwork;
-        dispatch(setNetworkState(currentNetwork));
-        window.close();
-      }
-    };
-    window.addEventListener("message", handlePopupResponse);
-  };
-  useEffect(() => {
-    handleLogin();
-  }, []);
+  const [origin, setOrigin] = useState<string | null>("");
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -149,9 +135,60 @@ const Overview = () => {
     result.balanceUsd = (parseFloat(USD) * parseFloat(result.balance)).toString();
     return result;
   };
+  //REQ login
+  //req login
+  // const networkState = useAppSelector(state => state.network);
 
+  // const testAddress = networkState.currentNetwork.data.chainID === "flow-testnet" ? getTorusKey().flowAddress : getTorusKey().ethAddress;
+
+  const handleLogin = () => {
+    const handlePopupResponse = (event: any) => {
+      if (event.data.type === "LOGIN_REQ") {
+        const data = event.data.data;
+        cookies.set("chainId", data.chainId);
+        setOrigin(data.origin);
+        const currentNetwork = listNetWorks.find(network => network.chainID === data.chainId) as ChainNetwork;
+        dispatch(setNetworkState(currentNetwork));
+        console.log("a");
+      }
+    };
+    window.addEventListener("message", handlePopupResponse);
+  };
+  const handleComfirmRequest = () => {
+    const handlePopupResponse = (event: any) => {
+      window.addEventListener("beforeunload", () => {
+        event.source.postMessage({ type: "ADDRESS", data: myAddress }, event.origin);
+      });
+      setOrigin("");
+      window.close();
+    };
+    window.addEventListener("message", handlePopupResponse);
+  };
+  const handleReject = () => {
+    const handleReject = (event: any) => {
+      window.addEventListener("beforeunload", () => {
+        event.source.postMessage({ type: "ADDRESS", data: "" }, event.origin);
+      });
+      setOrigin("");
+      window.close();
+    };
+    window.addEventListener("message", handleReject);
+  };
+  useEffect(() => {
+    handleLogin();
+  }, []);
   return (
     <Page>
+      <LoginRequestModal
+        title='Login request'
+        subTitle='Login request from Marketplace'
+        loading={false}
+        origin={origin}
+        handleClose={() => {
+          handleReject();
+        }}
+        handleConfirm={handleComfirmRequest}
+      />
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
         <Grid item xs={100} sm={100} md={100} lg={50} xl={60}>
           <TilePageContainer>

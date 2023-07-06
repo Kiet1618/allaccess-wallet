@@ -43,16 +43,15 @@ import {
   ContainerIconSuccess,
   ContainerTwoButtonModal,
 } from "./transfer.css";
-import Cookies from "universal-cookie";
 const steps = ["Start", "Pending", "Success"];
 import DoneIcon from "@mui/icons-material/Done";
 import { InfoTransacions } from "@app/components/Modal/SignTransactionModal";
+
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
 
 const Transfer = () => {
-  const cookies = new Cookies();
   const networkState = useAppSelector(state => state.network);
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
@@ -75,12 +74,51 @@ const Transfer = () => {
   const [transactionError, setTransactionError] = useState("");
   //Modal Transactions d-app
   const [transactionInfoCookies, setTransactionInfoCookies] = useState<InfoTransacions | null>(null);
+  // Transactions d-app
 
+  const handleGetInfo = () => {
+    const handlePopupResponse = (event: any) => {
+      if (event.data.type === "SIGN_REQ") {
+        const data = event.data.data;
+        setTransactionInfoCookies(data);
+      }
+    };
+
+    window.addEventListener("message", handlePopupResponse);
+  };
+  // const handleComfirmRequest = () => {
+  //   const handlePopupResponse = (event: any) => {
+  //     window.addEventListener("beforeunload", () => {
+  //       event.source.postMessage(
+  //         {
+  //           type: "STATUS",
+  //           data: transactionError
+  //         },
+  //         event.origin
+
+  //       );
+  //     });
+  //     window.close();
+  //   };
+  //   window.addEventListener("message", handlePopupResponse);
+  // };
+  // const handleReject = () => {
+  //   const handleReject = (event: any) => {
+  //     window.addEventListener("beforeunload", () => {
+  //       event.source.postMessage({ type: "STATUS", data: null }, event.origin);
+  //     });
+  //     setTransactionInfoCookies(null)
+  //     window.close();
+  //   };
+  //   window.addEventListener("message", handleReject);
+  // };
+  //
   useEffect(() => {
     try {
-      const data: InfoTransacions = cookies.get("transaction");
-      setTransactionInfoCookies(data);
-    } catch {}
+      handleGetInfo();
+    } catch {
+      console.log("Failed to get transaction");
+    }
   });
 
   const handleClose = () => {
@@ -139,16 +177,14 @@ const Transfer = () => {
   const handleSubmitModal = async () => {
     handleReset();
     setTransactionHash("");
-    setOpen(true);
     const values: FormData = {
       addressTo: transactionInfoCookies?.addressTo as string,
       amount: transactionInfoCookies?.amount as string,
     };
+    setOpen(true);
     transactionInfoCookies?.contractTo
       ? await sendTransactionToken(web3 as Web3, values, transactionInfoCookies?.contractTo, setTransactionHash, setInfoTransaction, setTransactionError)
       : await sendTransaction(web3 as Web3, values, setTransactionHash, setInfoTransaction, setTransactionError);
-    setTransactionInfoCookies(null);
-    cookies.remove("transaction");
   };
   const handleResize = () => {
     if (window.innerWidth < 600) {
@@ -219,6 +255,10 @@ const Transfer = () => {
     if (infoTransaction === "Error") {
       handleClose();
       setOpenAlert(true);
+      if (transactionInfoCookies) {
+        setTransactionInfoCookies(null);
+        setTimeout(() => window.close(), 3000);
+      }
     }
     if (infoTransaction === "success") {
       setActiveStep(2);
@@ -390,7 +430,20 @@ const Transfer = () => {
                   styleButton='inactive'
                   text='View transfer history'
                 ></CustomButton>
-                <CustomButton onClick={() => handleClose()} width='135px' height='44px' styleButton='primary' text='Ok, I got it'></CustomButton>
+                <CustomButton
+                  onClick={() => {
+                    handleClose();
+                    if (transactionInfoCookies) {
+                      // handleComfirmRequest();
+                      setTransactionInfoCookies(null);
+                      window.close();
+                    }
+                  }}
+                  width='135px'
+                  height='44px'
+                  styleButton='primary'
+                  text='Ok, I got it'
+                ></CustomButton>
               </ContainerTwoButtonModal>
             </>
           ) : infoTransaction === "pending" ? (
@@ -493,8 +546,7 @@ const Transfer = () => {
         loading={false}
         info={transactionInfoCookies}
         handleClose={() => {
-          setTransactionInfoCookies(null);
-          cookies.remove("transaction");
+          window.close();
         }}
         handleConfirm={handleSubmitModal}
       />

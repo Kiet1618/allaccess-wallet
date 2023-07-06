@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Grid } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
-import { TextField as CustomInput, Button as CustomButton } from "@app/components";
+import { TextField as CustomInput } from "@app/components";
 import { Copy } from "@app/assets/icon";
 import { sliceAddress, copyAddress } from "@app/utils";
 import { TitlePageBlack } from "@app/styles";
