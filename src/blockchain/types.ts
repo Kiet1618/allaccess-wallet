@@ -24,6 +24,8 @@ export type GetToken = {
   tokenContract: string;
 };
 
+export type SignedTransferResponse = { error?: string; signed?: string };
+
 export type Callbacks = {
   onHash: (_: string) => void;
   onError: (_: string) => void;

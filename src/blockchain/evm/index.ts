@@ -9,7 +9,7 @@ import { getToken } from "./token";
 import { formatValue } from "./format";
 import { getGasPrice, getGasLimit } from "./blockchain";
 import { getBalanceToken, getBalance } from "./balance";
-import { transfer, transferToken } from "./transfer";
+import { transfer, transferToken, signTransfer } from "./transfer";
 import { useEffect, useState } from "react";
 
 export const useEVMBlockchain = (rpcUrl?: string) => {
@@ -31,7 +31,7 @@ export const useEVMBlockchain = (rpcUrl?: string) => {
     }
   }, [masterKey, networkState.currentNetwork.data]);
 
-  return { web3: web3Instance, account, getGasPrice, getGasLimit, getBalanceToken, getBalance, transfer, transferToken, formatValue, getToken };
+  return { web3: web3Instance, account, getGasPrice, getGasLimit, getBalanceToken, getBalance, transfer, transferToken, formatValue, getToken, signTransfer };
 };
 
 export { getGasPrice, getGasLimit, getBalanceToken, getBalance, transfer, transferToken, formatValue, getToken };

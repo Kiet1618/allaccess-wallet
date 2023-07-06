@@ -2,7 +2,7 @@ import { useAppSelector } from "@app/store";
 import { useEVMBlockchain } from "./evm";
 import { useFlowBlockchain } from "./flow";
 import { isEmpty } from "lodash";
-import { Callbacks, DefaultCallbacks, GetBalanceToken, GetGasTransaction, GetToken, TransferNative, TransferToken } from "./types";
+import { Callbacks, DefaultCallbacks, GetBalanceToken, GetGasTransaction, GetToken, SignedTransferResponse, TransferNative, TransferToken } from "./types";
 import { Token } from "@app/types/blockchain.type";
 // interface Blockchain {
 //   getBalance: () => number;
@@ -24,6 +24,7 @@ const useBlockchain = () => {
     getGasPrice: evmGetGasPrice,
     getGasLimit: evmGetGasLimit,
     getToken: evmGetToken,
+    signTransfer: evmSignTransfer,
   } = useEVMBlockchain();
   const {
     account: fvmAccount,
@@ -34,6 +35,7 @@ const useBlockchain = () => {
     getGasPrice: fvmGetGasPrice,
     getGasLimit: fvmGetGasLimit,
     getToken: fvmGetToken,
+    signTransfer: fvmSignTransfer,
   } = useFlowBlockchain();
 
   const getBalance = async () => {
@@ -142,7 +144,22 @@ const useBlockchain = () => {
     return null;
   };
 
-  return { web3, getBalance, getBalanceToken, getAccount, getAccountByCore, transfer, transferToken, getGasPrice, getGasLimit, getToken };
+  const signTransfer = async (data: TransferNative): Promise<SignedTransferResponse> => {
+    const error: SignedTransferResponse = {
+      error: "Unknown network",
+    };
+    if (isEmpty(networkState.currentNetwork.data)) return error;
+    const { core } = networkState.currentNetwork.data;
+    if (core === "evm") {
+      return evmSignTransfer(web3!, data);
+    }
+    if (core === "fvm") {
+      return fvmSignTransfer(data);
+    }
+    return error;
+  };
+
+  return { web3, getBalance, getBalanceToken, getAccount, getAccountByCore, transfer, transferToken, getGasPrice, getGasLimit, getToken, signTransfer };
 };
 
 export default useBlockchain;

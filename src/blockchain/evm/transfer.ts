@@ -2,7 +2,7 @@ import Web3 from "web3";
 import { parseUnits } from "ethers";
 import { AbiItem } from "web3-utils";
 import ERC20_ABI from "@app/common/ERC20_ABI.json";
-import { Callbacks, DefaultCallbacks, TransferNative, TransferToken } from "../types";
+import { Callbacks, DefaultCallbacks, SignedTransferResponse, TransferNative, TransferToken } from "../types";
 export const transfer = async (web3: Web3, data: TransferNative, callbacks: Callbacks = DefaultCallbacks) => {
   const { onError, onHash, onSuccess } = callbacks;
   try {
@@ -74,4 +74,28 @@ export const transferToken = async (web3: Web3, data: TransferToken, callbacks: 
       onHash("");
       return;
     });
+};
+
+export const signTransfer = async (web3: Web3, data: TransferNative): Promise<SignedTransferResponse> => {
+  try {
+    const { recipient, amount } = data;
+    const tx = {
+      to: recipient,
+      from: web3.defaultAccount as string,
+      value: parseUnits(amount, 18).toString(),
+      data: "0x",
+    } as any;
+    const gasLimit = await web3.eth.estimateGas(tx);
+    tx.gasLimit = gasLimit;
+
+    const privateKey = web3.eth.accounts.wallet[0].privateKey;
+
+    const signedTransaction = await web3.eth.accounts.signTransaction(tx, privateKey);
+    return { signed: JSON.stringify(signedTransaction) };
+  } catch (error: any) {
+    return {
+      error: error?.message || "Unknown sign transfer EVM",
+      // signed: null,
+    };
+  }
 };

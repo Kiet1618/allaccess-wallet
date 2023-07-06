@@ -9,7 +9,7 @@ import * as fcl from "@onflow/fcl";
 import { TransferFlowScript } from "./transactions";
 import { isEmpty } from "lodash";
 import { createFlowAccount } from "./apis";
-import { Callbacks, DefaultCallbacks, TransferNative, TransferToken } from "../types";
+import { Callbacks, DefaultCallbacks, SignedTransferResponse, TransferNative, TransferToken } from "../types";
 import numeral from "numeral";
 import { GetBalanceFlowScript } from "./scripts";
 import { TransactionStatus } from "./types";
@@ -189,5 +189,26 @@ export const useFlowBlockchain = () => {
     return null;
   };
 
-  return { fcl, account, createOrGetAccount, getBlock, getAccount, getBalance, getBalanceToken, transfer, transferToken, getGasPrice, getGasLimit, getToken };
+  const signTransfer = async (data: TransferNative): Promise<SignedTransferResponse> => {
+    try {
+      const blockResponse = await fcl.send([fcl.getBlock(true) as any]);
+      const signed = await fcl.build([
+        fcl.transaction(TransferFlowScript),
+        fcl.args([
+          fcl.arg(Number(data.amount), t.UFix64), // Amount to transfer
+          fcl.arg(data.recipient, t.Address), // Recipient's address
+        ]),
+        fcl.payer(authorization),
+        fcl.proposer(authorization),
+        fcl.authorizations([authorization]),
+        fcl.ref(blockResponse.block.id),
+        fcl.limit(100),
+      ]);
+      return { signed: JSON.stringify(signed) };
+    } catch (error: any) {
+      return { error: error?.message || "Unknown error sign transfer FLow" };
+    }
+  };
+
+  return { fcl, account, createOrGetAccount, getBlock, getAccount, getBalance, getBalanceToken, transfer, transferToken, getGasPrice, getGasLimit, getToken, signTransfer };
 };
