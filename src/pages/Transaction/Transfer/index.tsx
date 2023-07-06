@@ -56,7 +56,6 @@ const Transfer = () => {
   const [openSelect, setOpenSelect] = useState(false);
   const [gasPrice, setGasPrice] = useState<string | 0>("0");
   const [gasLimit, setGasLimit] = useState<string | 0>("0");
-  const [reRenderGas, setRenderGasLimit] = useState<string>("0");
   const [amount, setAmount] = useState("0");
 
   const [isOpenTransaction, setIsOpenTransaction] = useState(false);
@@ -106,7 +105,7 @@ const Transfer = () => {
     };
 
     updateGasLimit();
-  }, [reRenderGas, token?.symbol, networkState.currentNetwork.data, web3, amount]);
+  }, [token?.symbol, networkState.currentNetwork.data, web3, amount]);
   useEffect(() => {
     const updateGasPrice = async () => {
       const gasPriceValue = await getGasPrice();
@@ -114,6 +113,18 @@ const Transfer = () => {
     };
     updateGasPrice();
   }, [networkState.currentNetwork.data, web3, amount]);
+
+  const renderTotalGas = (): number => {
+    return Number(gasLimit) + Number(gasPrice);
+  };
+
+  const renderTotalAmount = () => {
+    if (networkState.currentNetwork.data.title === token?.symbol) {
+      return `${(renderTotalGas() + Number(amount)).toFixed(10)} ${networkState.currentNetwork.data.title}`;
+    } else {
+      return `${renderTotalGas().toFixed(10)} ${networkState.currentNetwork.data.title}`;
+    }
+  };
 
   const onSubmit = async (values: FormData) => {
     setStatusTransaction("pending");
@@ -269,7 +280,6 @@ const Transfer = () => {
                     <CustomInput
                       error={!!errors.addressTo}
                       onChange={e => {
-                        setRenderGasLimit(e.target.value);
                         onChange(e);
                       }}
                       name={name}
@@ -298,7 +308,6 @@ const Transfer = () => {
                     <CustomInput
                       error={!!errors.amount}
                       onChange={e => {
-                        setRenderGasLimit(e.target.value);
                         setAmount(e.target.value);
                         onChange(e);
                       }}
@@ -323,7 +332,7 @@ const Transfer = () => {
               <ContainerFlexSpace>
                 <div>Total gas</div>
                 <div>
-                  {Number(gasLimit) + Number(gasPrice) ? (Number(gasLimit) ? Number(gasLimit).toFixed(10) + " + " : "") + Number(gasPrice).toFixed(10) : "0"} {networkState.currentNetwork.data.title}
+                  {renderTotalGas().toFixed(10)} {networkState.currentNetwork.data.title}
                 </div>
               </ContainerFlexSpace>
               {/* <ContainerFlexSpace>
@@ -332,12 +341,7 @@ const Transfer = () => {
               </ContainerFlexSpace> */}
               <ContainerFlexSpace>
                 <TextHeaderOverview>Total amount</TextHeaderOverview>
-                <TextHeaderOverview>
-                  {networkState.currentNetwork.data.title === token?.symbol
-                    ? (Number(gasLimit) + Number(gasPrice) + Number(amount) ? Number(gasLimit) + Number(gasPrice) + Number(amount) : "0") + " " + networkState.currentNetwork.data.title
-                    : (Number(gasLimit) + Number(gasPrice) ? Number(gasLimit) + Number(gasPrice) + " " + networkState.currentNetwork.data.title : "") +
-                      ((Number(amount) ? " + " + Number(amount) : " + 0") + " " + token?.symbol)}
-                </TextHeaderOverview>
+                <TextHeaderOverview>{renderTotalAmount()}</TextHeaderOverview>
               </ContainerFlexSpace>
 
               <ContainerRight>
