@@ -20,7 +20,7 @@ export const profile = createSlice({
     });
     builder.addCase(actions.setProfile.fulfilled, (state, action) => {
       state.profileInfo.data = action.payload;
-      sessionStorage.setItem("profileInfo", JSON.stringify(state.profileInfo.data)); // Save array to local storage
+      localStorage.setItem("profileInfo", JSON.stringify(state.profileInfo.data)); // Save array to local storage
 
       state.profileInfo.loading = false;
     });
