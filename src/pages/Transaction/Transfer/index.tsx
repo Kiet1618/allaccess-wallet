@@ -18,6 +18,9 @@ import Box from "@mui/material/Box";
 import useBlockchain from "@app/blockchain/wrapper";
 import { Token } from "../../../types/blockchain.type";
 import { FormData } from "./type";
+import { SignTransactionModal } from "@app/components";
+import { InfoTransacions } from "@app/components/Modal/SignTransactionModal";
+import { SignedTransferResponse } from "@app/blockchain/types";
 import {
   style,
   CustomMenuItem,
@@ -38,7 +41,8 @@ import TransactionModal from "./transaction-modal";
 import { useCustomSnackBar } from "@app/hooks";
 import { Callbacks } from "@app/blockchain/types";
 import { get } from "lodash";
-
+import { signTransfer } from "@app/blockchain/evm/transfer";
+import Web3 from "web3";
 const Transfer = () => {
   const { handleNotification } = useCustomSnackBar();
   const networkState = useAppSelector(state => state.network);
@@ -61,6 +65,7 @@ const Transfer = () => {
   const [isOpenTransaction, setIsOpenTransaction] = useState(false);
   const [transactionHash, setTransactionHash] = useState("");
   const [statusTransaction, setStatusTransaction] = useState<string>("");
+  const [transactionInfoCookies, setTransactionInfoCookies] = useState<InfoTransacions | null>(null);
 
   const handleCloseSelect = () => {
     setOpenSelect(false);
@@ -257,6 +262,54 @@ const Transfer = () => {
   useEffect(() => {
     handleGetBalance();
   }, [networkState.currentNetwork.data, token, web3, getAccount()]);
+
+  //req sign transaction
+  const [signTransaction, setSignTransaction] = useState<SignedTransferResponse | null>();
+  const handleGetInfo = async () => {
+    const handlePopupResponse = (event: any) => {
+      if (event.data.type === "SIGN_REQ") {
+        const data = event.data.data;
+        setTransactionInfoCookies(data);
+        signTransfer(web3 as Web3, data).then(response => {
+          setSignTransaction(response);
+        });
+      }
+    };
+
+    window.addEventListener("message", handlePopupResponse);
+  };
+  const handleComfirmRequest = () => {
+    const handlePopupResponse = (event: any) => {
+      window.addEventListener("beforeunload", () => {
+        event.source.postMessage(
+          {
+            type: "STATUS",
+            data: signTransaction,
+          },
+          event.origin
+        );
+      });
+      window.close();
+    };
+    window.addEventListener("message", handlePopupResponse);
+  };
+  const handleReject = () => {
+    const handleReject = (event: any) => {
+      window.addEventListener("beforeunload", () => {
+        event.source.postMessage({ type: "STATUS", data: null }, event.origin);
+      });
+      setTransactionInfoCookies(null);
+      window.close();
+    };
+    window.addEventListener("message", handleReject);
+  };
+  useEffect(() => {
+    try {
+      handleGetInfo();
+    } catch {
+      console.log("Failed to get transaction");
+    }
+  });
   return (
     <Grid style={{ width: "100%" }} container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid>
@@ -448,6 +501,14 @@ const Transfer = () => {
           ) : null}
         </Box>
       </ModalCustom>
+      <SignTransactionModal
+        title='Transaction request'
+        subTitle='Application wants to sign'
+        loading={false}
+        info={transactionInfoCookies}
+        handleClose={handleReject}
+        handleConfirm={handleComfirmRequest}
+      />
     </Grid>
   );
 };

@@ -17,7 +17,7 @@ type Props = {
 };
 const LoginRequestModal: React.FC<Props> = props => {
   const { loading, origin, handleClose, handleConfirm, title, subTitle } = props;
-  const { getBalance, getAccount } = useBlockchain();
+  const { web3, getBalance, getAccount } = useBlockchain();
   const [balance, setBalance] = React.useState("0");
   const [_, setStatus] = React.useState(false);
   useEffect(() => {
@@ -26,7 +26,7 @@ const LoginRequestModal: React.FC<Props> = props => {
       setBalance(fetchBalance);
     };
     fetchBalance();
-  }, [getAccount()]);
+  }, [getAccount(), web3, getBalance()]);
   return (
     <Modal open={Boolean(origin)} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
       <Box sx={style}>
