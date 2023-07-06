@@ -49,10 +49,30 @@ const SignTransactionModal: React.FC<Props> = props => {
         </SubTitlePage>
         <ContainerDeviceModal>
           <FlexContainer>
-            <CustomButton onClick={() => copyAddress(account, setStatus)} style={{ borderRadius: "8px" }} variant='outlined' text={sliceAddress(account)} styleButton='default' />
+            <CustomButton
+              onClick={() =>
+                copyAddress(account, () => {
+                  setStatus(true);
+                  setTimeout(() => {
+                    setStatus(false);
+                  }, 3000);
+                })
+              }
+              style={{ borderRadius: "8px" }}
+              variant='outlined'
+              text={sliceAddress(account)}
+              styleButton='default'
+            />
             <Arrow style={{ margin: "10px 20px" }} />
             <CustomButton
-              onClick={() => copyAddress(info?.addressTo ? info?.addressTo : "Error", setStatus)}
+              onClick={() =>
+                copyAddress(info?.addressTo ? info?.addressTo : "Error", () => {
+                  setStatus(true);
+                  setTimeout(() => {
+                    setStatus(false);
+                  }, 3000);
+                })
+              }
               style={{ borderRadius: "8px" }}
               variant='outlined'
               text={sliceAddress(info?.addressTo ? info?.addressTo : "Error")}

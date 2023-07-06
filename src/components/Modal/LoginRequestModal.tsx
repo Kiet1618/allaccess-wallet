@@ -45,7 +45,20 @@ const LoginRequestModal: React.FC<Props> = props => {
             </div>
           </FlexContainer>
           <FlexContainer style={{ marginTop: "10px" }}>
-            <CustomButton onClick={() => copyAddress(account, setStatus)} style={{ borderRadius: "8px" }} variant='outlined' text={sliceAddress(account)} styleButton='default'></CustomButton>
+            <CustomButton
+              onClick={() =>
+                copyAddress(account, () => {
+                  setStatus(true);
+                  setTimeout(() => {
+                    setStatus(false);
+                  }, 3000);
+                })
+              }
+              style={{ borderRadius: "8px" }}
+              variant='outlined'
+              text={sliceAddress(account)}
+              styleButton='default'
+            ></CustomButton>
             <CustomButton style={{ borderRadius: "8px" }} variant='outlined' text={balance} styleButton='default' border='none'></CustomButton>
           </FlexContainer>
           <FlexContainer style={{ marginTop: "30px", marginBottom: "30px" }}>
