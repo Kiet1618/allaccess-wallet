@@ -8,13 +8,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { TimeDropdown } from "../../assets/icon";
-import { rows } from "../../configs/data/test";
-import { Empty, Filter, SearchIcon } from "../../assets/icon";
+import { Filter, SearchIcon } from "../../assets/icon";
 import CustomInput from "../../components/TextField";
 import CustomButton from "../../components/Button";
 import TableCustom from "../../components/Table";
 import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../components/Table/table.css";
-import { EmptyContainer } from "../Overview/overview.css";
 import { Page, TitlePage } from "../../styles";
 import { Token } from "@app/types/blockchain.type";
 import { listNetWorks } from "@app/configs/data";
@@ -28,7 +26,6 @@ import {
   ContainerFilter,
   ContainerDataTable,
   TilePageContainer,
-  ContainerItemEmpty,
   SubTitlePage,
   ContainerFilterButton,
   ContainerTextFieldTime,
@@ -45,7 +42,7 @@ import { ChainNetwork } from "@app/types/blockchain.type";
 import useBlockchain from "@app/blockchain/wrapper";
 const History = () => {
   const networkState = useAppSelector(state => state.network);
-  const { getAccount } = useBlockchain();
+  const { getAccount, getAccountByCore } = useBlockchain();
   const dispatch = useAppDispatch();
   const [time, setTime] = useState("30");
   const [method, setMethod] = useState("All");
@@ -80,7 +77,7 @@ const History = () => {
     if (getAccount()) {
       fetchData(network);
     }
-  }, [network, getAccount(), status, customTimeFrom, customTimeTo]);
+  }, [network, status, customTimeFrom, customTimeTo]);
   // useEffect(() => {
   //   if (network !== networkState.currentNetwork.data) fetchData(network);
 
@@ -89,7 +86,7 @@ const History = () => {
   const listTokenState = useAppSelector(state => state.token);
   const fetchData = async (currentNetwork: ChainNetwork) => {
     const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.chainID === currentNetwork.chainID && tokens.tokenContract !== undefined);
-    const historyTransaction = await preProcessHistoryResponse(currentNetwork, getAccount(), listToken);
+    const historyTransaction = await preProcessHistoryResponse(currentNetwork, getAccountByCore(currentNetwork.core), listToken);
     dispatch(setHistoriesAddress(historyTransaction));
   };
   return (
@@ -167,16 +164,7 @@ const History = () => {
         </ContainerFilterButton>
       </TilePageContainer>
       <ContainerDataTable>
-        {rows ? (
-          <TableCustom />
-        ) : (
-          <EmptyContainer>
-            <ContainerItemEmpty>
-              <Empty></Empty>
-              <p>No records found.</p>
-            </ContainerItemEmpty>
-          </EmptyContainer>
-        )}
+        <TableCustom selectedNetwork={network} />
       </ContainerDataTable>
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style} width={isDesktop ? 500 : 320}>
