@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import { parseUnits } from "ethers";
+import { parseEther, parseUnits } from "ethers";
 import { AbiItem } from "web3-utils";
 import ERC20_ABI from "@app/common/ERC20_ABI.json";
 import { Callbacks, DefaultCallbacks, SignedTransferResponse, TransferNative, TransferToken } from "../types";
@@ -7,21 +7,20 @@ export const transfer = async (web3: Web3, data: TransferNative, callbacks: Call
   const { onError, onHash, onSuccess } = callbacks;
   try {
     const { recipient, amount } = data;
-    const weiValue = Math.round(parseFloat(String(amount)) * 10 ** 18);
-    const hexValue = web3.utils.toHex(weiValue ? weiValue : 0);
+    const hexValue = parseEther(amount);
     const price = await web3.eth.getGasPrice();
 
     const gasLimit = await web3.eth.estimateGas({
       to: recipient,
       from: web3.defaultAccount as string,
-      value: hexValue,
+      value: hexValue.toString(),
       data: "0x",
     });
 
     const tx = {
       to: recipient,
       from: web3.defaultAccount as string,
-      value: hexValue,
+      value: hexValue.toString(),
       gas: gasLimit as number,
       gasPrice: price,
       data: "0x",

@@ -96,6 +96,11 @@ const Transfer = () => {
   useEffect(() => {
     const updateGasLimit = async () => {
       const addressTo = getValues("addressTo");
+      const isValid = isValidAddress(addressTo, networkState.currentNetwork.data.core);
+      if (!isValid) {
+        setGasLimit(0);
+        return;
+      }
       const gasLimitValue = await getGasLimit({
         addressTo,
         amount,
@@ -105,14 +110,15 @@ const Transfer = () => {
     };
 
     updateGasLimit();
-  }, [token?.symbol, networkState.currentNetwork.data, web3, amount]);
+  }, [token, networkState.currentNetwork.data, web3, amount]);
   useEffect(() => {
     const updateGasPrice = async () => {
       const gasPriceValue = await getGasPrice();
+      console.log("🚀 ~ file: index.tsx:112 ~ updateGasPrice ~ gasPriceValue:", gasPriceValue);
       setGasPrice(gasPriceValue);
     };
     updateGasPrice();
-  }, [networkState.currentNetwork.data, web3, amount]);
+  }, [token, networkState.currentNetwork.data, web3, amount]);
 
   const renderTotalGas = (): number => {
     return Number(gasLimit) + Number(gasPrice);
@@ -122,7 +128,7 @@ const Transfer = () => {
     if (networkState.currentNetwork.data.title === token?.symbol) {
       return `${(renderTotalGas() + Number(amount)).toFixed(10)} ${networkState.currentNetwork.data.title}`;
     } else {
-      return `${renderTotalGas().toFixed(10)} ${networkState.currentNetwork.data.title}`;
+      return `${amount} ${token?.symbol} + ${renderTotalGas().toFixed(10)} ${networkState.currentNetwork.data.title}`;
     }
   };
 
