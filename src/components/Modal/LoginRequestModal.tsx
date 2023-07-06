@@ -3,12 +3,10 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { TitlePage } from "@app/styles";
 import { Button as CustomButton } from "@app/components";
-import { useBlockchain, getBalance } from "@app/blockchain";
+import useBlockchain from "@app/blockchain/wrapper";
 import { SubTitlePage, ContainerDeviceModal, ContainerButtonFactors, FlexContainer, style } from "./css";
 import { sliceAddress, copyAddress } from "@app/utils";
-import { useAppSelector } from "@app/store";
 
-import Web3 from "web3";
 type Props = {
   title?: string;
   subTitle?: string;
@@ -19,17 +17,16 @@ type Props = {
 };
 const LoginRequestModal: React.FC<Props> = props => {
   const { loading, origin, handleClose, handleConfirm, title, subTitle } = props;
-  const networkState = useAppSelector(state => state.network);
-  const { web3, account } = useBlockchain(networkState.currentNetwork.data.rpcUrls);
+  const { getBalance, getAccount } = useBlockchain();
   const [balance, setBalance] = React.useState("0");
   const [_, setStatus] = React.useState(false);
   useEffect(() => {
     const fetchBalance = async () => {
-      const fetchBalance = await getBalance(web3 as Web3);
+      const fetchBalance = await getBalance();
       setBalance(fetchBalance);
     };
     fetchBalance();
-  }, [web3, account]);
+  }, [getAccount()]);
   return (
     <Modal open={Boolean(origin)} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
       <Box sx={style}>
@@ -47,7 +44,7 @@ const LoginRequestModal: React.FC<Props> = props => {
           <FlexContainer style={{ marginTop: "10px" }}>
             <CustomButton
               onClick={() =>
-                copyAddress(account, () => {
+                copyAddress(getAccount(), () => {
                   setStatus(true);
                   setTimeout(() => {
                     setStatus(false);
@@ -56,7 +53,7 @@ const LoginRequestModal: React.FC<Props> = props => {
               }
               style={{ borderRadius: "8px" }}
               variant='outlined'
-              text={sliceAddress(account)}
+              text={sliceAddress(getAccount())}
               styleButton='default'
             ></CustomButton>
             <CustomButton style={{ borderRadius: "8px" }} variant='outlined' text={balance} styleButton='default' border='none'></CustomButton>
