@@ -7,6 +7,7 @@ import Modal from "@mui/material/Modal";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import { Grid } from "@mui/material";
+import Chip from "@mui/material/Chip";
 
 import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
 import { KeyPair } from "@app/wallet/types";
@@ -17,7 +18,7 @@ import { Button as CustomButton, TextField as CustomInput } from "@app/component
 
 import { BackgroundPage, TitlePageContainer } from "../profile.css";
 import { SubTitlePage, ContainerTextField, SpanRed } from "../../Transaction/transaction.css";
-import { TextHeaderCard, ContainerDevice, GroupLeftItemDevice, ContainerText, NameText, IpText } from "../../MultipleFactors/multipleFactors.css";
+import { TextHeaderCard, ContainerDevice, GroupLeftItemDevice, ContainerText, NameText, IpText, TextSummary } from "../../MultipleFactors/multipleFactors.css";
 import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerNumberFactors, ContainerHeaderFactors, style, EnableMFAContainer } from "./mfa.css";
 import ModalEnableMFA from "./components/ModalEnableMFA";
 import { generateWords } from "@app/utils";
@@ -159,6 +160,10 @@ const MFA = () => {
     getInfoWalletByNetworkKey(networkKey!);
   };
 
+  const totalDeviceShares = () => {
+    return infoMasterKey?.shares?.filter(elm => elm.type === "device").length;
+  };
+
   return (
     <>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -222,7 +227,10 @@ const MFA = () => {
             <Grid item xs={100} sm={100} md={100} lg={50} xl={45}>
               <ListDevicesContainer>
                 <BackgroundPage style={{ maxHeight: "500px", overflow: "auto" }}>
-                  <TextHeaderCard>List devices</TextHeaderCard>
+                  <TextHeaderCard>
+                    List devices <Chip label={`${totalDeviceShares()} keys`} color='primary' />{" "}
+                  </TextHeaderCard>
+                  <TextSummary>Security keys are hardware devices that can be used as your second factor of authentication.</TextSummary>
                   {deviceShares.map(device => (
                     <ContainerDevice key={device.publicKey}>
                       <GroupLeftItemDevice>

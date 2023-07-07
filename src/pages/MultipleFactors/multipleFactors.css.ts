@@ -64,6 +64,9 @@ export const TextHeaderCard = styled.div`
   font-size: 20px;
   line-height: 24px;
 `;
+export const TextSummary = styled.p`
+  font-size: ${props => props.theme.fontSizes.md};
+`;
 export const ContainerBackgroundCard = styled.div`
   border-radius: 8px;
   padding: 32px;
