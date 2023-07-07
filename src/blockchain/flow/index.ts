@@ -122,6 +122,7 @@ export const useFlowBlockchain = () => {
         fcl.limit(100),
       ]);
       const { transactionId } = response;
+      onHash(transactionId);
       fcl.tx(response).subscribe(res => {
         const { status, errorMessage } = res;
         if (TransactionStatus.Pending === status) {

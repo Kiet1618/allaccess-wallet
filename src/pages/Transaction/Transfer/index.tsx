@@ -114,7 +114,6 @@ const Transfer = () => {
   useEffect(() => {
     const updateGasPrice = async () => {
       const gasPriceValue = await getGasPrice();
-      console.log("🚀 ~ file: index.tsx:112 ~ updateGasPrice ~ gasPriceValue:", gasPriceValue);
       setGasPrice(gasPriceValue);
     };
     updateGasPrice();
@@ -125,7 +124,8 @@ const Transfer = () => {
   };
 
   const renderTotalAmount = () => {
-    if (networkState.currentNetwork.data.title === token?.symbol) {
+    // Should check by token contract, native is zero address,
+    if (networkState.currentNetwork.data.title.toUpperCase() === token?.symbol.toUpperCase()) {
       return `${(renderTotalGas() + Number(amount)).toFixed(10)} ${networkState.currentNetwork.data.title}`;
     } else {
       return `${amount} ${token?.symbol} + ${renderTotalGas().toFixed(10)} ${networkState.currentNetwork.data.title}`;

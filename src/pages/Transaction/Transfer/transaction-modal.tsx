@@ -54,7 +54,10 @@ const TransactionModal: React.FC<Props> = memo(props => {
 
             <ContainerTwoButtonModal>
               <CustomButton
-                onClick={() => window.open(networkState.currentNetwork.data.apiTransactionHash?.replace("{transactionHash}", transactionHash || ""), "_blank")}
+                onClick={() => {
+                  const link = networkState.currentNetwork.data.apiTransactionHash?.replace("{transactionHash}", transactionHash || "");
+                  window.open(link, "_blank");
+                }}
                 width='230px'
                 height='44px'
                 styleButton='inactive'
@@ -79,7 +82,6 @@ const TransactionModal: React.FC<Props> = memo(props => {
               <CopyAddressContainer
                 onClick={() => {
                   const link = networkState.currentNetwork.data.apiTransactionHash?.replace("{transactionHash}", transactionHash || "");
-                  console.log("🚀 ~ file: transaction-modal.tsx:82 ~ link:", link);
                   window.open(link, "_blank");
                 }}
               >
