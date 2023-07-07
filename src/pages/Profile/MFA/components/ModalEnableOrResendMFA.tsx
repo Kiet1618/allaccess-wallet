@@ -5,7 +5,7 @@ import Modal from "@mui/material/Modal";
 import DoneIcon from "@mui/icons-material/Done";
 
 import { TitlePage } from "@app/styles";
-import { TextField as CustomInput, Button } from "@app/components";
+import { Button } from "@app/components";
 import { Copy } from "@app/assets/icon";
 
 import styled from "styled-components";
