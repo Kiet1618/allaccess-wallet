@@ -51,9 +51,9 @@ const ModalEnableMFA: React.FC<Props> = props => {
   return (
     <Modal open={isOpen} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
       <Box sx={style}>
-        <TitlePage>Send Recovery Phrase</TitlePage>
+        <TitlePage>Recovery Phrase</TitlePage>
         <ContainerSummary>
-          Recovery phrase will be sent to <p>{email}</p>. In case you lose access to your saved browser, you can authenticate with your recovery phrase
+          Recovery phrase will be sent to <b>{email}</b>. In case you lose access to your saved browser, you can authenticate with your recovery phrase
         </ContainerSummary>
         <ContainerActions spacing={2}>
           <Grid>
@@ -92,7 +92,9 @@ const ModalEnableMFA: React.FC<Props> = props => {
   );
 };
 
-const ContainerSummary = styled.div``;
+const ContainerSummary = styled.div`
+  margin-top: 8px;
+`;
 
 const ContainerActions = styled(Grid)`
   text-align: left;
