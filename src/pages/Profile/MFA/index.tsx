@@ -20,6 +20,7 @@ import { SubTitlePage, ContainerTextField, SpanRed } from "../../Transaction/tra
 import { TextHeaderCard, ContainerDevice, GroupLeftItemDevice, ContainerText, NameText, IpText } from "../../MultipleFactors/multipleFactors.css";
 import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerNumberFactors, ContainerHeaderFactors, style, EnableMFAContainer } from "./mfa.css";
 import ModalEnableMFA from "./components/ModalEnableMFA";
+import { generateWords } from "@app/utils";
 
 const MFA = () => {
   const { token } = usePushNotifications();
@@ -34,7 +35,9 @@ const MFA = () => {
   const [loadingRecovery, setLoadingRecovery] = useState(false);
   const [loadingDeleteDevice, setLoadingDeleteDevice] = useState(false);
 
+  const [seeds, setSeeds] = useState(generateWords());
   const [isOpenEnableMFA, setIsOpenEnableMFA] = useState(false);
+  const [loadingEnableMFA, setLoadingEnableMFA] = useState(false);
 
   useEffect(() => {
     if (networkKey) {
@@ -53,6 +56,10 @@ const MFA = () => {
   const handleOpen = (device: ShareInfo) => setDeleteDevice(device);
   const handleClose = () => setDeleteDevice(undefined);
 
+  const reGenerateSeeds = () => {
+    setSeeds(generateWords());
+  };
+
   const isCurrentDevice = (deviceShare: ShareInfo) => {
     if (isEmpty(deviceKey)) return false;
     return deviceShare?.publicKey === deviceKey?.pubKey;
@@ -70,7 +77,7 @@ const MFA = () => {
     setLoadingRecovery(true);
     const { mfa } = infoMasterKey;
     if (!mfa) {
-      const { error } = await enableMFA(recoveryEmail);
+      const { error } = await enableMFA(recoveryEmail, seeds);
       if (error) {
         setLoadingRecovery(false);
         handleNotification(error, "error");
@@ -80,6 +87,7 @@ const MFA = () => {
       handleNotification("Please check your email to get new phrase", "success");
       getInfoWalletByNetworkKey(networkKey!);
       insertTokenFCM(token, infoMasterKey);
+      reGenerateSeeds();
       return;
     }
     // pss shares
@@ -93,8 +101,40 @@ const MFA = () => {
       setLoadingRecovery(false);
       handleNotification("Please check your email to get new phrase", "success");
       getInfoWalletByNetworkKey(networkKey!);
+      reGenerateSeeds();
     }
     return;
+  };
+
+  const handleEnableMFA = async () => {
+    if (!infoMasterKey?.verifierId) {
+      handleNotification("Something went wrong with your email", "error");
+      return;
+    }
+    if (!infoMasterKey) {
+      handleNotification("Please initial master key before", "error");
+      return;
+    }
+    const { mfa } = infoMasterKey;
+    if (!mfa) {
+      setLoadingEnableMFA(true);
+      const { error } = await enableMFA(infoMasterKey.verifierId, seeds.trim());
+      if (error) {
+        setLoadingEnableMFA(false);
+        handleNotification(error, "error");
+        return;
+      }
+      setLoadingEnableMFA(false);
+      handleNotification("Please check your email to get new phrase", "success");
+      getInfoWalletByNetworkKey(networkKey!);
+      insertTokenFCM(token, infoMasterKey);
+      setIsOpenEnableMFA(false);
+      reGenerateSeeds();
+      return;
+    }
+    if (mfa) {
+      handleNotification("Enabled MFA", "warning");
+    }
   };
 
   const handleDelete = async () => {
@@ -119,8 +159,6 @@ const MFA = () => {
     getInfoWalletByNetworkKey(networkKey!);
   };
 
-  const mfa = true;
-
   return (
     <>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -130,18 +168,18 @@ const MFA = () => {
             <SubTitlePage>You can manage your security and view your devices here</SubTitlePage>
           </TitlePageContainer>
         </Grid>
-        {!mfa && (
+        {!infoMasterKey?.mfa && (
           <Grid item xs={100} sm={100} md={100} lg={100} xl={100}>
             <EnableMFAContainer>
               <Grid className='title' item>
-                <TextHeaderCard>Two-factor authentication (2MFA)</TextHeaderCard>
+                <TextHeaderCard>Two-factor authentication (MFA)</TextHeaderCard>
                 <SubTitlePage>We strongly recommend you to enable 2FA on your account</SubTitlePage>
               </Grid>
               <CustomButton className='btn' variant='contained' styleButton='primary' text='Enable 2FA' onClick={() => setIsOpenEnableMFA(true)} />
             </EnableMFAContainer>
           </Grid>
         )}
-        {mfa && (
+        {infoMasterKey?.mfa && (
           <>
             <Grid item xs={100} sm={100} md={100} lg={50} xl={55}>
               <BackgroundPage>
@@ -212,6 +250,9 @@ const MFA = () => {
         handleClose={() => {
           setIsOpenEnableMFA(false);
         }}
+        seeds={seeds}
+        loadingEnableMFA={loadingEnableMFA}
+        handleEnableMFA={handleEnableMFA}
       />
       <Modal open={!isEmpty(deleteDevice)} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style}>
