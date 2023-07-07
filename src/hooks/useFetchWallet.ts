@@ -406,7 +406,7 @@ export const useFetchWallet = () => {
     }
   };
 
-  const changeRecoveryEmail = async (email: string): Promise<{ error?: string; success?: boolean }> => {
+  const changeRecoveryEmail = async (email: string, phrase: string): Promise<{ error?: string; success?: boolean }> => {
     try {
       if (isEmpty(masterKey)) {
         throw new Error("Master key not found");
@@ -426,8 +426,8 @@ export const useFetchWallet = () => {
       } = {};
       const splits = sharmirSplitPrivateKey(Buffer.from(masterPrivateKey, "hex"));
 
-      const recoveryKey = formatPrivateKey(generateRandomPrivateKey());
-      const phrase = hexToWords(recoveryKey.priKey);
+      const recoveryKey = formatPrivateKey(new BN(wordsToHex(phrase.trim()), "hex"));
+      // const phrase = hexToWords(recoveryKey.priKey);
 
       await Promise.all(
         (infoMasterKey?.shares || []).map(async share => {

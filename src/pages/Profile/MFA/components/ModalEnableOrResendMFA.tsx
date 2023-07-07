@@ -16,6 +16,7 @@ import { useCustomSnackBar } from "@app/hooks";
 
 type Props = {
   isOpen: boolean;
+  email: string;
   handleClose: () => void;
   loadingEnableMFA: boolean;
   handleEnableMFA: () => void;
@@ -24,7 +25,7 @@ type Props = {
 const ModalEnableMFA: React.FC<Props> = props => {
   const { handleNotification } = useCustomSnackBar();
 
-  const { isOpen, handleClose, loadingEnableMFA, handleEnableMFA, seeds } = props;
+  const { email, isOpen, handleClose, loadingEnableMFA, handleEnableMFA, seeds } = props;
   const [copiedSeeds, setCopiedSeeds] = useState(false);
   const [allowConfirm, setAllowConfirm] = useState(false);
 
@@ -51,7 +52,9 @@ const ModalEnableMFA: React.FC<Props> = props => {
     <Modal open={isOpen} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
       <Box sx={style}>
         <TitlePage>Send Recovery Phrase</TitlePage>
-        <ContainerSummary>Provide an email to receive recovery phrase. In case you lose access to your saved browser, you can authenticate with your recovery phrase</ContainerSummary>
+        <ContainerSummary>
+          Recovery phrase will be sent to <p>{email}</p>. In case you lose access to your saved browser, you can authenticate with your recovery phrase
+        </ContainerSummary>
         <ContainerActions spacing={2}>
           <Grid>
             <TextField

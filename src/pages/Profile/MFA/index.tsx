@@ -14,13 +14,13 @@ import { KeyPair } from "@app/wallet/types";
 import { Computer, Trash } from "@app/assets/icon";
 import { TitlePageBlack, TitlePage } from "@app/styles";
 import { InfoMasterKey, ShareInfo } from "@app/wallet/metadata";
-import { Button as CustomButton, TextField as CustomInput } from "@app/components";
+import { Button as CustomButton } from "@app/components";
 
 import { BackgroundPage, TitlePageContainer } from "../profile.css";
-import { SubTitlePage, ContainerTextField, SpanRed } from "../../Transaction/transaction.css";
+import { SubTitlePage } from "../../Transaction/transaction.css";
 import { TextHeaderCard, ContainerDevice, GroupLeftItemDevice, ContainerText, NameText, IpText, TextSummary } from "../../MultipleFactors/multipleFactors.css";
-import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerNumberFactors, ContainerHeaderFactors, style, EnableMFAContainer } from "./mfa.css";
-import ModalEnableMFA from "./components/ModalEnableMFA";
+import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerHeaderFactors, style, EnableMFAContainer } from "./mfa.css";
+import ModalEnableOrResendMFA from "./components/ModalEnableOrResendMFA";
 import { generateWords } from "@app/utils";
 
 const MFA = () => {
@@ -32,13 +32,12 @@ const MFA = () => {
   const [deviceKey, ___] = useSessionStorage<KeyPair | null>("device-key", null);
   const [deleteDevice, setDeleteDevice] = useState<ShareInfo>();
   const [deviceShares, setDeviceShares] = useState<ShareInfo[]>([]);
-  const [recoveryEmail, setRecoveryEmail] = useState<string>("");
+  // const [recoveryEmail, setRecoveryEmail] = useState<string>("");
   const [loadingRecovery, setLoadingRecovery] = useState(false);
   const [loadingDeleteDevice, setLoadingDeleteDevice] = useState(false);
 
   const [seeds, setSeeds] = useState(generateWords());
   const [isOpenEnableMFA, setIsOpenEnableMFA] = useState(false);
-  const [loadingEnableMFA, setLoadingEnableMFA] = useState(false);
 
   useEffect(() => {
     if (networkKey) {
@@ -50,8 +49,8 @@ const MFA = () => {
     if (infoMasterKey) {
       const devices = infoMasterKey.shares?.filter(elm => elm.type === "device");
       setDeviceShares(devices || []);
-      const recoveryShare = infoMasterKey.shares?.find(elm => elm.type === "recovery-phrase");
-      setRecoveryEmail(recoveryShare?.email || "");
+      // const recoveryShare = infoMasterKey.shares?.find(elm => elm.type === "recovery-phrase");
+      // setRecoveryEmail(recoveryShare?.email || "");
     }
   }, [infoMasterKey]);
   const handleOpen = (device: ShareInfo) => setDeleteDevice(device);
@@ -67,8 +66,8 @@ const MFA = () => {
   };
 
   const changeRecoveryPhrase = async () => {
-    if (!recoveryEmail) {
-      handleNotification("Please input email valid", "error");
+    if (!infoMasterKey?.verifierId) {
+      handleNotification("Something went wrong with your email", "error");
       return;
     }
     if (!infoMasterKey) {
@@ -78,54 +77,13 @@ const MFA = () => {
     setLoadingRecovery(true);
     const { mfa } = infoMasterKey;
     if (!mfa) {
-      const { error } = await enableMFA(recoveryEmail, seeds);
+      const { error } = await enableMFA(infoMasterKey.verifierId, seeds);
       if (error) {
         setLoadingRecovery(false);
         handleNotification(error, "error");
         return;
       }
       setLoadingRecovery(false);
-      handleNotification("Please check your email to get new phrase", "success");
-      getInfoWalletByNetworkKey(networkKey!);
-      insertTokenFCM(token, infoMasterKey);
-      reGenerateSeeds();
-      return;
-    }
-    // pss shares
-    if (mfa) {
-      const { error } = await changeRecoveryEmail(recoveryEmail);
-      if (error) {
-        setLoadingRecovery(false);
-        handleNotification(error, "error");
-        return;
-      }
-      setLoadingRecovery(false);
-      handleNotification("Please check your email to get new phrase", "success");
-      getInfoWalletByNetworkKey(networkKey!);
-      reGenerateSeeds();
-    }
-    return;
-  };
-
-  const handleEnableMFA = async () => {
-    if (!infoMasterKey?.verifierId) {
-      handleNotification("Something went wrong with your email", "error");
-      return;
-    }
-    if (!infoMasterKey) {
-      handleNotification("Please initial master key before", "error");
-      return;
-    }
-    const { mfa } = infoMasterKey;
-    if (!mfa) {
-      setLoadingEnableMFA(true);
-      const { error } = await enableMFA(infoMasterKey.verifierId, seeds.trim());
-      if (error) {
-        setLoadingEnableMFA(false);
-        handleNotification(error, "error");
-        return;
-      }
-      setLoadingEnableMFA(false);
       handleNotification("Please check your email to get new phrase", "success");
       getInfoWalletByNetworkKey(networkKey!);
       insertTokenFCM(token, infoMasterKey);
@@ -133,9 +91,21 @@ const MFA = () => {
       reGenerateSeeds();
       return;
     }
+    // pss shares
     if (mfa) {
-      handleNotification("Enabled MFA", "warning");
+      const { error } = await changeRecoveryEmail(infoMasterKey.verifierId, seeds.trim());
+      if (error) {
+        setLoadingRecovery(false);
+        handleNotification(error, "error");
+        return;
+      }
+      setLoadingRecovery(false);
+      handleNotification("Please check your email to get new phrase", "success");
+      getInfoWalletByNetworkKey(networkKey!);
+      setIsOpenEnableMFA(false);
+      reGenerateSeeds();
     }
+    return;
   };
 
   const handleDelete = async () => {
@@ -189,11 +159,11 @@ const MFA = () => {
             <Grid item xs={100} sm={100} md={100} lg={50} xl={55}>
               <BackgroundPage>
                 <ContainerHeaderFactors>
-                  <TextHeaderCard>Security factors</TextHeaderCard>
-                  <ContainerNumberFactors>{`2/${infoMasterKey?.shares?.length}`}</ContainerNumberFactors>
+                  <TextHeaderCard>Recovery phrase</TextHeaderCard>
+                  <TextSummary>Please ensure you stored your recovery key in safe place...</TextSummary>
+                  {/* <ContainerNumberFactors>{`2/${infoMasterKey?.shares?.length}`}</ContainerNumberFactors> */}
                 </ContainerHeaderFactors>
-                <SubTitlePage>The number of factors to authenticate in order to access your account.</SubTitlePage>
-                <ContainerTextField>
+                {/* <ContainerTextField>
                   <label>
                     Recovery email <SpanRed>*</SpanRed>
                   </label>
@@ -207,19 +177,20 @@ const MFA = () => {
                       setRecoveryEmail(e.target.value);
                     }}
                   ></CustomInput>
-                </ContainerTextField>
+                </ContainerTextField> */}
                 <ContainerButtonFactors>
-                  <CustomButton height='48px' width='100px' mTop='50px' mBottom='20px' mRight='20px' text='Cancel' styleButton='inactive'></CustomButton>
                   <CustomButton
                     variant='contained'
                     height='48px'
                     width='100px'
                     mTop='50px'
                     mBottom='20px'
-                    text={loadingRecovery ? "" : "Confirm"}
+                    text={loadingRecovery ? "" : "Resend"}
                     styleButton={loadingRecovery ? "inactive" : "primary"}
                     loading={loadingRecovery}
-                    onClick={changeRecoveryPhrase}
+                    onClick={() => {
+                      setIsOpenEnableMFA(true);
+                    }}
                   ></CustomButton>
                 </ContainerButtonFactors>
               </BackgroundPage>
@@ -253,14 +224,15 @@ const MFA = () => {
           </>
         )}
       </Grid>
-      <ModalEnableMFA
+      <ModalEnableOrResendMFA
+        email={infoMasterKey?.verifierId || ""}
         isOpen={isOpenEnableMFA}
         handleClose={() => {
           setIsOpenEnableMFA(false);
         }}
         seeds={seeds}
-        loadingEnableMFA={loadingEnableMFA}
-        handleEnableMFA={handleEnableMFA}
+        loadingEnableMFA={loadingRecovery}
+        handleEnableMFA={changeRecoveryPhrase}
       />
       <Modal open={!isEmpty(deleteDevice)} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style}>
