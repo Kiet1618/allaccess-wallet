@@ -18,7 +18,8 @@ import { Button as CustomButton, TextField as CustomInput } from "@app/component
 import { BackgroundPage, TitlePageContainer } from "../profile.css";
 import { SubTitlePage, ContainerTextField, SpanRed } from "../../Transaction/transaction.css";
 import { TextHeaderCard, ContainerDevice, GroupLeftItemDevice, ContainerText, NameText, IpText } from "../../MultipleFactors/multipleFactors.css";
-import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerNumberFactors, ContainerHeaderFactors, style } from "./mfa.css";
+import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerNumberFactors, ContainerHeaderFactors, style, EnableMFAContainer } from "./mfa.css";
+import ModalEnableMFA from "./components/ModalEnableMFA";
 
 const MFA = () => {
   const { token } = usePushNotifications();
@@ -32,6 +33,8 @@ const MFA = () => {
   const [recoveryEmail, setRecoveryEmail] = useState<string>("");
   const [loadingRecovery, setLoadingRecovery] = useState(false);
   const [loadingDeleteDevice, setLoadingDeleteDevice] = useState(false);
+
+  const [isOpenEnableMFA, setIsOpenEnableMFA] = useState(false);
 
   useEffect(() => {
     if (networkKey) {
@@ -116,6 +119,8 @@ const MFA = () => {
     getInfoWalletByNetworkKey(networkKey!);
   };
 
+  const mfa = true;
+
   return (
     <>
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
@@ -125,68 +130,89 @@ const MFA = () => {
             <SubTitlePage>You can manage your security and view your devices here</SubTitlePage>
           </TitlePageContainer>
         </Grid>
-        <Grid item xs={100} sm={100} md={100} lg={50} xl={55}>
-          <BackgroundPage>
-            <ContainerHeaderFactors>
-              <TextHeaderCard>Security factors</TextHeaderCard>
-              <ContainerNumberFactors>{`2/${infoMasterKey?.shares?.length}`}</ContainerNumberFactors>
-            </ContainerHeaderFactors>
-            <SubTitlePage>The number of factors to authenticate in order to access your account.</SubTitlePage>
-            <ContainerTextField>
-              <label>
-                Recovery email <SpanRed>*</SpanRed>
-              </label>
-              <CustomInput
-                size='small'
-                type='email'
-                fullWidth
-                value={recoveryEmail}
-                styleTextField='default'
-                onChange={e => {
-                  setRecoveryEmail(e.target.value);
-                }}
-              ></CustomInput>
-            </ContainerTextField>
-            <ContainerButtonFactors>
-              <CustomButton height='48px' width='100px' mTop='50px' mBottom='20px' mRight='20px' text='Cancel' styleButton='inactive'></CustomButton>
-              <CustomButton
-                variant='contained'
-                height='48px'
-                width='100px'
-                mTop='50px'
-                mBottom='20px'
-                text={loadingRecovery ? "" : "Confirm"}
-                styleButton={loadingRecovery ? "inactive" : "primary"}
-                loading={loadingRecovery}
-                onClick={changeRecoveryPhrase}
-              ></CustomButton>
-            </ContainerButtonFactors>
-          </BackgroundPage>
-        </Grid>
-        <Grid item xs={100} sm={100} md={100} lg={50} xl={45}>
-          <ListDevicesContainer>
-            <BackgroundPage style={{ maxHeight: "500px", overflow: "auto" }}>
-              <TextHeaderCard>List devices</TextHeaderCard>
-              {deviceShares.map(device => (
-                <ContainerDevice key={device.publicKey}>
-                  <GroupLeftItemDevice>
-                    <Computer />
-                    <ContainerText>
-                      <NameText> {`${device.deviceInfo?.name} ${device.deviceInfo?.version} ${isCurrentDevice(device!) ? "(Current)" : ""}`}</NameText>
-                      <IpText>IP: {device.deviceInfo?.ipv4}</IpText>
-                    </ContainerText>
-                  </GroupLeftItemDevice>
-                  <Tooltip title='Delete' placement='top-start'>
-                    <IconButton onClick={() => handleOpen(device)}>
-                      <Trash />
-                    </IconButton>
-                  </Tooltip>
-                </ContainerDevice>
-              ))}
-            </BackgroundPage>
-          </ListDevicesContainer>
-        </Grid>
+        {!mfa && (
+          <Grid item xs={100} sm={100} md={100} lg={100} xl={100}>
+            <EnableMFAContainer>
+              <Grid className='title' item>
+                <TextHeaderCard>Two-factor authentication (2MFA)</TextHeaderCard>
+                <SubTitlePage>We strongly recommend you to enable 2FA on your account</SubTitlePage>
+              </Grid>
+              <CustomButton className='btn' variant='contained' styleButton='primary' text='Enable 2FA' onClick={() => setIsOpenEnableMFA(true)} />
+            </EnableMFAContainer>
+          </Grid>
+        )}
+        {mfa && (
+          <>
+            <Grid item xs={100} sm={100} md={100} lg={50} xl={55}>
+              <BackgroundPage>
+                <ContainerHeaderFactors>
+                  <TextHeaderCard>Security factors</TextHeaderCard>
+                  <ContainerNumberFactors>{`2/${infoMasterKey?.shares?.length}`}</ContainerNumberFactors>
+                </ContainerHeaderFactors>
+                <SubTitlePage>The number of factors to authenticate in order to access your account.</SubTitlePage>
+                <ContainerTextField>
+                  <label>
+                    Recovery email <SpanRed>*</SpanRed>
+                  </label>
+                  <CustomInput
+                    size='small'
+                    type='email'
+                    fullWidth
+                    value={recoveryEmail}
+                    styleTextField='default'
+                    onChange={e => {
+                      setRecoveryEmail(e.target.value);
+                    }}
+                  ></CustomInput>
+                </ContainerTextField>
+                <ContainerButtonFactors>
+                  <CustomButton height='48px' width='100px' mTop='50px' mBottom='20px' mRight='20px' text='Cancel' styleButton='inactive'></CustomButton>
+                  <CustomButton
+                    variant='contained'
+                    height='48px'
+                    width='100px'
+                    mTop='50px'
+                    mBottom='20px'
+                    text={loadingRecovery ? "" : "Confirm"}
+                    styleButton={loadingRecovery ? "inactive" : "primary"}
+                    loading={loadingRecovery}
+                    onClick={changeRecoveryPhrase}
+                  ></CustomButton>
+                </ContainerButtonFactors>
+              </BackgroundPage>
+            </Grid>
+            <Grid item xs={100} sm={100} md={100} lg={50} xl={45}>
+              <ListDevicesContainer>
+                <BackgroundPage style={{ maxHeight: "500px", overflow: "auto" }}>
+                  <TextHeaderCard>List devices</TextHeaderCard>
+                  {deviceShares.map(device => (
+                    <ContainerDevice key={device.publicKey}>
+                      <GroupLeftItemDevice>
+                        <Computer />
+                        <ContainerText>
+                          <NameText> {`${device.deviceInfo?.name} ${device.deviceInfo?.version} ${isCurrentDevice(device!) ? "(Current)" : ""}`}</NameText>
+                          <IpText>IP: {device.deviceInfo?.ipv4}</IpText>
+                        </ContainerText>
+                      </GroupLeftItemDevice>
+                      <Tooltip title='Delete' placement='top-start'>
+                        <IconButton onClick={() => handleOpen(device)}>
+                          <Trash />
+                        </IconButton>
+                      </Tooltip>
+                    </ContainerDevice>
+                  ))}
+                </BackgroundPage>
+              </ListDevicesContainer>
+            </Grid>
+          </>
+        )}
       </Grid>
+      <ModalEnableMFA
+        isOpen={isOpenEnableMFA}
+        handleClose={() => {
+          setIsOpenEnableMFA(false);
+        }}
+      />
       <Modal open={!isEmpty(deleteDevice)} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style}>
           <TitlePage>Delete devices</TitlePage>

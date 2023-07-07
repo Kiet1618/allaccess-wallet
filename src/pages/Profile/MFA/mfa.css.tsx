@@ -46,3 +46,13 @@ export const style = {
   textAlign: "center",
   alignItems: "center",
 };
+
+export const EnableMFAContainer = styled.div`
+  width: 100%;
+  .title {
+    flex: 1;
+  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
