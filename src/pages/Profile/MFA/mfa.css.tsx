@@ -17,10 +17,7 @@ export const ContainerButtonFactors = styled.div`
   float: right;
 `;
 
-export const ContainerHeaderFactors = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
+export const ContainerHeaderFactors = styled.div``;
 export const ContainerNumberFactors = styled.div`
   padding: 12px 28px;
   gap: 10px;
@@ -46,3 +43,13 @@ export const style = {
   textAlign: "center",
   alignItems: "center",
 };
+
+export const EnableMFAContainer = styled.div`
+  width: 100%;
+  .title {
+    flex: 1;
+  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;

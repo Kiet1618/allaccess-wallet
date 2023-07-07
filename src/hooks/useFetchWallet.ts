@@ -329,7 +329,7 @@ export const useFetchWallet = () => {
     }
   };
 
-  const enableMFA = async (email: string): Promise<{ error: string; success?: boolean }> => {
+  const enableMFA = async (email: string, phrase: string): Promise<{ error: string; success?: boolean }> => {
     try {
       if (isEmpty(masterKey)) {
         throw new Error("Master key not found");
@@ -353,8 +353,9 @@ export const useFetchWallet = () => {
       const deviceShare = await encryptedMessage(splits[1], new BN(deviceKey.priKey, "hex"));
       // Encrypted by recovery key
       // Generate 24 words
-      const recoveryKey = formatPrivateKey(generateRandomPrivateKey());
-      const phrase = hexToWords(recoveryKey.priKey);
+      // const recoveryKey = formatPrivateKey(generateRandomPrivateKey());
+      const recoveryKey = formatPrivateKey(new BN(wordsToHex(phrase), "hex"));
+      // const phrase = hexToWords(recoveryKey.priKey);
       const recoveryShare = await encryptedMessage(splits[1], new BN(recoveryKey.priKey, "hex"));
 
       const shares = [
@@ -405,7 +406,7 @@ export const useFetchWallet = () => {
     }
   };
 
-  const changeRecoveryEmail = async (email: string): Promise<{ error?: string; success?: boolean }> => {
+  const changeRecoveryEmail = async (email: string, phrase: string): Promise<{ error?: string; success?: boolean }> => {
     try {
       if (isEmpty(masterKey)) {
         throw new Error("Master key not found");
@@ -425,8 +426,8 @@ export const useFetchWallet = () => {
       } = {};
       const splits = sharmirSplitPrivateKey(Buffer.from(masterPrivateKey, "hex"));
 
-      const recoveryKey = formatPrivateKey(generateRandomPrivateKey());
-      const phrase = hexToWords(recoveryKey.priKey);
+      const recoveryKey = formatPrivateKey(new BN(wordsToHex(phrase.trim()), "hex"));
+      // const phrase = hexToWords(recoveryKey.priKey);
 
       await Promise.all(
         (infoMasterKey?.shares || []).map(async share => {
