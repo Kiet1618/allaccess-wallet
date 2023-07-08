@@ -18,7 +18,7 @@ import {
 } from "@app/wallet/metadata";
 import { decryptedMessage, encryptedMessage, encryptedMessageWithoutSign, formatPrivateKey, generateRandomPrivateKey, sharmirCombinePrivateKey, sharmirSplitPrivateKey } from "@app/wallet/algorithm";
 import BN from "bn.js";
-import { deviceInfo, hexToWords, wordsToHex } from "@app/utils";
+import { deviceInfo, wordsToHex } from "@app/utils";
 
 export const useFetchWallet = () => {
   const cookies = new Cookies();
