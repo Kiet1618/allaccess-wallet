@@ -25,7 +25,7 @@ type Props = {
 const ModalEnableMFA: React.FC<Props> = props => {
   const { handleNotification } = useCustomSnackBar();
 
-  const { email, isOpen, handleClose, loadingEnableMFA, handleEnableMFA, seeds } = props;
+  const { isOpen, handleClose, loadingEnableMFA, handleEnableMFA, seeds } = props;
   const [copiedSeeds, setCopiedSeeds] = useState(false);
   const [allowConfirm, setAllowConfirm] = useState(false);
 
@@ -51,9 +51,9 @@ const ModalEnableMFA: React.FC<Props> = props => {
   return (
     <Modal open={isOpen} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
       <Box sx={style}>
-        <TitlePage>Recovery Phrase</TitlePage>
+        <TitlePage>Backup recovery key</TitlePage>
         <ContainerSummary>
-          Recovery phrase will be sent to <b>{email}</b>. In case you lose access to your saved browser, you can authenticate with your recovery phrase
+          Please ensure you store your recovery key in a safe place. It is important as the recovery key is the only way to access your account in case you lose data on all configured devices
         </ContainerSummary>
         <ContainerActions spacing={2}>
           <Grid>

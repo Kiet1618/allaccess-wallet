@@ -9,6 +9,7 @@ export const BackgroundPage = styled.div`
   border-radius: 8px;
 `;
 export const SubTitlePage = styled.div`
+  width: 100% !important;
   font-weight: ${({ theme }) => theme.fontWeights.regular};
   font-size: ${({ theme }) => theme.fontSizes.xs + "px"};
   line-height: 24px;

@@ -16,7 +16,7 @@ const Profile = () => {
       <OverviewHeaderTopCoin>
         <TabsCustom value={value} onChange={handleChange} aria-label='basic tabs example'>
           <TabTransfer label='Profile' {...a11yProps(0)} />
-          <TabTransfer label='MFA Setting' {...a11yProps(1)} />
+          <TabTransfer label='2FA Setting' {...a11yProps(1)} />
         </TabsCustom>
       </OverviewHeaderTopCoin>
       <TabPanel value={value} index={0}>

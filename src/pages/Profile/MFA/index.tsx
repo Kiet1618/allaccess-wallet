@@ -139,15 +139,18 @@ const MFA = () => {
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
         <Grid item xs={100}>
           <TitlePageContainer>
-            <TitlePageBlack>MFA Setting</TitlePageBlack>
-            <SubTitlePage>You can manage your security and view your devices here</SubTitlePage>
+            <TitlePageBlack>Two-factor Authentication Setting</TitlePageBlack>
+            <SubTitlePage>
+              By enabling this feature, an extra key will be stored on your devices, ensuring added protection. Please note that when logging in on new devices, you will require approval from your
+              current device or your backup phrase. For more information on Two-Factor Authentication, click here.
+            </SubTitlePage>
           </TitlePageContainer>
         </Grid>
         {!infoMasterKey?.mfa && (
           <Grid item xs={100} sm={100} md={100} lg={100} xl={100}>
             <EnableMFAContainer>
               <Grid className='title' item>
-                <TextHeaderCard>Two-factor authentication (MFA)</TextHeaderCard>
+                <TextHeaderCard>Two-factor authentication (2FA)</TextHeaderCard>
                 <SubTitlePage>We strongly recommend you to enable 2FA on your account</SubTitlePage>
               </Grid>
               <CustomButton className='btn' variant='contained' styleButton='primary' text='Enable 2FA' onClick={() => setIsOpenEnableMFA(true)} />
@@ -160,7 +163,11 @@ const MFA = () => {
               <BackgroundPage>
                 <ContainerHeaderFactors>
                   <TextHeaderCard>Recovery phrase</TextHeaderCard>
-                  <TextSummary>Please ensure you stored your recovery key in safe place...</TextSummary>
+                  <TextSummary>
+                    If you&apos;ve misplaced your recovery key, we&apos;re to help. Click below button to initiate recovery key reset process, a new key will be securely delivered to your email.
+                    <br />
+                    Please remember to only reset your recovery key when absolutely necessary.
+                  </TextSummary>
                   {/* <ContainerNumberFactors>{`2/${infoMasterKey?.shares?.length}`}</ContainerNumberFactors> */}
                 </ContainerHeaderFactors>
                 {/* <ContainerTextField>
