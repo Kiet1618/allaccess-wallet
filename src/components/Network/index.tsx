@@ -1,15 +1,14 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { get } from "lodash";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Dropdown } from "@app/assets/icon";
 import { listNetWorks } from "@app/configs/data";
-import { ChainNetwork, Token } from "@app/types/blockchain.type";
+import { ChainNetwork } from "@app/types/blockchain.type";
 import { useAppDispatch, useAppSelector } from "@app/store";
 import { setNetworkState } from "@app/store/redux/network/actions";
-import { setHistoriesAddress } from "@app/store/redux/history/actions";
-import { sliceAddress, copyAddress, preProcessHistoryResponse } from "@app/utils";
+import { sliceAddress, copyAddress } from "@app/utils";
 import { ModalCustom, HeaderModalInfoTransaction, HeaderModalGroupLeft, TitleModal } from "../Table/table.css";
 import { ChangeNetworkTag, ChangeNetworkTagSub, FormControlCustom, SelectCustom, Container, MenuItemCustom, style, TagNetwork } from "./network.css";
 import TagChangeNetwork from "./changeNetwork";
@@ -19,19 +18,8 @@ import useBlockchain from "@app/blockchain/wrapper";
 import { createAccount } from "@app/store/redux/wallet/actions";
 import { useCustomSnackBar } from "@app/hooks";
 
-export const fetchData = async (currentNetwork: ChainNetwork) => {
-  const myAddress = getTorusKey().ethAddress;
-  const listTokenState = useAppSelector(state => state.token);
-  const dispatch = useAppDispatch();
-  try {
-    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.chainID === currentNetwork.chainID && tokens.tokenContract !== undefined);
-    const historyTransaction = await preProcessHistoryResponse(currentNetwork, myAddress, listToken);
-    dispatch(setHistoriesAddress(historyTransaction));
-  } catch (error) {
-    console.log(error);
-  }
-};
-export const NetworkContainer = () => {
+type Props = {};
+export const NetworkContainer: React.FC<Props> = () => {
   const networkState = useAppSelector(state => state.network);
   const [selectedNetwork, setSelectedNetwork] = useState(networkState.currentNetwork.data);
   const { handleNotification } = useCustomSnackBar();
@@ -44,7 +32,6 @@ export const NetworkContainer = () => {
   const handleClose = () => setOpen(false);
   const [_, setStatus] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
-  const historyState = useAppSelector(state => state.history);
   const createAccountState = useAppSelector(state => state.wallet.createAccount);
 
   const handleChangeNetwork = async (event: any) => {
@@ -63,6 +50,7 @@ export const NetworkContainer = () => {
       }
     }
     await dispatch(setNetworkState(selectedNetwork));
+    // Get history by network
     handleClose();
   };
 
@@ -80,9 +68,7 @@ export const NetworkContainer = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  useEffect(() => {
-    if (!historyState.getHistoriesAddress.data) fetchData(networkState.currentNetwork.data);
-  }, [networkState]);
+
   return (
     <Container>
       <ButtonCustom

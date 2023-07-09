@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Web3 from "web3";
 import { Grid } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import { formatBalance, sliceAddress } from "../../utils";
+import { formatBalance, preProcessHistoryResponse, sliceAddress } from "../../utils";
 import { useAppSelector, useAppDispatch } from "../../store";
 import { Page } from "../../styles";
 import { TitlePage } from "../../styles";
@@ -60,8 +61,10 @@ import { setNetworkState } from "@app/store/redux/network/actions";
 import { listNetWorks } from "@app/configs/data";
 import { ChainNetwork } from "@app/types/blockchain.type";
 import { LoginRequestModal } from "@app/components";
+import { setHistoriesAddress } from "@app/store/redux/history/actions";
 
 const Overview = () => {
+  const navigate = useNavigate();
   const historyState = useAppSelector(state => state.history);
   const cookies = new Cookies();
   //const [number, setNumber] = useState(6);
@@ -76,8 +79,21 @@ const Overview = () => {
   const [origin, setOrigin] = useState<string | null>("");
   const dispatch = useAppDispatch();
 
+  /** Should be move to action redux, because it can be re-used */
+  const fetchDataHistories = async () => {
+    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.chainID === networkState.currentNetwork.data.chainID && tokens.tokenContract !== undefined);
+    const historyTransaction = await preProcessHistoryResponse(networkState.currentNetwork.data, getAccount(), listToken);
+    dispatch(setHistoriesAddress(historyTransaction));
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
+    if (getAccount()) {
+      fetchDataHistories();
+    }
+  }, [networkState.currentNetwork.data, getAccount()]);
+
+  useEffect(() => {
+    const fetchBalanceData = async () => {
       try {
         const balance = await getBalance();
         const USD: string = await getUSDPrice(networkState.currentNetwork.data.title);
@@ -111,7 +127,7 @@ const Overview = () => {
       }
     };
 
-    fetchData();
+    fetchBalanceData();
   }, [getAccount()]);
 
   const handleGetBalance = async (item: Token) => {
@@ -308,7 +324,14 @@ const Overview = () => {
             </ListItemMyAssets>
           </ContentPageContainer>
           <OverviewHeaderTopCoin>
-            <CustomButton width='100%' border='none' text='View all transactions' />
+            <CustomButton
+              width='100%'
+              border='none'
+              text='View all transactions'
+              onClick={() => {
+                navigate("/history");
+              }}
+            />
           </OverviewHeaderTopCoin>
         </Grid>
       </Grid>
