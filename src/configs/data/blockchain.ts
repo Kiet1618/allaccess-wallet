@@ -1,15 +1,15 @@
 import { ChainNetwork } from "../../types/blockchain.type";
 export const listNetWorks: ChainNetwork[] = [
-  {
-    chainID: "1",
-    core: "evm",
-    apiScanNormalTransactionsByAddress: `https://api.etherscan.io/api?module=account&action=txlist&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
-    apiScanTokenTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=tokentx&contractaddress={contract}&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
-    rpcUrls: "https://eth.llamarpc.com",
-    title: "ETH",
-    description: "Ethereum Mainnet",
-    apiTransactionHash: "https://etherscan.io/tx/{transactionHash}",
-  },
+  // {
+  //   chainID: "1",
+  //   core: "evm",
+  //   apiScanNormalTransactionsByAddress: `https://api.etherscan.io/api?module=account&action=txlist&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
+  //   apiScanTokenTransactionsByAddress: `https://api-goerli.etherscan.io/api?module=account&action=tokentx&contractaddress={contract}&address={address}&sort=asc&apikey=6YA3MRG422USB7DWGGQTWHDZTUG248ZKJ5`,
+  //   rpcUrls: "https://eth.llamarpc.com",
+  //   title: "ETH",
+  //   description: "Ethereum Mainnet",
+  //   apiTransactionHash: "https://etherscan.io/tx/{transactionHash}",
+  // },
   {
     chainID: "5",
     core: "evm",
@@ -20,33 +20,34 @@ export const listNetWorks: ChainNetwork[] = [
     description: "Goerli Testnet",
     apiTransactionHash: "https://goerli.etherscan.io/tx/{transactionHash}",
   },
-  {
-    chainID: "56",
-    core: "evm",
-    apiScanNormalTransactionsByAddress: "https://api.bscscan.com/api?module=account&action=txlist&address={address}&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW",
-    apiScanTokenTransactionsByAddress: `
-    https://api.bscscan.com/api
-   ?module=account
-   &action=tokentx
-   &contractaddress={contract}
-   &address={address}
-   &page=1
-   &offset=5
-   &startblock=0
-   &endblock=999999999
-   &sort=asc
-   &apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW`,
-    rpcUrls: "https://bsc-dataseed1.binance.org",
-    title: "BNB",
-    description: "Binance Smart Chain Mainnet",
-    apiTransactionHash: "https://bscscan.com/tx/{transactionHash}",
-  },
+  // {
+  //   chainID: "56",
+  //   core: "evm",
+  //   apiScanNormalTransactionsByAddress: "https://api.bscscan.com/api?module=account&action=txlist&address={address}&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW",
+  //   apiScanTokenTransactionsByAddress: `
+  //   https://api.bscscan.com/api
+  //  ?module=account
+  //  &action=tokentx
+  //  &contractaddress={contract}
+  //  &address={address}
+  //  &page=1
+  //  &offset=5
+  //  &startblock=0
+  //  &endblock=999999999
+  //  &sort=asc
+  //  &apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW`,
+  //   rpcUrls: "https://bsc-dataseed1.binance.org",
+  //   title: "BNB",
+  //   description: "Binance Smart Chain Mainnet",
+  //   apiTransactionHash: "https://bscscan.com/tx/{transactionHash}",
+  // },
   {
     chainID: "97",
     core: "evm",
-    apiScanNormalTransactionsByAddress: "https://testnet.bscscan.com/api?module=account&action=txlist&address={address}&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW",
+    apiScanNormalTransactionsByAddress:
+      "https://us9bzwjn9a.execute-api.ap-southeast-1.amazonaws.com/bnb/api?module=account&action=txlist&address={address}&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW",
     apiScanTokenTransactionsByAddress: `
-    https://testnet.bscscan.com/api?module=account&action=tokentx&contractaddress={contract}&address={address}&page=1&offset=5&startblock=0&endblock=999999999&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW`,
+    https://us9bzwjn9a.execute-api.ap-southeast-1.amazonaws.com/bnb/api?module=account&action=tokentx&contractaddress={contract}&address={address}&page=1&offset=5&startblock=0&endblock=999999999&sort=asc&apikey=I1JJ6MQZRU7BG9WNH1FU69M3T377FIC4JW`,
     rpcUrls: "https://data-seed-prebsc-2-s2.binance.org:8545",
     title: "BNB",
     description: "Binance Smart Chain Testnet",

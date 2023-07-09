@@ -77,7 +77,7 @@ const History = () => {
     if (getAccount()) {
       fetchData(network);
     }
-  }, [network, status, customTimeFrom, customTimeTo]);
+  }, [getAccount(), network, status, customTimeFrom, customTimeTo]);
   // useEffect(() => {
   //   if (network !== networkState.currentNetwork.data) fetchData(network);
 
