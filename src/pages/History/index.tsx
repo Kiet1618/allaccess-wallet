@@ -40,7 +40,10 @@ import {
 import { useAppDispatch, useAppSelector } from "@app/store";
 import { ChainNetwork } from "@app/types/blockchain.type";
 import useBlockchain from "@app/blockchain/wrapper";
+import { useCustomSnackBar } from "@app/hooks";
+
 const History = () => {
+  const { handleNotification } = useCustomSnackBar();
   const networkState = useAppSelector(state => state.network);
   const { getAccount, getAccountByCore } = useBlockchain();
   const dispatch = useAppDispatch();
@@ -103,7 +106,10 @@ const History = () => {
               select
               id='time'
               size='small'
-              onChange={e => setTime(e.target.value)}
+              onChange={e => {
+                setTime(e.target.value);
+                handleNotification("Ohhh, it is upgrading", "warning");
+              }}
               SelectProps={{
                 IconComponent: () => <TimeDropdown style={{ marginRight: "10px" }} />,
               }}
@@ -118,7 +124,17 @@ const History = () => {
           </ContainerTextFieldTime>
           <ContainerTextFieldMethod>
             <label style={{ marginBottom: "5px" }}>Method</label>
-            <CustomInput value={method} styleTextField='default' select id='method' size='small' onChange={e => setMethod(e.target.value)}>
+            <CustomInput
+              value={method}
+              styleTextField='default'
+              select
+              id='method'
+              size='small'
+              onChange={e => {
+                handleNotification("Ohhh, it is upgrading", "warning");
+                setMethod(e.target.value);
+              }}
+            >
               <MenuItem value={"All"}>All</MenuItem>
               <MenuItem value={"Receive"}>Receive</MenuItem>
               <MenuItem value={"Execute"}>Execute</MenuItem>
@@ -147,7 +163,17 @@ const History = () => {
           </ContainerTextFieldNetwork>
           <ContainerTextFieldStatus>
             <label style={{ marginBottom: "5px" }}>Status</label>
-            <CustomInput value={status} styleTextField='default' select id='status' size='small' onChange={e => setStatus(e.target.value)}>
+            <CustomInput
+              value={status}
+              styleTextField='default'
+              select
+              id='status'
+              size='small'
+              onChange={e => {
+                handleNotification("Ohhh, it is upgrading", "warning");
+                setStatus(e.target.value);
+              }}
+            >
               <MenuItem value={"All"}>All</MenuItem>
               <MenuItem value={"Completed"}>Completed</MenuItem>
               <MenuItem value={"Incomplete"}>Incomplete</MenuItem>
