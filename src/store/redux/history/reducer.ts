@@ -15,15 +15,15 @@ export const history = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(actions.setHistoriesAddress.pending, state => {
+    builder.addCase(actions.getHistoriesAddress.pending, state => {
       state.getHistoriesAddress.data = [];
       state.getHistoriesAddress.loading = true;
     });
-    builder.addCase(actions.setHistoriesAddress.fulfilled, (state, action) => {
+    builder.addCase(actions.getHistoriesAddress.fulfilled, (state, action) => {
       state.getHistoriesAddress.data = action.payload;
       state.getHistoriesAddress.loading = false;
     });
-    builder.addCase(actions.setHistoriesAddress.rejected, (state, action) => {
+    builder.addCase(actions.getHistoriesAddress.rejected, (state, action) => {
       state.getHistoriesAddress.data = [];
       state.getHistoriesAddress.error = action.payload;
       state.getHistoriesAddress.loading = false;

@@ -14,10 +14,8 @@ import CustomButton from "../../components/Button";
 import TableCustom from "../../components/Table";
 import { ModalCustom, HeaderModalInfoTransaction, TitleModal } from "../../components/Table/table.css";
 import { Page, TitlePage } from "../../styles";
-import { Token } from "@app/types/blockchain.type";
 import { listNetWorks } from "@app/configs/data";
-import { preProcessHistoryResponse } from "@app/utils";
-import { setHistoriesAddress } from "@app/store/redux/history/actions";
+import { getHistoriesAddress } from "@app/store/redux/history/actions";
 
 import {
   ContainerButtonModalFilter,
@@ -86,11 +84,8 @@ const History = () => {
 
   //   dispatch(setNetworkState(network));
   // }, [network]);
-  const listTokenState = useAppSelector(state => state.token);
   const fetchData = async (currentNetwork: ChainNetwork) => {
-    const listToken = listTokenState.currentListTokens.data.filter((tokens: Token) => tokens.chainID === currentNetwork.chainID && tokens.tokenContract !== undefined);
-    const historyTransaction = await preProcessHistoryResponse(currentNetwork, getAccountByCore(currentNetwork.core), listToken);
-    dispatch(setHistoriesAddress(historyTransaction));
+    dispatch(getHistoriesAddress({ network, address: getAccountByCore(currentNetwork.core) }));
   };
   return (
     <Page>

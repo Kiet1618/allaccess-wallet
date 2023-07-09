@@ -3,6 +3,7 @@ import Web3 from "web3";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import CircularProgress from "@mui/material/CircularProgress";
 import { Table, TableContainer, TableBody, TableCell, TableHead, TableRow, Pagination } from "@mui/material";
 import { Copy, Eyes } from "../../assets/icon";
 import { Empty } from "../../assets/icon";
@@ -11,7 +12,7 @@ import { sliceAddress, copyAddress } from "../../utils";
 import { formatValue } from "../../blockchain";
 import useBlockchain from "@app/blockchain/wrapper";
 import { useAppSelector } from "../../store";
-import { EmptyContainer } from "../../pages/Overview/overview.css";
+import { EmptyContainer, SpinningContainer } from "../../pages/Overview/overview.css";
 import { CopyAddressContainer } from "../../pages/Transaction/transaction.css";
 import { TitleModal, ContainerInfoTransactions, HeaderModalInfoTransaction, style, HeaderModalGroupLeft, ModalCustom, CustomMethod, TableCellCustomInOut, TableCellCustom } from "./table.css";
 import DoneIcon from "@mui/icons-material/Done";
@@ -110,6 +111,11 @@ const TableWithPagination: React.FC<Props> = props => {
           </TableHead>
 
           <TableBody>
+            {historyState.getHistoriesAddress.loading && (
+              <SpinningContainer>
+                <CircularProgress />
+              </SpinningContainer>
+            )}
             {historyState.getHistoriesAddress.data?.length ? (
               historyState.getHistoriesAddress.data.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage).map(row => (
                 <TableRow key={row.id}>

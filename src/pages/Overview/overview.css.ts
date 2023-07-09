@@ -168,3 +168,11 @@ export const EmptyContainer = styled.div`
   text-align: center;
   width: 100%;
 `;
+
+export const SpinningContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+`;
