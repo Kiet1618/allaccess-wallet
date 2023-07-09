@@ -1,15 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import * as actions from "./actions";
-import { Token } from "../../../types/blockchain.type";
+// import { Token } from "../../../types/blockchain.type";
 import { ListTokenState } from "./types";
-import { getListTokens } from "../../../storage/storage-service";
+// import { getListTokens } from "../../../storage/storage-service";
 import { listTokens } from "../../../configs/data";
 
 const dataTokensList = () => {
-  if (getListTokens() !== null) {
-    const data: Token[] = getListTokens();
-    return data;
-  }
+  // if (getListTokens() !== null) {
+  //   const data: Token[] = getListTokens();
+  //   return data;
+  // }
   return listTokens;
 };
 const initialState = {

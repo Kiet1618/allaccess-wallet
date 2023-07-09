@@ -3,9 +3,8 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { TitlePage } from "@app/styles";
 import { Button as CustomButton } from "@app/components";
-import { useBlockchain, getGasPrice } from "@app/blockchain";
 import { SubTitlePage, ContainerDeviceModal, ContainerButtonFactors, FlexContainer, style } from "./css";
-import Web3 from "web3";
+import useBlockchain from "@app/blockchain/wrapper";
 import { isEmpty } from "lodash";
 import { useAppSelector } from "@app/store";
 import { sliceAddress, copyAddress } from "@app/utils";
@@ -30,16 +29,15 @@ const SignTransactionModal: React.FC<Props> = props => {
   const networkState = useAppSelector(state => state.network);
   const [_, setStatus] = useState(false);
   const { loading, info, handleClose, handleConfirm, title, subTitle } = props;
-  const { web3, account } = useBlockchain(networkState.currentNetwork.data.rpcUrls);
+  const { getAccount, getGasPrice } = useBlockchain();
   const [gasFee, setGasFee] = useState("0");
   useEffect(() => {
     const fetchGas = async () => {
-      const gasPrice = await getGasPrice(web3 as Web3);
-
+      const gasPrice = await getGasPrice();
       setGasFee(gasPrice);
     };
     fetchGas();
-  }, [web3, account]);
+  }, [getAccount()]);
   return (
     <Modal open={!isEmpty(info)} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
       <Box sx={style}>
@@ -51,7 +49,7 @@ const SignTransactionModal: React.FC<Props> = props => {
           <FlexContainer>
             <CustomButton
               onClick={() =>
-                copyAddress(account, () => {
+                copyAddress(getAccount(), () => {
                   setStatus(true);
                   setTimeout(() => {
                     setStatus(false);
@@ -60,7 +58,7 @@ const SignTransactionModal: React.FC<Props> = props => {
               }
               style={{ borderRadius: "8px" }}
               variant='outlined'
-              text={sliceAddress(account)}
+              text={sliceAddress(getAccount())}
               styleButton='default'
             />
             <Arrow style={{ margin: "10px 20px" }} />

@@ -20,7 +20,7 @@ import { Token } from "../../../types/blockchain.type";
 import { FormData } from "./type";
 import { SignTransactionModal } from "@app/components";
 import { InfoTransacions } from "@app/components/Modal/SignTransactionModal";
-import { SignedTransferResponse } from "@app/blockchain/types";
+import { SignedTransferResponse, TransferNative } from "@app/blockchain/types";
 import {
   style,
   CustomMenuItem,
@@ -41,15 +41,13 @@ import TransactionModal from "./transaction-modal";
 import { useCustomSnackBar } from "@app/hooks";
 import { Callbacks } from "@app/blockchain/types";
 import { get } from "lodash";
-import { signTransfer } from "@app/blockchain/evm/transfer";
-import Web3 from "web3";
 const Transfer = () => {
   const { handleNotification } = useCustomSnackBar();
   const networkState = useAppSelector(state => state.network);
   const listTokenState = useAppSelector(state => state.token);
   const dispatch = useAppDispatch();
   const [status, setStatus] = useState(false);
-  const { web3, getAccount, getBalance, getBalanceToken, getGasPrice, getGasLimit, transfer, transferToken, getToken } = useBlockchain();
+  const { web3, getAccount, getBalance, getBalanceToken, signTransfer, getGasPrice, getGasLimit, transfer, transferToken, getToken } = useBlockchain();
   const [tokenAddress, setTokenAddress] = useState("");
   const [tokenImport, setTokenImport] = useState<Token>();
   const [balance, setBalance] = useState("");
@@ -268,9 +266,13 @@ const Transfer = () => {
   const handleGetInfo = async () => {
     const handlePopupResponse = (event: any) => {
       if (event.data.type === "SIGN_REQ") {
-        const data = event.data.data;
+        const data: InfoTransacions = event.data.data;
         setTransactionInfoCookies(data);
-        signTransfer(web3 as Web3, data).then(response => {
+        const signData: TransferNative = {
+          recipient: data.addressTo,
+          amount: data.amount,
+        };
+        signTransfer(signData).then(response => {
           setSignTransaction(response);
         });
       }
