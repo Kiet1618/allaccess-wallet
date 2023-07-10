@@ -38,11 +38,26 @@ const ModalEnableMFA: React.FC<Props> = props => {
   const handleDownload = () => {
     const element = document.createElement("a");
     const file = new Blob([seeds], { type: "text/plain" });
-    element.href = URL.createObjectURL(file);
+    const url = window.URL.createObjectURL(file);
+    element.href = url;
     element.download = "recovery_phrase.txt";
+    element.hidden = true;
     document.body.appendChild(element);
+
+    element.addEventListener("click", () => {
+      // Check if the download was canceled
+      if (element.href === "") {
+        console.log("Download canceled");
+        // Handle the cancel event here
+        setIsDownloaded(false);
+      } else {
+        setIsDownloaded(true);
+      }
+    });
     element.click();
-    document.body.removeChild(element);
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(element); // Clean up after downloading
+
     setIsDownloaded(true);
   };
 
@@ -108,8 +123,8 @@ const ModalEnableMFA: React.FC<Props> = props => {
           />
         </ContainerInput>
         <ContainerActions spacing={2}>
+          <Button onClick={handleSendEmail} styleButton={disableSendEmail()} loading={sendPhraseToEmailState.loading} mRight='8px' variant='outlined' text='Send to email' />
           <Button onClick={handleDownload} variant='outlined' text='Download' />
-          <Button onClick={handleSendEmail} styleButton={disableSendEmail()} loading={sendPhraseToEmailState.loading} mLeft='8px' variant='outlined' text='Send to email' />
         </ContainerActions>
         {(isDownloaded || isSentEmail) && (
           <Button styleButton={loadingEnableMFA ? "inactive" : "primary"} loading={loadingEnableMFA} onClick={preHandleEnableMFA} mTop='8px' width='135px' height='44px' text='Confirm'></Button>

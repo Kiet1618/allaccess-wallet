@@ -130,7 +130,6 @@ const MFA = () => {
   };
 
   const handleOpen2FA = () => {
-    setIsOpenEnableMFA(true);
     if (!infoMasterKey) {
       handleNotification("Please initial master key before", "error");
       return;
