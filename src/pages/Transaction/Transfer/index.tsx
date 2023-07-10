@@ -21,6 +21,8 @@ import { FormData } from "./type";
 import { SignTransactionModal } from "@app/components";
 import { InfoTransacions } from "@app/components/Modal/SignTransactionModal";
 import { SignedTransferResponse, TransferNative } from "@app/blockchain/types";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 import {
   style,
   CustomMenuItem,
@@ -63,7 +65,6 @@ const Transfer = () => {
   const [isOpenTransaction, setIsOpenTransaction] = useState(false);
   const [transactionHash, setTransactionHash] = useState("");
   const [statusTransaction, setStatusTransaction] = useState<string>("");
-  const [transactionInfoCookies, setTransactionInfoCookies] = useState<InfoTransacions | null>(null);
 
   const handleCloseSelect = () => {
     setOpenSelect(false);
@@ -262,31 +263,37 @@ const Transfer = () => {
   }, [networkState.currentNetwork.data, token, web3, getAccount()]);
 
   //req sign transaction
-  const [signTransaction, setSignTransaction] = useState<SignedTransferResponse | null>();
+  const [signFormData, setSignFormData] = useState<TransferNative | null>();
+  const [openLoadingPage, setOpenLoadingPage] = React.useState(false);
+  const [transactionInfoCookies, setTransactionInfoCookies] = useState<InfoTransacions | null>(null);
+
+  const handleCloseLoadingPage = () => {
+    setOpenLoadingPage(false);
+  };
+  const handleOpenLoadingPage = () => {
+    setOpenLoadingPage(true);
+  };
   const handleGetInfo = async () => {
-    const handlePopupResponse = (event: any) => {
-      if (event.data.type === "SIGN_REQ") {
-        const data: InfoTransacions = event.data.data;
-        setTransactionInfoCookies(data);
-        const signData: TransferNative = {
-          recipient: data.addressTo,
-          amount: data.amount,
-        };
-        signTransfer(signData).then(response => {
-          setSignTransaction(response);
-        });
-      }
+    const handlePopupResponse = async (event: any) => {
+      const data: InfoTransacions = event.data.data;
+      setTransactionInfoCookies(data);
+      const signData: TransferNative = {
+        recipient: data.addressTo,
+        amount: data.amount,
+      };
+      setSignFormData(signData);
     };
 
     window.addEventListener("message", handlePopupResponse);
   };
-  const handleComfirmRequest = () => {
+
+  function handleComfirmRequest(res: SignedTransferResponse) {
     const handlePopupResponse = (event: any) => {
       window.addEventListener("beforeunload", () => {
         event.source.postMessage(
           {
             type: "STATUS",
-            data: signTransaction,
+            data: res,
           },
           event.origin
         );
@@ -294,6 +301,15 @@ const Transfer = () => {
       window.close();
     };
     window.addEventListener("message", handlePopupResponse);
+  }
+
+  const handleClickComfirmRequest = () => {
+    handleOpenLoadingPage();
+    signTransfer(signFormData as TransferNative).then(res => {
+      console.log(res);
+      handleCloseLoadingPage();
+      handleComfirmRequest(res);
+    });
   };
   const handleReject = () => {
     const handleReject = (event: any) => {
@@ -312,6 +328,7 @@ const Transfer = () => {
       console.log("Failed to get transaction");
     }
   });
+
   return (
     <Grid style={{ width: "100%" }} container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
       <Grid>
@@ -509,8 +526,11 @@ const Transfer = () => {
         loading={false}
         info={transactionInfoCookies}
         handleClose={handleReject}
-        handleConfirm={handleComfirmRequest}
+        handleConfirm={handleClickComfirmRequest}
       />
+      <Backdrop sx={{ color: "#fff", zIndex: 9999999999 }} open={openLoadingPage}>
+        <CircularProgress color='inherit' />
+      </Backdrop>
     </Grid>
   );
 };

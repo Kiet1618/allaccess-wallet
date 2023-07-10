@@ -192,10 +192,10 @@ export const useFlowBlockchain = () => {
   const signTransfer = async (data: TransferNative): Promise<SignedTransferResponse> => {
     try {
       const blockResponse = await fcl.send([fcl.getBlock(true) as any]);
-      const signed = await fcl.build([
+      const signed = await fcl.send([
         fcl.transaction(TransferFlowScript),
         fcl.args([
-          fcl.arg(Number(data.amount), t.UFix64), // Amount to transfer
+          fcl.arg(numeral(data.amount).format("0.0[0000000000]"), t.UFix64), // Amount to transfer
           fcl.arg(data.recipient, t.Address), // Recipient's address
         ]),
         fcl.payer(authorization),
