@@ -16,6 +16,8 @@ import { NetworkContainer } from "../../components/Network";
 import { formatValue } from "../../blockchain";
 import useBlockchain from "@app/blockchain/wrapper";
 import { SearchIcon, ReceiveTransactionHistory, SendTransactionHistory, LinkTransaction, Empty } from "../../assets/icon";
+import { useLocalStorage } from "usehooks-ts";
+import { KeyPair } from "@app/wallet/types";
 import {
   NetworkContainerFixed,
   SubHeaderPage,
@@ -78,6 +80,7 @@ const Overview = () => {
   const [searchText, setSearchText] = useState("");
   const [origin, setOrigin] = useState<string | null>("");
   const dispatch = useAppDispatch();
+  const [masterKey, _] = useLocalStorage<KeyPair | null>("master-key", null);
 
   /** Should be move to action redux, because it can be re-used */
   const fetchDataHistories = async () => {
@@ -167,9 +170,14 @@ const Overview = () => {
     window.addEventListener("message", handlePopupResponse);
   };
   const handleComfirmRequest = () => {
+    const myAddress = getAccount();
+    const data = JSON.stringify({
+      address: myAddress,
+      publicKey: masterKey?.pubKey,
+    });
     const handlePopupResponse = (event: any) => {
       window.addEventListener("beforeunload", () => {
-        event.source.postMessage({ type: "ADDRESS", data: getAccount() }, event.origin);
+        event.source.postMessage({ type: "ADDRESS", data: data }, event.origin);
       });
       setOrigin("");
       window.close();
