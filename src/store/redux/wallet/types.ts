@@ -4,4 +4,9 @@ export type NetworkState = {
     loading: boolean;
     error: unknown;
   };
+  sendPhraseToEmail: {
+    data: string;
+    loading: boolean;
+    error: unknown;
+  };
 };

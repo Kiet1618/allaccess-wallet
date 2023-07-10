@@ -13,6 +13,8 @@ import { Grid, InputAdornment, TextField } from "@mui/material";
 import { copyAddress } from "@app/utils";
 import { style } from "../mfa.css";
 import { useCustomSnackBar } from "@app/hooks";
+import { useAppDispatch } from "@app/store";
+import { sendPhraseToEmail } from "@app/store/redux/wallet/actions";
 
 type Props = {
   isOpen: boolean;
@@ -23,11 +25,14 @@ type Props = {
   seeds: string;
 };
 const ModalEnableMFA: React.FC<Props> = props => {
+  const dispatch = useAppDispatch();
+
   const { handleNotification } = useCustomSnackBar();
 
-  const { isOpen, handleClose, loadingEnableMFA, handleEnableMFA, seeds } = props;
+  const { email, isOpen, handleClose, loadingEnableMFA, handleEnableMFA, seeds } = props;
   const [copiedSeeds, setCopiedSeeds] = useState(false);
-  const [allowConfirm, setAllowConfirm] = useState(false);
+  const [isDownloaded, setIsDownloaded] = useState(false);
+  const [isSentEmail, setIsSentEmail] = useState(false);
 
   const handleDownload = () => {
     const element = document.createElement("a");
@@ -37,11 +42,23 @@ const ModalEnableMFA: React.FC<Props> = props => {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-    setAllowConfirm(true);
+    setIsDownloaded(true);
+  };
+
+  const handleSendEmail = async () => {
+    const { meta } = await dispatch(sendPhraseToEmail({ email, phrase: seeds }));
+    if (meta.requestStatus === "fulfilled") {
+      handleNotification("Please check your email to get new phrase", "success");
+      setIsSentEmail(true);
+    }
+    if (meta.requestStatus === "rejected") {
+      handleNotification("Sent mail failed, please try again later", "error");
+      setIsSentEmail(false);
+    }
   };
 
   const preHandleEnableMFA = () => {
-    if (!allowConfirm) {
+    if (!isDownloaded && !isSentEmail) {
       handleNotification("Please download recovery phrase before", "error");
       return;
     }
@@ -55,38 +72,39 @@ const ModalEnableMFA: React.FC<Props> = props => {
         <ContainerSummary>
           Please ensure you store your recovery key in a safe place. It is important as the recovery key is the only way to access your account in case you lose data on all configured devices
         </ContainerSummary>
+        <ContainerInput>
+          <TextField
+            multiline
+            rows={2}
+            maxRows={4}
+            value={seeds}
+            style={{ width: "100%" }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='start' style={{ cursor: "pointer" }}>
+                  {copiedSeeds && <DoneIcon />}
+                  {!copiedSeeds && (
+                    <Copy
+                      onClick={() => {
+                        setCopiedSeeds(true);
+                        copyAddress(seeds, () => {
+                          setTimeout(() => {
+                            setCopiedSeeds(false);
+                          }, 3000);
+                        });
+                      }}
+                    />
+                  )}
+                </InputAdornment>
+              ),
+            }}
+          />
+        </ContainerInput>
         <ContainerActions spacing={2}>
-          <Grid>
-            <TextField
-              multiline
-              rows={2}
-              maxRows={4}
-              value={seeds}
-              style={{ width: "100%" }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position='start' style={{ cursor: "pointer" }}>
-                    {copiedSeeds && <DoneIcon />}
-                    {!copiedSeeds && (
-                      <Copy
-                        onClick={() => {
-                          setCopiedSeeds(true);
-                          copyAddress(seeds, () => {
-                            setTimeout(() => {
-                              setCopiedSeeds(false);
-                            }, 3000);
-                          });
-                        }}
-                      />
-                    )}
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Grid>
-          <Button onClick={handleDownload} mTop='8px' variant='outlined' text='Download' />
+          <Button onClick={handleDownload} variant='outlined' text='Download' />
+          <Button onClick={handleSendEmail} mLeft='8px' variant='outlined' text='Send to email' />
         </ContainerActions>
-        <Button styleButton={loadingEnableMFA ? "inactive" : "primary"} loading={loadingEnableMFA} onClick={preHandleEnableMFA} mTop='8px' width='135px' height='44px' text='Send to email'></Button>
+        <Button styleButton={loadingEnableMFA ? "inactive" : "primary"} loading={loadingEnableMFA} onClick={preHandleEnableMFA} mTop='8px' width='135px' height='44px' text='Confirm'></Button>
       </Box>
     </Modal>
   );
@@ -97,7 +115,11 @@ const ContainerSummary = styled.div`
 `;
 
 const ContainerActions = styled(Grid)`
-  text-align: left;
+  width: 100%;
+  margin-top: ${({ theme }) => theme.spacing.sm}px;
+`;
+
+const ContainerInput = styled(Grid)`
   width: 100%;
   margin-top: ${({ theme }) => theme.spacing.sm}px;
 `;

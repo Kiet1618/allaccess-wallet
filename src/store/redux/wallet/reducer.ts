@@ -8,6 +8,11 @@ const initialState = {
     loading: false,
     error: {},
   },
+  sendPhraseToEmail: {
+    data: "",
+    loading: false,
+    error: {},
+  },
 } as NetworkState;
 
 export const wallet = createSlice({
@@ -24,6 +29,16 @@ export const wallet = createSlice({
     });
     builder.addCase(actions.createAccount.rejected, state => {
       state.createAccount.loading = false;
+    });
+
+    builder.addCase(actions.sendPhraseToEmail.pending, state => {
+      state.sendPhraseToEmail.loading = true;
+    });
+    builder.addCase(actions.sendPhraseToEmail.fulfilled, state => {
+      state.sendPhraseToEmail.loading = false;
+    });
+    builder.addCase(actions.sendPhraseToEmail.rejected, state => {
+      state.sendPhraseToEmail.loading = false;
     });
   },
 });

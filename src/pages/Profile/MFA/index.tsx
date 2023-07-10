@@ -8,6 +8,7 @@ import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import { Grid } from "@mui/material";
 import Chip from "@mui/material/Chip";
+import Switch from "@mui/material/Switch";
 
 import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
 import { KeyPair } from "@app/wallet/types";
@@ -19,7 +20,7 @@ import { Button as CustomButton } from "@app/components";
 import { BackgroundPage, TitlePageContainer } from "../profile.css";
 import { SubTitlePage } from "../../Transaction/transaction.css";
 import { TextHeaderCard, ContainerDevice, GroupLeftItemDevice, ContainerText, NameText, IpText, TextSummary } from "../../MultipleFactors/multipleFactors.css";
-import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerHeaderFactors, style, EnableMFAContainer } from "./mfa.css";
+import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerHeaderFactors, style } from "./mfa.css";
 import ModalEnableOrResendMFA from "./components/ModalEnableOrResendMFA";
 import { generateWords } from "@app/utils";
 
@@ -84,7 +85,6 @@ const MFA = () => {
         return;
       }
       setLoadingRecovery(false);
-      handleNotification("Please check your email to get new phrase", "success");
       getInfoWalletByNetworkKey(networkKey!);
       insertTokenFCM(token, infoMasterKey);
       setIsOpenEnableMFA(false);
@@ -100,7 +100,6 @@ const MFA = () => {
         return;
       }
       setLoadingRecovery(false);
-      handleNotification("Please check your email to get new phrase", "success");
       getInfoWalletByNetworkKey(networkKey!);
       setIsOpenEnableMFA(false);
       reGenerateSeeds();
@@ -130,6 +129,21 @@ const MFA = () => {
     getInfoWalletByNetworkKey(networkKey!);
   };
 
+  const handleOpen2FA = () => {
+    setIsOpenEnableMFA(true);
+    if (!infoMasterKey) {
+      handleNotification("Please initial master key before", "error");
+      return;
+    }
+    const { mfa } = infoMasterKey;
+    if (mfa) {
+      handleNotification("Disable 2FA is unavailable, please try again later", "warning");
+      return;
+    }
+    setIsOpenEnableMFA(true);
+    return;
+  };
+
   const totalDeviceShares = () => {
     return infoMasterKey?.shares?.filter(elm => elm.type === "device").length;
   };
@@ -139,24 +153,22 @@ const MFA = () => {
       <Grid container columns={{ xs: 100, sm: 100, md: 100, lg: 100, xl: 100 }}>
         <Grid item xs={100}>
           <TitlePageContainer>
-            <TitlePageBlack>Two-factor Authentication Setting</TitlePageBlack>
+            <TitlePageBlack>
+              Two-factor Authentication Setting
+              <Switch
+                size='medium'
+                checked={infoMasterKey?.mfa}
+                onChange={() => {
+                  handleOpen2FA();
+                }}
+              />
+            </TitlePageBlack>
             <SubTitlePage>
               By enabling this feature, an extra key will be stored on your devices, ensuring added protection. Please note that when logging in on new devices, you will require approval from your
               current device or your backup phrase. For more information on Two-Factor Authentication, click here.
             </SubTitlePage>
           </TitlePageContainer>
         </Grid>
-        {!infoMasterKey?.mfa && (
-          <Grid item xs={100} sm={100} md={100} lg={100} xl={100}>
-            <EnableMFAContainer>
-              <Grid className='title' item>
-                <TextHeaderCard>Two-factor authentication (2FA)</TextHeaderCard>
-                <SubTitlePage>We strongly recommend you to enable 2FA on your account</SubTitlePage>
-              </Grid>
-              <CustomButton className='btn' variant='contained' styleButton='primary' text='Enable 2FA' onClick={() => setIsOpenEnableMFA(true)} />
-            </EnableMFAContainer>
-          </Grid>
-        )}
         {infoMasterKey?.mfa && (
           <>
             <Grid item xs={100} sm={100} md={100} lg={50} xl={55}>
