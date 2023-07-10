@@ -13,7 +13,7 @@ import { Grid, InputAdornment, TextField } from "@mui/material";
 import { copyAddress } from "@app/utils";
 import { style } from "../mfa.css";
 import { useCustomSnackBar } from "@app/hooks";
-import { useAppDispatch } from "@app/store";
+import { useAppDispatch, useAppSelector } from "@app/store";
 import { sendPhraseToEmail } from "@app/store/redux/wallet/actions";
 
 type Props = {
@@ -28,6 +28,7 @@ const ModalEnableMFA: React.FC<Props> = props => {
   const dispatch = useAppDispatch();
 
   const { handleNotification } = useCustomSnackBar();
+  const sendPhraseToEmailState = useAppSelector(state => state.wallet.sendPhraseToEmail);
 
   const { email, isOpen, handleClose, loadingEnableMFA, handleEnableMFA, seeds } = props;
   const [copiedSeeds, setCopiedSeeds] = useState(false);
@@ -48,7 +49,7 @@ const ModalEnableMFA: React.FC<Props> = props => {
   const handleSendEmail = async () => {
     const { meta } = await dispatch(sendPhraseToEmail({ email, phrase: seeds }));
     if (meta.requestStatus === "fulfilled") {
-      handleNotification("Please check your email to get new phrase", "success");
+      handleNotification("Please confirm to complete the 2FA setting", "success");
       setIsSentEmail(true);
     }
     if (meta.requestStatus === "rejected") {
@@ -63,6 +64,12 @@ const ModalEnableMFA: React.FC<Props> = props => {
       return;
     }
     handleEnableMFA();
+  };
+
+  const disableSendEmail = () => {
+    // if (isSentEmail) return "inactive";
+    if (!sendPhraseToEmailState.loading) return "style";
+    if (sendPhraseToEmailState.loading) return "inactive";
   };
 
   return (
@@ -102,9 +109,11 @@ const ModalEnableMFA: React.FC<Props> = props => {
         </ContainerInput>
         <ContainerActions spacing={2}>
           <Button onClick={handleDownload} variant='outlined' text='Download' />
-          <Button onClick={handleSendEmail} mLeft='8px' variant='outlined' text='Send to email' />
+          <Button onClick={handleSendEmail} styleButton={disableSendEmail()} loading={sendPhraseToEmailState.loading} mLeft='8px' variant='outlined' text='Send to email' />
         </ContainerActions>
-        <Button styleButton={loadingEnableMFA ? "inactive" : "primary"} loading={loadingEnableMFA} onClick={preHandleEnableMFA} mTop='8px' width='135px' height='44px' text='Confirm'></Button>
+        {(isDownloaded || isSentEmail) && (
+          <Button styleButton={loadingEnableMFA ? "inactive" : "primary"} loading={loadingEnableMFA} onClick={preHandleEnableMFA} mTop='8px' width='135px' height='44px' text='Confirm'></Button>
+        )}
       </Box>
     </Modal>
   );

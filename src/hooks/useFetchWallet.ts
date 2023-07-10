@@ -395,10 +395,10 @@ export const useFetchWallet = () => {
       }
       // Send mail
       setDeviceKey(deviceKey);
-      await sendMailPhrase({
-        email,
-        phrase,
-      });
+      // await sendMailPhrase({
+      //   email,
+      //   phrase,
+      // });
 
       return { error: "", success: enabledMFA.data };
     } catch (error) {
