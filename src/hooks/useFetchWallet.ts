@@ -257,7 +257,7 @@ export const useFetchWallet = () => {
       const deviceKey = formatPrivateKey(generateRandomPrivateKey());
       const deviceShare = await encryptedMessage(decryptedShares[1], new BN(deviceKey.priKey, "hex"));
 
-      createShare({
+      await createShare({
         masterPublicKey: infoMasterKey.masterPublicKey,
         publicKey: deviceShare.publicKey,
         encryptedData: deviceShare.encryptedToString,

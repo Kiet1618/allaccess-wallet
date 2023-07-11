@@ -25,5 +25,8 @@ messaging.onBackgroundMessage(function (payload) {
     body: payload.notification.body,
   };
 
+  const channel = new BroadcastChannel("notifications");
+  channel.postMessage(payload);
+
   self.registration.showNotification(notificationTitle, notificationOptions);
 });

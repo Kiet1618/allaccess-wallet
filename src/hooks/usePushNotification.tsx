@@ -32,6 +32,7 @@ export function usePushNotifications(callback?: (_: MessagePayload) => void) {
   // Handle insert token by master public key
   onMessageListener().then(data => {
     console.log("Receive foreground: ", JSON.parse(data.notification?.body || "{}"));
+    if (isEmpty(masterKey)) return;
     if (typeof callback === "function") callback(data);
   });
 

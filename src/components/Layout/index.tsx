@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import { Grid } from "@mui/material";
@@ -10,6 +10,8 @@ import { MessagePayload } from "@firebase/messaging";
 import { ShareInfo } from "@app/wallet/metadata";
 import { Header, Footer, Sidebar, DeviceModal } from "../";
 import { isEmpty } from "lodash";
+import { KeyPair } from "@app/wallet/types";
+import { useLocalStorage } from "usehooks-ts";
 //import { getTorusKey } from "@app/storage/storage-service";
 // import { ChainNetwork } from "@app/types/blockchain.type";
 // import { Token } from "@app/types/blockchain.type";
@@ -18,6 +20,8 @@ import { isEmpty } from "lodash";
 // import { setHistoriesAddress } from "@app/store/redux/history/actions";
 // import { getTorusKey } from "@app/storage/storage-service";
 const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesProps>) => {
+  const [masterKey, _] = useLocalStorage<KeyPair | null>("master-key", null);
+
   //const [theme, setTheme] = useState("light");
   // const themeToggler = () => {
   //     theme === "light" ? setTheme("dark") : setTheme("light");
@@ -58,7 +62,7 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
 
   const handleDetectDevice = (message: MessagePayload) => {
     if (!message) return;
-
+    if (isEmpty(masterKey)) return;
     if (message.notification?.title === "confirm-device") {
       // Display modal
       const share = JSON.parse(message?.notification?.body || "{}") as ShareInfo;
@@ -68,6 +72,15 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
   };
 
   usePushNotifications(handleDetectDevice);
+
+  useEffect(() => {
+    const channel = new BroadcastChannel("notifications");
+    channel.addEventListener("message", event => {
+      console.log("Receive background from SW", event.data);
+      handleDetectDevice(event.data);
+    });
+  }, []);
+
   const handleConfirmDevice = async () => {
     if (isEmpty(detectDevice)) return;
     const { error } = await updateShareForPublicKey(detectDevice);
