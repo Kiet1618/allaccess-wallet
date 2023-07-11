@@ -28,7 +28,7 @@ const MultipleFactors = () => {
 
   const [infoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [deviceKey, setDeviceKey] = useLocalStorage<KeyPair | null>("device-key", null);
-  const [networkKey, setNetworkKey] = useLocalStorage<KeyPair | null>("network-key", null);
+  const [networkKey, setNetworkKey] = useSessionStorage<KeyPair | null>("network-key", null);
   const navigate = useNavigate();
   const { getInfoWalletByNetworkKey, fetchMasterKeyWithPhrase, insertTokenFCM, fetchMasterKeyWithDevice } = useFetchWallet();
 
