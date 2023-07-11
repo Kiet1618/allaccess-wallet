@@ -43,6 +43,7 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
   const checkLayout = routes.find(route => route.path === location.pathname);
   const [isDesktop, setIsDesktop] = useState(false);
   const [detectDevice, setDetectDevice] = useState<ShareInfo | null>(null);
+  const [loadingDetectDevice, setLoadingDetectDevice] = useState(false);
   const handleResize = () => {
     if (window.innerWidth < 600) {
       setIsDesktop(false);
@@ -83,13 +84,16 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
 
   const handleConfirmDevice = async () => {
     if (isEmpty(detectDevice)) return;
+    setLoadingDetectDevice(true);
     const { error } = await updateShareForPublicKey(detectDevice);
     if (error) {
+      setLoadingDetectDevice(false);
       handleNotification(error, "error");
       return;
     }
     handleNotification("Confirm successfully", "success");
     setDetectDevice(null);
+    setLoadingDetectDevice(false);
   };
 
   return (
@@ -98,7 +102,7 @@ const LayoutApp: React.FC<RoutesProps> = (props: React.PropsWithChildren<RoutesP
       <DeviceModal
         title='Confirm device'
         subTitle='Please confirm new device if you logged!'
-        loading={false}
+        loading={loadingDetectDevice}
         device={detectDevice}
         isCurrent={false}
         handleClose={() => setDetectDevice(null)}

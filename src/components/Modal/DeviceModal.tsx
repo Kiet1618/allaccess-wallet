@@ -41,7 +41,16 @@ const DeviceModal: React.FC<Props> = props => {
         </ContainerDeviceModal>
         <ContainerButtonFactors>
           <CustomButton onClick={handleClose} height='48px' width='150px' mTop='50px' mBottom='20px' mRight='20px' text='Cancel' styleButton='inactive'></CustomButton>
-          <CustomButton loading={loading} onClick={handleConfirm} height='48px' width='150px' mTop='50px' mBottom='20px' text="Yes, I'm sure" styleButton='primary'></CustomButton>
+          <CustomButton
+            styleButton={loading ? "inactive" : "primary"}
+            loading={loading}
+            onClick={handleConfirm}
+            height='48px'
+            width='150px'
+            mTop='50px'
+            mBottom='20px'
+            text="Yes, I'm sure"
+          ></CustomButton>
         </ContainerButtonFactors>
       </Box>
     </Modal>
