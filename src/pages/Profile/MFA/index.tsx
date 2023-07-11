@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { isEmpty } from "lodash";
-import { useSessionStorage } from "usehooks-ts";
+import { useLocalStorage } from "usehooks-ts";
 
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -28,9 +28,9 @@ const MFA = () => {
   const { token } = usePushNotifications();
   const { handleNotification } = useCustomSnackBar();
   const { getInfoWalletByNetworkKey, enableMFA, changeRecoveryEmail, removeDeviceShare, insertTokenFCM } = useFetchWallet();
-  const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
-  const [networkKey, __] = useSessionStorage<KeyPair | null>("network-key", null);
-  const [deviceKey, ___] = useSessionStorage<KeyPair | null>("device-key", null);
+  const [infoMasterKey, _] = useLocalStorage<InfoMasterKey | null>("info-master-key", null);
+  const [networkKey, __] = useLocalStorage<KeyPair | null>("network-key", null);
+  const [deviceKey, ___] = useLocalStorage<KeyPair | null>("device-key", null);
   const [deleteDevice, setDeleteDevice] = useState<ShareInfo>();
   const [deviceShares, setDeviceShares] = useState<ShareInfo[]>([]);
   // const [recoveryEmail, setRecoveryEmail] = useState<string>("");
