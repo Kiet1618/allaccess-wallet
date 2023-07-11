@@ -6,7 +6,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import { subMenuItem } from "../../types/subMenuItem.type";
 import { ArrowRight, ArrowDown } from "../../assets/icon";
 import { MenuLink, IconArrowMenu, ListItemDiv, NavLinkCustom } from "./sidebar.css";
-import { useLocalStorage } from "usehooks-ts";
+import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { KeyPair } from "@app/wallet/types";
 import { InfoMasterKey } from "@app/wallet/metadata";
 import Cookies from "universal-cookie";
@@ -19,7 +19,7 @@ type Props = {
 const Slider: React.FC<Props> = (props: Props) => {
   const cookies = new Cookies();
   const [_, setMasterKey] = useLocalStorage<KeyPair | null>("master-key", null);
-  const [__, setInfoMasterKey] = useLocalStorage<InfoMasterKey | null>("info-master-key", null);
+  const [__, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [___, setNetworkKey] = useLocalStorage<KeyPair | null>("network-key", null);
   const location = useLocation();
   const [open, setOpen] = React.useState(false);

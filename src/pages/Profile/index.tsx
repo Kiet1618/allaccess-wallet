@@ -7,8 +7,8 @@ import { TabsCustom, TabTransfer } from "../Transaction/transaction.css";
 import MFA from "./MFA";
 import Info from "./Info";
 const Profile = () => {
-  const [value, setValue] = React.useState(1);
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const [value, setValue] = React.useState(0);
+  const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
   return (

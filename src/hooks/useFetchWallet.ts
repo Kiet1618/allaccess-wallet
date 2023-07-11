@@ -1,5 +1,5 @@
 import { find, get, isEmpty, map } from "lodash";
-import { useLocalStorage } from "usehooks-ts";
+import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { getNodeKey } from "@app/wallet/node-service";
 import { KeyPair } from "@app/wallet/types";
 import Cookies from "universal-cookie";
@@ -22,7 +22,7 @@ import { deviceInfo, wordsToHex } from "@app/utils";
 
 export const useFetchWallet = () => {
   const cookies = new Cookies();
-  const [infoMasterKey, setInfoMasterKey] = useLocalStorage<InfoMasterKey | null>("info-master-key", null);
+  const [infoMasterKey, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [masterKey, setMasterKey] = useLocalStorage<KeyPair | null>("master-key", null);
   const [networkKey, setNetworkKey] = useLocalStorage<KeyPair | null>("network-key", null);
   const [deviceKey, setDeviceKey] = useLocalStorage<KeyPair | null>("device-key", null);

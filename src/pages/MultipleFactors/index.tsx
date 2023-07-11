@@ -20,13 +20,13 @@ import {
 } from "./multipleFactors.css";
 import { useCustomSnackBar, useFetchWallet, usePushNotifications } from "@app/hooks";
 import { InfoMasterKey, ShareInfo } from "@app/wallet/metadata";
-import { useLocalStorage } from "usehooks-ts";
+import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 import { KeyPair } from "@app/wallet/types";
 const MultipleFactors = () => {
   const { handleNotification } = useCustomSnackBar();
   const { token } = usePushNotifications();
 
-  const [infoMasterKey] = useLocalStorage<InfoMasterKey | null>("info-master-key", null);
+  const [infoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [deviceKey, setDeviceKey] = useLocalStorage<KeyPair | null>("device-key", null);
   const [networkKey, setNetworkKey] = useLocalStorage<KeyPair | null>("network-key", null);
   const navigate = useNavigate();
