@@ -55,7 +55,10 @@ const History = () => {
   const [open, setOpen] = React.useState(false);
   const [openFilter, setOpenFilter] = React.useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    setOpen(true);
+    handleNotification("Ohhh, it is upgrading", "warning");
+  };
   const handleClose = () => setOpen(false);
   const handleOpenFilter = () => setOpenFilter(true);
   const handleCloseFilter = () => setOpenFilter(false);
@@ -103,7 +106,6 @@ const History = () => {
               size='small'
               onChange={e => {
                 setTime(e.target.value);
-                handleNotification("Ohhh, it is upgrading", "warning");
               }}
               SelectProps={{
                 IconComponent: () => <TimeDropdown style={{ marginRight: "10px" }} />,
@@ -185,7 +187,7 @@ const History = () => {
         </ContainerFilterButton>
       </TilePageContainer>
       <ContainerDataTable>
-        <TableCustom selectedNetwork={network} />
+        <TableCustom selectedNetwork={network} time={time} method={method} searchId={searchId} status={status} />
       </ContainerDataTable>
       <ModalCustom open={open} onClose={handleClose} aria-labelledby='modal-modal-title' aria-describedby='modal-modal-description'>
         <Box sx={style} width={isDesktop ? 500 : 320}>
