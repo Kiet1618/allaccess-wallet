@@ -15,7 +15,7 @@ const OldAddress = styled.div`
   justify-content: center;
   padding: 6px 10px;
   gap: 10px;
-  width: 130px;
+  width: 150px;
   position: absolute;
   height: 36px;
   top: 0;
@@ -34,7 +34,7 @@ const NewAddress = styled.div`
   justify-content: center;
   padding: 6px 10px;
   gap: 10px;
-  width: 130px;
+  width: 150px;
   position: absolute;
   height: 36px;
   top: 0;
@@ -53,10 +53,10 @@ const MoveContainer = styled.div`
   z-index: 9;
   ${breakpoint("xs")`
        width: 50% !important;
-       left: 30%;
+       left: 26%;
       `}
   ${breakpoint("sm")`
-        left: 45%;
+        left: 44%;
     `}
 `;
 const ContainerDiv = styled.div`
