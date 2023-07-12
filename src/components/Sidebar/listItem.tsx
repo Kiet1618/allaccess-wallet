@@ -20,7 +20,7 @@ const Slider: React.FC<Props> = (props: Props) => {
   const cookies = new Cookies();
   const [_, setMasterKey] = useLocalStorage<KeyPair | null>("master-key", null);
   const [__, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
-  const [___, setNetworkKey] = useSessionStorage<KeyPair | null>("network-key", null);
+  const [___, setNetworkKey] = useLocalStorage<KeyPair | null>("network-key", null);
   const location = useLocation();
   const [open, setOpen] = React.useState(false);
 

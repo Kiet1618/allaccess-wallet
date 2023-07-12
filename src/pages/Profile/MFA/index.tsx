@@ -29,7 +29,7 @@ const MFA = () => {
   const { handleNotification } = useCustomSnackBar();
   const { getInfoWalletByNetworkKey, enableMFA, changeRecoveryEmail, removeDeviceShare, insertTokenFCM } = useFetchWallet();
   const [infoMasterKey, _] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
-  const [networkKey, __] = useSessionStorage<KeyPair | null>("network-key", null);
+  const [networkKey, __] = useLocalStorage<KeyPair | null>("network-key", null);
   const [deviceKey, ___] = useLocalStorage<KeyPair | null>("device-key", null);
   const [deleteDevice, setDeleteDevice] = useState<ShareInfo>();
   const [deviceShares, setDeviceShares] = useState<ShareInfo[]>([]);
@@ -41,7 +41,7 @@ const MFA = () => {
   const [isOpenEnableMFA, setIsOpenEnableMFA] = useState(false);
 
   useEffect(() => {
-    if (networkKey) {
+    if (!isEmpty(networkKey)) {
       getInfoWalletByNetworkKey(networkKey!);
     }
   }, []);

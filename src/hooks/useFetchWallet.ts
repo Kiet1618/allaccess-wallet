@@ -24,7 +24,7 @@ export const useFetchWallet = () => {
   const cookies = new Cookies();
   const [infoMasterKey, setInfoMasterKey] = useSessionStorage<InfoMasterKey | null>("info-master-key", null);
   const [masterKey, setMasterKey] = useLocalStorage<KeyPair | null>("master-key", null);
-  const [networkKey, setNetworkKey] = useSessionStorage<KeyPair | null>("network-key", null);
+  const [networkKey, setNetworkKey] = useLocalStorage<KeyPair | null>("network-key", null);
   const [deviceKey, setDeviceKey] = useLocalStorage<KeyPair | null>("device-key", null);
 
   // Get info master key
