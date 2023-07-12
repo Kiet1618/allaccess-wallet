@@ -17,7 +17,7 @@ import { TitlePageBlack, TitlePage } from "@app/styles";
 import { InfoMasterKey, ShareInfo } from "@app/wallet/metadata";
 import { Button as CustomButton } from "@app/components";
 
-import { BackgroundPage, Title2FAContainer, TitlePageContainer } from "../profile.css";
+import { BackgroundPage, Title2FAContainer } from "../profile.css";
 import { SubTitlePage } from "../../Transaction/transaction.css";
 import { TextHeaderCard, ContainerDevice, GroupLeftItemDevice, ContainerText, NameText, IpText, TextSummary } from "../../MultipleFactors/multipleFactors.css";
 import { ContainerDeviceModal, ListDevicesContainer, ContainerButtonFactors, ContainerHeaderFactors, style } from "./mfa.css";
