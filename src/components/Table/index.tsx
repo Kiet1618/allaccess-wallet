@@ -18,6 +18,7 @@ import { TitleModal, ContainerInfoTransactions, HeaderModalInfoTransaction, styl
 import DoneIcon from "@mui/icons-material/Done";
 import { get } from "lodash";
 import { ChainNetwork } from "@app/types/blockchain.type";
+import dayjs from "dayjs";
 import { PreProcessHistoryResponse } from "@app/utils/history";
 const sliceAddressIdTableCell = (str: string) => {
   if (str.length > 35) {
@@ -32,8 +33,8 @@ type Props = {
   time?: string;
   method: string;
   status: string;
-  timeFrom?: string;
-  timeTo?: string;
+  timeFrom?: string | undefined;
+  timeTo?: string | undefined;
 };
 const TableWithPagination: React.FC<Props> = props => {
   const { selectedNetwork } = props;
@@ -102,12 +103,37 @@ const TableWithPagination: React.FC<Props> = props => {
     const day = date.getDate();
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
-    return month + "/" + day + "/" + year;
+    return year + "/" + month + "/" + day;
+  };
+  const convertToTimestamp = (dateString: string) => {
+    const date = dayjs(dateString, "YYYY-MM-DD");
+    return date.toDate().getTime(); // Returns the timestamp in milliseconds
   };
   const handleDay = (values: PreProcessHistoryResponse) => {
-    const currentDate = new Date();
-    const daysToFilter = Number(props.time);
-    return Number(values.timeStamp) * 1000 > currentDate.getTime() - daysToFilter * 24 * 60 * 60 * 1000;
+    if (props.time) {
+      const currentDate = new Date();
+      const daysToFilter = Number(props.time);
+      if (Number(values.timeStamp) * 1000 < currentDate.getTime() - daysToFilter * 24 * 60 * 60 * 1000) {
+        return false;
+      }
+    } else {
+      const timeStampFrom = convertToTimestamp(props.timeFrom as string);
+      const timeStampTo = convertToTimestamp(props.timeTo as string);
+      if (Number(values.timeStamp) * 1000 < timeStampFrom || Number(values.timeStamp) * 1000 > timeStampTo) {
+        return false;
+      }
+    }
+    if (props.searchId) {
+      if (values.blockHash !== props.searchId) {
+        return false;
+      }
+    }
+    if (props.method !== "All") {
+      if (values.method !== props.method) {
+        return false;
+      }
+    }
+    return true;
   };
 
   return (
@@ -283,7 +309,7 @@ const TableWithPagination: React.FC<Props> = props => {
             </HeaderModalInfoTransaction>
             <HeaderModalInfoTransaction>
               <div>Date</div>
-              <div>{row.time}</div>
+              <div>{handleGetDateFromTimeStamp(row.time)}</div>
             </HeaderModalInfoTransaction>
             <HeaderModalInfoTransaction>
               <div>Method</div>
@@ -350,9 +376,9 @@ const TableWithPagination: React.FC<Props> = props => {
               </CopyAddressContainer>
             </HeaderModalInfoTransaction>
             <HeaderModalInfoTransaction>
-              <div>Fee</div>
+              <div>Amount</div>
               <div>
-                0.12
+                {row.amount + " "}
                 <span>{row.token}</span>
               </div>
             </HeaderModalInfoTransaction>
